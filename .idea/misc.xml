@@ -4,7 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/background_btn.xml" value="0.14635416666666667" />
+        <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/circle_none.xml" value="0.23425925925925925" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/goctron.xml" value="0.2" />
+        <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/goctron_red.xml" value="0.23425925925925925" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/ic_baseline_arrow_forward_ios_24.xml" value="0.2" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/ic_baseline_circle_24.xml" value="0.2638888888888889" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/ic_baseline_favorite_24.xml" value="0.2" />
@@ -12,18 +14,22 @@
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/ic_baseline_phone_24.xml" value="0.14635416666666667" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/ic_favourite_none.xml" value="0.2638888888888889" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/icon_lock.xml" value="0.14635416666666667" />
+        <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/temp.xml" value="0.23425925925925925" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/vien.xml" value="0.2" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/vien_circle.xml" value="0.2638888888888889" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/vien_scroll.xml" value="0.2638888888888889" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/activity_cart.xml" value="0.19927536231884058" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/activity_costume.xml" value="0.264" />
-        <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/activity_favourite.xml" value="0.22780797101449277" />
+        <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/activity_favourite.xml" value="0.2" />
+        <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/activity_info.xml" value="0.22735507246376813" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/activity_main.xml" value="0.22780797101449277" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/activity_registration.xml" value="0.22780797101449277" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/activity_sign_in.xml" value="0.19927536231884058" />
+        <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/activity_suggestion.xml" value="0.22735507246376813" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/drawer_main.xml" value="0.18385416666666668" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/header_main.xml" value="0.18385416666666668" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/item_costume.xml" value="0.22780797101449277" />
+        <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/item_costume_cart.xml" value="0.2" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/item_costume_img.xml" value="0.22780797101449277" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/item_costume_style.xml" value="0.18385416666666668" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/menu/drawer_main.xml" value="0.18385416666666668" />
