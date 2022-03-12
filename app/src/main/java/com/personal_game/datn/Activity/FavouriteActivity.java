@@ -1,9 +1,10 @@
-package com.personal_game.datn;
+package com.personal_game.datn.Activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -32,6 +33,7 @@ public class FavouriteActivity extends AppCompatActivity {
         actionBar.hide();
 
         setCostume();
+        setListeners();
     }
 
     private void setCostume(){
@@ -52,5 +54,12 @@ public class FavouriteActivity extends AppCompatActivity {
 
         binding.rclCostume.setLayoutManager(gridLayoutManager);
         binding.rclCostume.setAdapter(costumeAdapter);
+    }
+
+    private void setListeners(){
+        binding.imgCart.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), CartActivity.class);
+            startActivity(intent);
+        });
     }
 }

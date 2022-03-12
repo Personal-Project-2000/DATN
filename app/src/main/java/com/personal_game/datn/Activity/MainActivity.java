@@ -1,5 +1,6 @@
-package com.personal_game.datn;
+package com.personal_game.datn.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -7,11 +8,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.material.navigation.NavigationView;
 import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Adapter.CostumeStyleAdapter;
+import com.personal_game.datn.R;
 import com.personal_game.datn.databinding.ActivityMainBinding;
 import com.personal_game.datn.databinding.ActivitySignInBinding;
 
@@ -43,9 +48,48 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setListeners(){
+        activityMainBinding.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_info: {
+                        Intent intent = new Intent(getApplication(), InfoActivity.class);
+                        startActivityForResult(intent, 1);
+                        break;
+                    }
+                    case R.id.nav_favourite: {
+                        Intent intent = new Intent(getApplication(), FavouriteActivity.class);
+                        startActivityForResult(intent, 2);
+                        break;
+                    }
+                    case R.id.nav_notification: {
+                        Intent intent = new Intent(getApplication(), NotificationActivity.class);
+                        startActivityForResult(intent, 3);
+                        break;
+                    }
+                    case R.id.nav_suggest: {
+                        Intent intent = new Intent(getApplication(), SuggestionActivity.class);
+                        startActivityForResult(intent, 3);
+                        break;
+                    }
+                    case R.id.nav_signout: {
+                        Intent intent = new Intent(getApplication(), SignInActivity.class);
+                        startActivity(intent);
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
+
         activityMainBinding.btnMenu.setOnClickListener(v -> {
             DrawerLayout d =  findViewById(R.id.drawerLayout);
             d.openDrawer(GravityCompat.START);
+        });
+
+        activityMainBinding.imgCart.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), CartActivity.class);
+            startActivity(intent);
         });
     }
 

@@ -1,4 +1,4 @@
-package com.personal_game.datn;
+package com.personal_game.datn.Activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -6,16 +6,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-import com.personal_game.datn.databinding.ActivitySignInBinding;
+import com.personal_game.datn.databinding.ActivityDeliveryAddressBinding;
+import com.personal_game.datn.databinding.ActivityInfoBinding;
 
-public class SignInActivity extends AppCompatActivity {
-    private ActivitySignInBinding activitySignInBinding;
+public class DeliveryAddressActivity extends AppCompatActivity {
+    private ActivityDeliveryAddressBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activitySignInBinding = ActivitySignInBinding.inflate(getLayoutInflater());
-        View view = activitySignInBinding.getRoot();
+        binding = ActivityDeliveryAddressBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
         setContentView(view);
 
         init();

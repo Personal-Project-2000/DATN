@@ -52,12 +52,12 @@ public class CostumeCartAdapter extends RecyclerView.Adapter<CostumeCartAdapter.
             this.binding = binding;
         }
 
-        public void setData(String costumeStyle) {
+        public void setData(String costume) {
 
         }
     }
 
     public interface CostumeCartListeners {
-        void onClick(String costumeStyle);
+        void onClick(String costume);
     }
 }

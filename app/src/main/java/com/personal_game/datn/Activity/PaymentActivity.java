@@ -1,4 +1,4 @@
-package com.personal_game.datn;
+package com.personal_game.datn.Activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,19 +9,19 @@ import android.view.View;
 
 import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Adapter.CostumeCartAdapter;
-import com.personal_game.datn.databinding.ActivityCartBinding;
-import com.personal_game.datn.databinding.ActivitySuggestionBinding;
+import com.personal_game.datn.databinding.ActivityInfoBinding;
+import com.personal_game.datn.databinding.ActivityPaymentBinding;
 
 import java.util.ArrayList;
 
-public class SuggestionActivity extends AppCompatActivity {
-    private ActivitySuggestionBinding binding;
-    private CostumeAdapter costumeAdapter;
+public class PaymentActivity extends AppCompatActivity {
+    private ActivityPaymentBinding binding;
+    private CostumeCartAdapter costumeCartAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivitySuggestionBinding.inflate(getLayoutInflater());
+        binding = ActivityPaymentBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
 
@@ -32,26 +32,26 @@ public class SuggestionActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-        setCostume();
+        setCostumeCart();
     }
 
-    private void setCostume(){
+    private void setCostumeCart(){
         ArrayList<String> temp = new ArrayList<>();
         for(int i = 0; i < 20; i ++){
             temp.add("Sy");
         }
 
-        costumeAdapter = new CostumeAdapter(temp, this, new CostumeAdapter.CostumeListeners() {
+        costumeCartAdapter = new CostumeCartAdapter(temp, this, new CostumeCartAdapter.CostumeCartListeners() {
             @Override
-            public void onClick(String costumeStyle) {
+            public void onClick(String costume) {
 
             }
         });
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
 
-        binding.rclCostume.setLayoutManager(gridLayoutManager);
-        binding.rclCostume.setAdapter(costumeAdapter);
+        binding.rclCostumeCart.setLayoutManager(gridLayoutManager);
+        binding.rclCostumeCart.setAdapter(costumeCartAdapter);
     }
 }

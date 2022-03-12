@@ -1,4 +1,4 @@
-package com.personal_game.datn;
+package com.personal_game.datn.Activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,21 +7,20 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import android.os.Bundle;
 import android.view.View;
 
+import com.personal_game.datn.Adapter.AddressAdapter;
 import com.personal_game.datn.Adapter.CostumeCartAdapter;
-import com.personal_game.datn.Adapter.CostumeImgAdapter;
-import com.personal_game.datn.databinding.ActivityCartBinding;
-import com.personal_game.datn.databinding.ActivityCostumeBinding;
+import com.personal_game.datn.databinding.ActivityAddressBinding;
 
 import java.util.ArrayList;
 
-public class CartActivity extends AppCompatActivity {
-    private ActivityCartBinding binding;
-    private CostumeCartAdapter costumeCartAdapter;
+public class AddressActivity extends AppCompatActivity {
+    private ActivityAddressBinding binding;
+    private AddressAdapter addressAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityCartBinding.inflate(getLayoutInflater());
+        binding = ActivityAddressBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
 
@@ -32,18 +31,18 @@ public class CartActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-        setCostume();
+        setAddress();
     }
 
-    private void setCostume(){
+    private void setAddress(){
         ArrayList<String> temp = new ArrayList<>();
         for(int i = 0; i < 20; i ++){
             temp.add("Sy");
         }
 
-        costumeCartAdapter = new CostumeCartAdapter(temp, this, new CostumeCartAdapter.CostumeCartListeners() {
+        addressAdapter = new AddressAdapter(temp, this, new AddressAdapter.AddressListeners() {
             @Override
-            public void onClick(String costumeStyle) {
+            public void onClick(String address) {
 
             }
         });
@@ -51,7 +50,7 @@ public class CartActivity extends AppCompatActivity {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
 
-        binding.rclCostume.setLayoutManager(gridLayoutManager);
-        binding.rclCostume.setAdapter(costumeCartAdapter);
+        binding.rclAddress.setLayoutManager(gridLayoutManager);
+        binding.rclAddress.setAdapter(addressAdapter);
     }
 }

@@ -1,4 +1,4 @@
-package com.personal_game.datn;
+package com.personal_game.datn.Activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;

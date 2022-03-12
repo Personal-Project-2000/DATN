@@ -6,15 +6,15 @@
             android:icon="@drawable/ic_baseline_perm_identity_24"
             android:title="Thông tin cá nhân" />
         <item
-            android:id="@+id/nav_history"
+            android:id="@+id/nav_favourite"
             android:icon="@drawable/ic_baseline_favorite_border_24"
             android:title="Yêu thích" />
         <item
-            android:id="@+id/nav_setting"
+            android:id="@+id/nav_suggest"
             android:icon="@drawable/ic_baseline_search_24"
             android:title="Gợi ý" />
         <item
-            android:id="@+id/nav_create"
+            android:id="@+id/nav_notification"
             android:icon="@drawable/ic_baseline_notifications_none_24"
             android:title="Thông báo" />
         <item

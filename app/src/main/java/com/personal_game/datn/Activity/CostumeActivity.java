@@ -1,4 +1,4 @@
-package com.personal_game.datn;
+package com.personal_game.datn.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Adapter.CostumeImgAdapter;
 import com.personal_game.datn.Adapter.CostumeStyleAdapter;
+import com.personal_game.datn.R;
 import com.personal_game.datn.databinding.ActivityCostumeBinding;
 import com.personal_game.datn.databinding.ActivityMainBinding;
 
