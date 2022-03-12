@@ -1,12 +1,14 @@
 package com.personal_game.datn.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.personal_game.datn.Activity.CostumeActivity;
 import com.personal_game.datn.databinding.ItemCostumeBinding;
 import com.personal_game.datn.databinding.ItemCostumeStyleBinding;
 
@@ -53,7 +55,10 @@ public class CostumeAdapter extends RecyclerView.Adapter<CostumeAdapter.ViewHold
         }
 
         public void setData(String costumeStyle) {
-
+            binding.imgMain.setOnClickListener(v -> {
+                Intent intent = new Intent(context, CostumeActivity.class);
+                context.startActivity(intent);
+            });
         }
     }
 

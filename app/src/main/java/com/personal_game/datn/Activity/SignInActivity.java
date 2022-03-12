@@ -34,5 +34,10 @@ public class SignInActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplication(), MainActivity.class);
             startActivity(intent);
         });
+
+        binding.btnRegistration.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), RegistrationActivity.class);
+            startActivity(intent);
+        });
     }
 }
