@@ -10,56 +10,55 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DATN">
         <activity
-            android:name=".Activity.TestActivity"
+            android:name=".Activity.BillActivity"
             android:exported="true" >
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
+        <activity
+            android:name=".Activity.TestActivity"
+            android:exported="false"></activity>
         <activity
             android:name=".Activity.DeliveryAddressActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".Activity.StyleActivity"
-            android:exported="true"></activity>
+            android:exported="false" />
         <activity
             android:name=".Activity.AddressActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".Activity.PaymentActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".Activity.NotificationActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".Activity.CartActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".Activity.CostumeActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".Activity.SuggestionActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".Activity.FavouriteActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".Activity.InfoActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".Activity.RegistrationActivity"
-            android:exported="true">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
+            android:exported="false">
         </activity>
         <activity
             android:name=".Activity.SignInActivity"
-            android:exported="true" >
+            android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -68,7 +67,7 @@
         </activity>
         <activity
             android:name=".Activity.MainActivity"
-            android:exported="true" />
+            android:exported="false" />
     </application>
 
 </manifest>

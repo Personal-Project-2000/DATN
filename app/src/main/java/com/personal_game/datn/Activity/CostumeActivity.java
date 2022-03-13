@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Adapter.CostumeImgAdapter;
 import com.personal_game.datn.Adapter.CostumeStyleAdapter;
+import com.personal_game.datn.Adapter.StyleAdapter;
 import com.personal_game.datn.R;
 import com.personal_game.datn.databinding.ActivityCostumeBinding;
 import com.personal_game.datn.databinding.ActivityMainBinding;
@@ -26,7 +27,9 @@ public class CostumeActivity extends AppCompatActivity {
     private ActivityCostumeBinding binding;
     private CostumeImgAdapter costumeImgAdapter;
     private CostumeAdapter suitableOutfit;
-    private CostumeAdapter relatedCostumes;
+    private CostumeAdapter costumeAdapter;
+    private StyleAdapter styleAdapter;
+    private StyleAdapter bodyAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,8 @@ public class CostumeActivity extends AppCompatActivity {
         setImg();
         setSuitableOutfit();
         setRelatedCostumes();
+        setStyle();
+        setBody();
 
         setListeners();
     }
@@ -102,6 +107,34 @@ public class CostumeActivity extends AppCompatActivity {
         binding.btnAddCart.setOnClickListener(v -> {
 
         });
+
+        binding.layoutDes1.setOnClickListener(v -> {
+            binding.layoutDescription.setVisibility(View.VISIBLE);
+        });
+
+        binding.btnClose.setOnClickListener(v -> {
+            binding.layoutDescription.setVisibility(View.GONE);
+        });
+
+        binding.layoutD.setOnClickListener(v -> {
+            binding.layoutDescription.setVisibility(View.GONE);
+        });
+
+        binding.layoutPolicy.setOnClickListener(v -> {
+            binding.layoutPolicy1.setVisibility(View.VISIBLE);
+        });
+
+        binding.btnClosePolicy.setOnClickListener(v -> {
+            binding.layoutPolicy1.setVisibility(View.GONE);
+        });
+
+        binding.layoutSize.setOnClickListener(v -> {
+            binding.layoutSize1.setVisibility(View.VISIBLE);
+        });
+
+        binding.btnCloseSize.setOnClickListener(v -> {
+            binding.layoutSize1.setVisibility(View.GONE);
+        });
     }
 
     private void setImg(){
@@ -150,7 +183,7 @@ public class CostumeActivity extends AppCompatActivity {
             temp.add("Sy");
         }
 
-        relatedCostumes = new CostumeAdapter(temp, this, new CostumeAdapter.CostumeListeners() {
+        costumeAdapter = new CostumeAdapter(temp, this, new CostumeAdapter.CostumeListeners() {
             @Override
             public void onClick(String costumeStyle) {
 
@@ -161,6 +194,46 @@ public class CostumeActivity extends AppCompatActivity {
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
 
         binding.rclRelatedCostumes.setLayoutManager(gridLayoutManager);
-        binding.rclRelatedCostumes.setAdapter(relatedCostumes);
+        binding.rclRelatedCostumes.setAdapter(costumeAdapter);
+    }
+
+    private void setStyle(){
+        ArrayList<String> temp = new ArrayList<>();
+        for(int i = 0; i < 20; i ++){
+            temp.add("Sy");
+        }
+
+        styleAdapter = new StyleAdapter(temp, this, new StyleAdapter.StyleListeners() {
+            @Override
+            public void onClick(String style) {
+
+            }
+        });
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
+        gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
+
+        binding.rclStyles.setLayoutManager(gridLayoutManager);
+        binding.rclStyles.setAdapter(styleAdapter);
+    }
+
+    private void setBody(){
+        ArrayList<String> temp = new ArrayList<>();
+        for(int i = 0; i < 20; i ++){
+            temp.add("Sy");
+        }
+
+        bodyAdapter = new StyleAdapter(temp, this, new StyleAdapter.StyleListeners() {
+            @Override
+            public void onClick(String style) {
+
+            }
+        });
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
+        gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
+
+        binding.rclBodys.setLayoutManager(gridLayoutManager);
+        binding.rclBodys.setAdapter(bodyAdapter);
     }
 }

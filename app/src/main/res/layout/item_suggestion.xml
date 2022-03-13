@@ -28,13 +28,26 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@id/txtTitle"/>
 
+        <ImageView
+            android:id="@+id/imgMain"
+            android:layout_width="50dp"
+            android:layout_height="80dp"
+            android:src="@drawable/logo"
+            android:layout_marginTop="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:background="@drawable/vien"
+            app:layout_constraintTop_toBottomOf="@id/txtTitle"/>
+
         <TextView
             android:id="@+id/txtContext"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/txtTitle"
+            app:layout_constraintLeft_toRightOf="@id/imgMain"
+            app:layout_constraintRight_toRightOf="parent"
             android:background="@drawable/vien"
             android:layout_marginTop="10dp"
+            android:layout_marginLeft="5dp"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
             android:text="ìewfiwefiwnfoinfeoin"/>

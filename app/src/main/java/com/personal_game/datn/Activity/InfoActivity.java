@@ -49,7 +49,8 @@ public class InfoActivity extends AppCompatActivity {
         }
     }
 
-    private void changeView(boolean isChange){
+    //khi scroll sẽ thay đổi giao diện
+    private void changeViewScroll(boolean isChange){
         if(isChange){
             binding.txtInfoPersonal.setTextColor(getResources().getColor(R.color.secondary_text, null));
             binding.txtFavourite.setTextColor(getResources().getColor(R.color.black, null));
@@ -60,6 +61,17 @@ public class InfoActivity extends AppCompatActivity {
             binding.txtFavourite.setTextColor(getResources().getColor(R.color.secondary_text, null));
             binding.layoutIntroCostume.setVisibility(View.GONE);
             binding.layoutInfoCostume.setVisibility(View.VISIBLE);
+        }
+    }
+
+    //khi bấm vào xem thông tin cá nhân
+    private void changeViewInfo(boolean isChange){
+        if(isChange){
+            binding.layoutMain.setVisibility(View.GONE);
+            binding.layoutInfoUser.setVisibility(View.VISIBLE);
+        }else{
+            binding.layoutMain.setVisibility(View.VISIBLE);
+            binding.layoutInfoUser.setVisibility(View.GONE);
         }
     }
 
@@ -76,9 +88,9 @@ public class InfoActivity extends AppCompatActivity {
                 }
 
                 if(scrollY >= 500){
-                    changeView(true);
+                    changeViewScroll(true);
                 }else{
-                    changeView(false);
+                    changeViewScroll(false);
                 }
             }
         });
@@ -93,6 +105,25 @@ public class InfoActivity extends AppCompatActivity {
 
         binding.imgCart.setOnClickListener(v -> {
             Intent intent = new Intent(getApplication(), CartActivity.class);
+            startActivity(intent);
+        });
+
+        binding.layoutInfo.setOnClickListener(v -> {
+            changeViewInfo(true);
+        });
+
+        binding.layoutAddress.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), AddressActivity.class);
+            startActivity(intent);
+        });
+
+        binding.btnClose.setOnClickListener(v -> {
+            changeViewInfo(false);
+        });
+
+        binding.btnBillCancel.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), BillActivity.class);
+            intent.putExtra("code", 6);
             startActivity(intent);
         });
     }

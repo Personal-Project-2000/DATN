@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -33,6 +34,7 @@ public class PaymentActivity extends AppCompatActivity {
         actionBar.hide();
 
         setCostumeCart();
+        setListeners();
     }
 
     private void setCostumeCart(){
@@ -53,5 +55,12 @@ public class PaymentActivity extends AppCompatActivity {
 
         binding.rclCostumeCart.setLayoutManager(gridLayoutManager);
         binding.rclCostumeCart.setAdapter(costumeCartAdapter);
+    }
+
+    private void setListeners(){
+        binding.layoutAddress.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), AddressActivity.class);
+            startActivity(intent);
+        });
     }
 }

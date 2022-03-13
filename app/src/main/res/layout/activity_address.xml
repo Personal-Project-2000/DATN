@@ -75,7 +75,7 @@
             android:background="@color/color1"/>
 
         <FrameLayout
-            android:id="@+id/layoutCreateBill"
+            android:id="@+id/layoutAddAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
@@ -84,7 +84,7 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCreateBill"
+                android:id="@+id/btnAddAddress"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="+Thêm địa chỉ giao hàng"

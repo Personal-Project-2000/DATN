@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -32,6 +33,7 @@ public class AddressActivity extends AppCompatActivity {
         actionBar.hide();
 
         setAddress();
+        setListeners();
     }
 
     private void setAddress(){
@@ -52,5 +54,12 @@ public class AddressActivity extends AppCompatActivity {
 
         binding.rclAddress.setLayoutManager(gridLayoutManager);
         binding.rclAddress.setAdapter(addressAdapter);
+    }
+
+    private void setListeners(){
+        binding.btnAddAddress.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), DeliveryAddressActivity.class);
+            startActivity(intent);
+        });
     }
 }
