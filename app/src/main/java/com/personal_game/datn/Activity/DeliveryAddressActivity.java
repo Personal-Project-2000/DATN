@@ -1,15 +1,18 @@
 package com.personal_game.datn.Activity;
 
+import static com.personal_game.datn.Api.RetrofitApi.getRetrofit;
 import static com.personal_game.datn.Api.RetrofitLocation.getRetrofitLocation;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.personal_game.datn.Adapter.CostumeImgAdapter;
 import com.personal_game.datn.Adapter.LocationAdapter;
@@ -17,8 +20,13 @@ import com.personal_game.datn.Api.ModelLocation.DistrictModel;
 import com.personal_game.datn.Api.ModelLocation.Location;
 import com.personal_game.datn.Api.ModelLocation.ProvinceModel;
 import com.personal_game.datn.Api.ModelLocation.WardModel;
+import com.personal_game.datn.Api.ServiceApi.Service;
 import com.personal_game.datn.Api.ServiceApi.ServiceLocation;
+import com.personal_game.datn.Backup.Shared_Preferences;
+import com.personal_game.datn.Models.Address;
 import com.personal_game.datn.R;
+import com.personal_game.datn.Response.Message;
+import com.personal_game.datn.Response.Message_Info;
 import com.personal_game.datn.databinding.ActivityDeliveryAddressBinding;
 import com.personal_game.datn.databinding.ActivityInfoBinding;
 
@@ -41,6 +49,10 @@ public class DeliveryAddressActivity extends AppCompatActivity {
     private LocationAdapter locationDistrict;
     private LocationAdapter locationWard;
 
+    private Shared_Preferences shared_preferences;
+    private boolean addressDefault = false;
+    private Address address;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,8 +67,38 @@ public class DeliveryAddressActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
+        shared_preferences = new Shared_Preferences(getApplicationContext());
+
+        setAddress();
         setCity();
         setListeners();
+    }
+
+    private void setAddress(){
+        address = (Address) getIntent().getSerializableExtra("address");
+
+        if(address != null){
+            String name[] = address.getName().split(" ");
+            String firstName = "";
+            for(int i = 0; i < name.length-1; i ++){
+                firstName += name[i] +" ";
+            }
+
+            binding.txtLastName.setText(name[name.length-1]);
+            binding.txtFirstName.setText(firstName);
+            binding.txtPhone.setText(address.getPhone());
+            binding.txtStreet.setText(address.getStreet());
+            binding.txtWard.setText(address.getWard());
+            binding.txtDistrict.setText(address.getDistrict());
+            binding.txtCity.setText(address.getCity());
+            addressDefault = address.getDefault();
+
+            if(addressDefault){
+                binding.btnDefault.setImageResource(R.drawable.ic_baseline_toggle_on_24);
+            }else{
+                binding.btnDefault.setImageResource(R.drawable.ic_baseline_toggle_off_24);
+            }
+        }
     }
 
     private void setCity(){
@@ -286,6 +328,62 @@ public class DeliveryAddressActivity extends AppCompatActivity {
                 binding.txtWard.setText(binding.SelectWard.getText()+"");
             }else{
                 binding.txtWard.setText("");
+            }
+        });
+
+        binding.btnDefault.setOnClickListener(v -> {
+            if(addressDefault){
+                binding.btnDefault.setImageResource(R.drawable.ic_baseline_toggle_off_24);
+            }else{
+                binding.btnDefault.setImageResource(R.drawable.ic_baseline_toggle_on_24);
+            }
+            addressDefault = !addressDefault;
+        });
+
+        binding.btnSave.setOnClickListener(v -> {
+            Address newAddress = new Address(binding.txtFirstName.getText()+" "+binding.txtLastName.getText(),
+                    binding.txtWard.getText()+"",
+                    binding.txtDistrict.getText()+"",
+                    binding.txtCity.getText()+"",
+                    binding.txtStreet.getText()+"",
+                    binding.txtPhone.getText()+"",
+                    addressDefault,
+                    shared_preferences.getAccount());
+
+            AddAddress(newAddress);
+        });
+    }
+
+    private void loading(boolean Loading) {
+        if (Loading) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.btnSave.setVisibility(View.GONE);
+        } else {
+            binding.progressBar.setVisibility(View.GONE);
+            binding.btnSave.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void AddAddress(Address newAddress){
+        loading(true);
+
+        Service service = getRetrofit().create(Service.class);
+        Call<Message> addAddress = service.AddAddress("bearer "+shared_preferences.getToken(), newAddress);
+        addAddress.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if(response.body().getStatus() == 1){
+                    Intent intent = new Intent(getApplication(), AddressActivity.class);
+                    startActivity(intent);
+                }
+                loading(false);
+                Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                loading(false);
+                Toast.makeText(getApplicationContext(), "Thêm dữ liệu thất bại", Toast.LENGTH_SHORT).show();
             }
         });
     }

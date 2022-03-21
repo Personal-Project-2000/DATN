@@ -9,10 +9,10 @@ import java.util.List;
 public class UserInfo implements Serializable {
     private User user ;
     private Address addressDefault ;
-    private List<CostumeFavouriteInfo> costumeFavourites ;
+    private List<CostumeHome> costumeFavourites ;
     private int quantityCart ;
 
-    public UserInfo(User user, Address addressDefault, List<CostumeFavouriteInfo> costumeFavourites, int quantityCart) {
+    public UserInfo(User user, Address addressDefault, List<CostumeHome> costumeFavourites, int quantityCart) {
         this.user = user;
         this.addressDefault = addressDefault;
         this.costumeFavourites = costumeFavourites;
@@ -35,11 +35,11 @@ public class UserInfo implements Serializable {
         this.addressDefault = addressDefault;
     }
 
-    public List<CostumeFavouriteInfo> getCostumeFavourites() {
+    public List<CostumeHome> getCostumeFavourites() {
         return costumeFavourites;
     }
 
-    public void setCostumeFavourites(List<CostumeFavouriteInfo> costumeFavourites) {
+    public void setCostumeFavourites(List<CostumeHome> costumeFavourites) {
         this.costumeFavourites = costumeFavourites;
     }
 

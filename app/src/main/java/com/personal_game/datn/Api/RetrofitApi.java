@@ -7,7 +7,7 @@ public class RetrofitApi {
     private static Retrofit retrofit;
     private final static String BASE_URL="https://smartfashion.covid21tsp.space/api/";
 
-    public static Retrofit getRetrofitLocation(){
+    public static Retrofit getRetrofit(){
         if(retrofit==null){
             retrofit=new Retrofit.Builder().baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())

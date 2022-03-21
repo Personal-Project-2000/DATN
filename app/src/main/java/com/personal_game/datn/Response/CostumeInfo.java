@@ -13,12 +13,12 @@ public class CostumeInfo implements Serializable {
     private List<Body> bodies ;
     private List<PersonalStyle> personalStyles ;
     private Boolean isFavourite ;
-    private List<RelatedCostume> relatedCostumes ;
+    private List<CostumeHome> relatedCostumes ;
     private int quantityCart ;
     private int quantityFavourite ;
     private List<Picture> images ;
 
-    public CostumeInfo(Costume costume, List<Body> bodies, List<PersonalStyle> personalStyles, Boolean isFavourite, List<RelatedCostume> relatedCostumes, int quantityCart, int quantityFavourite, List<Picture> images) {
+    public CostumeInfo(Costume costume, List<Body> bodies, List<PersonalStyle> personalStyles, Boolean isFavourite, List<CostumeHome> relatedCostumes, int quantityCart, int quantityFavourite, List<Picture> images) {
         this.costume = costume;
         this.bodies = bodies;
         this.personalStyles = personalStyles;
@@ -61,11 +61,11 @@ public class CostumeInfo implements Serializable {
         isFavourite = favourite;
     }
 
-    public List<RelatedCostume> getRelatedCostumes() {
+    public List<CostumeHome> getRelatedCostumes() {
         return relatedCostumes;
     }
 
-    public void setRelatedCostumes(List<RelatedCostume> relatedCostumes) {
+    public void setRelatedCostumes(List<CostumeHome> relatedCostumes) {
         this.relatedCostumes = relatedCostumes;
     }
 

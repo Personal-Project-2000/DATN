@@ -92,6 +92,7 @@
                             android:layout_marginTop="10dp"/>
 
                         <EditText
+                            android:id="@+id/txtFirstName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="#00000000"
@@ -119,6 +120,7 @@
                             android:textSize="10sp"/>
 
                         <EditText
+                            android:id="@+id/txtLastName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="#00000000"
@@ -162,6 +164,7 @@
                                 app:layout_constraintTop_toTopOf="parent"/>
 
                             <EditText
+                                android:id="@+id/txtPhone"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:background="#00000000"
@@ -206,6 +209,7 @@
                             android:layout_marginTop="10dp"/>
 
                         <EditText
+                            android:id="@+id/txtStreet"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="#00000000"
@@ -305,6 +309,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"/>
 
                     <ImageView
+                        android:id="@+id/btnDefault"
                         android:layout_width="60dp"
                         android:layout_height="40dp"
                         android:src="@drawable/ic_baseline_toggle_off_24"

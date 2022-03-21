@@ -3,117 +3,123 @@ package com.personal_game.datn.Models;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private String Id ;
-    private String FullName ;
-    private String Pass ;
-    private String Img ;
-    private String Path ;
-    private String Phone ;
-    private Boolean Sex ;
-    private String Date ;
-    private int Day ;
-    private int Month ;
-    private int Year ;
+    private String id ;
+    private String fullName ;
+    private String pass ;
+    private String img ;
+    private String path ;
+    private String phone ;
+    private Boolean sex ;
+    private String date ;
+    private int day ;
+    private int month ;
+    private int year ;
+
+    public User(String fullName, String path, String phone) {
+        this.fullName = fullName;
+        this.path = path;
+        this.phone = phone;
+    }
 
     public User(String id, String fullName, String pass, String img, String path, String phone, Boolean sex, String date, int day, int month, int year) {
-        Id = id;
-        FullName = fullName;
-        Pass = pass;
-        Img = img;
-        Path = path;
-        Phone = phone;
-        Sex = sex;
-        Date = date;
-        Day = day;
-        Month = month;
-        Year = year;
+        this.id = id;
+        this.fullName = fullName;
+        this.pass = pass;
+        this.img = img;
+        this.path = path;
+        this.phone = phone;
+        this.sex = sex;
+        this.date = date;
+        this.day = day;
+        this.month = month;
+        this.year = year;
     }
 
     public String getId() {
-        return Id;
+        return id;
     }
 
     public void setId(String id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getFullName() {
-        return FullName;
+        return fullName;
     }
 
     public void setFullName(String fullName) {
-        FullName = fullName;
+        this.fullName = fullName;
     }
 
     public String getPass() {
-        return Pass;
+        return pass;
     }
 
     public void setPass(String pass) {
-        Pass = pass;
+        this.pass = pass;
     }
 
     public String getImg() {
-        return Img;
+        return img;
     }
 
     public void setImg(String img) {
-        Img = img;
+        this.img = img;
     }
 
     public String getPath() {
-        return Path;
+        return path;
     }
 
     public void setPath(String path) {
-        Path = path;
+        this.path = path;
     }
 
     public String getPhone() {
-        return Phone;
+        return phone;
     }
 
     public void setPhone(String phone) {
-        Phone = phone;
+        this.phone = phone;
     }
 
     public Boolean getSex() {
-        return Sex;
+        return sex;
     }
 
     public void setSex(Boolean sex) {
-        Sex = sex;
+        this.sex = sex;
     }
 
     public String getDate() {
-        return Date;
+        return date;
     }
 
     public void setDate(String date) {
-        Date = date;
+        this.date = date;
     }
 
     public int getDay() {
-        return Day;
+        return day;
     }
 
     public void setDay(int day) {
-        Day = day;
+        this.day = day;
     }
 
     public int getMonth() {
-        return Month;
+        return month;
     }
 
     public void setMonth(int month) {
-        Month = month;
+        this.month = month;
     }
 
     public int getYear() {
-        return Year;
+        return year;
     }
 
     public void setYear(int year) {
-        Year = year;
+        this.year = year;
     }
 }

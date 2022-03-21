@@ -4,19 +4,19 @@ import java.io.Serializable;
 import java.util.List;
 
 public class CostumeFavourite implements Serializable {
-    private List<CostumeFavouriteInfo> costumes ;
+    private List<CostumeHome> costumes ;
     private int quantityCart ;
 
-    public CostumeFavourite(List<CostumeFavouriteInfo> costumes, int quantityCart) {
+    public CostumeFavourite(List<CostumeHome> costumes, int quantityCart) {
         this.costumes = costumes;
         this.quantityCart = quantityCart;
     }
 
-    public List<CostumeFavouriteInfo> getCostumes() {
+    public List<CostumeHome> getCostumes() {
         return costumes;
     }
 
-    public void setCostumes(List<CostumeFavouriteInfo> costumes) {
+    public void setCostumes(List<CostumeHome> costumes) {
         this.costumes = costumes;
     }
 

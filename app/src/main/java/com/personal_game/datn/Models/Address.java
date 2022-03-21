@@ -3,17 +3,6 @@ package com.personal_game.datn.Models;
 import java.io.Serializable;
 
 public class Address implements Serializable {
-    public Address(String id, String name, String ward, String district, String city, String street, String phone, Boolean aDefault, String account) {
-        this.id = id;
-        this.name = name;
-        this.ward = ward;
-        this.district = district;
-        this.city = city;
-        this.street = street;
-        this.phone = phone;
-        Default = aDefault;
-        this.account = account;
-    }
 
     private String id ;
     private String name ;
@@ -22,8 +11,30 @@ public class Address implements Serializable {
     private String city ;
     private String street ;
     private String phone ;
-    private Boolean Default ;
+    private Boolean addressDefault ;
     private String account ;
+
+    public Address(String id, String name, String ward, String district, String city, String street, String phone, Boolean addressDefault) {
+        this.id = id;
+        this.name = name;
+        this.ward = ward;
+        this.district = district;
+        this.city = city;
+        this.street = street;
+        this.phone = phone;
+        this.addressDefault = addressDefault;
+    }
+
+    public Address(String name, String ward, String district, String city, String street, String phone, Boolean addressDefault, String account) {
+        this.name = name;
+        this.ward = ward;
+        this.district = district;
+        this.city = city;
+        this.street = street;
+        this.phone = phone;
+        this.addressDefault = addressDefault;
+        this.account = account;
+    }
 
     public String getId() {
         return id;
@@ -82,11 +93,11 @@ public class Address implements Serializable {
     }
 
     public Boolean getDefault() {
-        return Default;
+        return addressDefault;
     }
 
     public void setDefault(Boolean aDefault) {
-        Default = aDefault;
+        addressDefault = aDefault;
     }
 
     public String getAccount() {

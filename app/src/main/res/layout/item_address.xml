@@ -53,7 +53,7 @@
             android:layout_marginTop="5dp"/>
 
         <ImageView
-            android:id="@+id/btnInfoDetail"
+            android:id="@+id/btnDefault"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/circle_none"

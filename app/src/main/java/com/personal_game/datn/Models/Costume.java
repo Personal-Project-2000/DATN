@@ -3,97 +3,97 @@ package com.personal_game.datn.Models;
 import java.io.Serializable;
 
 public class Costume implements Serializable {
-    private String Id ;
-    private String Name ;
-    private int Price ;
-    private Boolean Sex ;
-    private String CostumeStyleId ;
-    private Boolean State ;
-    private int Quantity ;
-    private int QuantityBuy ;
-    private String Description ;
+    private String id ;
+    private String name ;
+    private int price ;
+    private Boolean sex ;
+    private String costumeStyleId ;
+    private Boolean state ;
+    private int quantity ;
+    private int quantityBuy ;
+    private String description ;
 
     public Costume(String id, String name, int price, Boolean sex, String costumeStyleId, Boolean state, int quantity, int quantityBuy, String description) {
-        Id = id;
-        Name = name;
-        Price = price;
-        Sex = sex;
-        CostumeStyleId = costumeStyleId;
-        State = state;
-        Quantity = quantity;
-        QuantityBuy = quantityBuy;
-        Description = description;
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.sex = sex;
+        this.costumeStyleId = costumeStyleId;
+        this.state = state;
+        this.quantity = quantity;
+        this.quantityBuy = quantityBuy;
+        this.description = description;
     }
 
     public String getId() {
-        return Id;
+        return id;
     }
 
     public void setId(String id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public int getPrice() {
-        return Price;
+        return price;
     }
 
     public void setPrice(int price) {
-        Price = price;
+        this.price = price;
     }
 
     public Boolean getSex() {
-        return Sex;
+        return sex;
     }
 
     public void setSex(Boolean sex) {
-        Sex = sex;
+        this.sex = sex;
     }
 
     public String getCostumeStyleId() {
-        return CostumeStyleId;
+        return costumeStyleId;
     }
 
     public void setCostumeStyleId(String costumeStyleId) {
-        CostumeStyleId = costumeStyleId;
+        this.costumeStyleId = costumeStyleId;
     }
 
     public Boolean getState() {
-        return State;
+        return state;
     }
 
     public void setState(Boolean state) {
-        State = state;
+        this.state = state;
     }
 
     public int getQuantity() {
-        return Quantity;
+        return quantity;
     }
 
     public void setQuantity(int quantity) {
-        Quantity = quantity;
+        this.quantity = quantity;
     }
 
     public int getQuantityBuy() {
-        return QuantityBuy;
+        return quantityBuy;
     }
 
     public void setQuantityBuy(int quantityBuy) {
-        QuantityBuy = quantityBuy;
+        this.quantityBuy = quantityBuy;
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 }

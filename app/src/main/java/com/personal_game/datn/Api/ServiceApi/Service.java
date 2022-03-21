@@ -6,20 +6,27 @@ import com.personal_game.datn.Models.Address;
 import com.personal_game.datn.Models.Cart;
 import com.personal_game.datn.Models.User;
 import com.personal_game.datn.Request.Request_Bill;
+import com.personal_game.datn.Request.Request_Suggestion;
 import com.personal_game.datn.Request.Request_UpdateBill;
 import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.Response.Message_Address;
 import com.personal_game.datn.Response.Message_Bill;
 import com.personal_game.datn.Response.Message_Cart;
+import com.personal_game.datn.Response.Message_Costume;
+import com.personal_game.datn.Response.Message_CostumeWithStyle;
 import com.personal_game.datn.Response.Message_Favourite;
+import com.personal_game.datn.Response.Message_Home;
 import com.personal_game.datn.Response.Message_Info;
 import com.personal_game.datn.Response.Message_Login;
+import com.personal_game.datn.Response.Message_Suggestion;
+import com.personal_game.datn.Response.Message_Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -29,7 +36,7 @@ import retrofit2.http.Query;
 
 public interface Service {
     @POST("Resgitration_Post")
-    Call<Message> Registration(@Header("Authorization") String token, User user);
+    Call<Message> Registration(@Header("Authorization") String token, @Body User user);
 
     @GET("Login_Get")
     Call<Message_Login> Login(@Header("Authorization") String token, @Query("phone") String phone, @Query("pass") String pass);
@@ -41,7 +48,7 @@ public interface Service {
     Call<Message_Info> ForgetPass(@Header("Authorization") String token, @Query("passNew") String passNew);
 
     @POST("UpdateInfo_Post")
-    Call<Message_Info> UpdateInfo(@Header("Authorization") String token, User newUser);
+    Call<Message_Info> UpdateInfo(@Header("Authorization") String token, @Body User newUser);
 
     @POST("UpdateImg_Post")
     Call<Message_Info> UpdateImg(@Header("Authorization") String token, @Part List<MultipartBody.Part> photo, @Query("domain") String domain);
@@ -59,23 +66,41 @@ public interface Service {
     Call<Message_Cart> GetCart(@Header("Authorization") String token);
 
     @POST("UpdateCart_Post")
-    Call<Message> UpdateCart(@Header("Authorization") String token, Cart cart);
+    Call<Message> UpdateCart(@Header("Authorization") String token, @Body Cart cart);
 
     @POST("Address_Post")
-    Call<Message> AddAddress(@Header("Authorization") String token, Address newAddress);
+    Call<Message> AddAddress(@Header("Authorization") String token, @Body Address newAddress);
 
     @GET("Addresses_Get")
     Call<Message_Address> GetAddress(@Header("Authorization") String token);
 
     @POST("UpdateAddress_Post")
-    Call<Message> UpdateAddess(@Header("Authorization") String token, Address address);
+    Call<Message> UpdateAddess(@Header("Authorization") String token, @Body Address address);
 
     @POST("Bill_Post")
-    Call<Message> AddBill(@Header("Authorization") String token, Request_Bill bill);
+    Call<Message> AddBill(@Header("Authorization") String token, @Body Request_Bill bill);
 
     @GET("BillsWithUser_Get")
     Call<Message_Bill> BillsWithUser(@Header("Authorization") String token);
 
     @POST("UpdateBill_Post")
-    Call<Message> UpdateBill(@Header("Authorization") String token, Request_UpdateBill updateBill);
+    Call<Message> UpdateBill(@Header("Authorization") String token, @Body Request_UpdateBill updateBill);
+
+    @GET("Costume_Get")
+    Call<Message_Costume> GetCostume(@Header("Authorization") String token, @Query("costumeId") String costumeId);
+
+    @GET("CostumeWithStyles_Get")
+    Call<Message_CostumeWithStyle> CostumeWithStyles(@Header("Authorization") String token, @Query("costumeStyleId") String costumeStyleId);
+
+    @POST("CostumeWithSugs_Post")
+    Call<Message_CostumeWithStyle> CostumeWithSugs(@Header("Authorization") String token, @Body Request_Suggestion request);
+
+    @GET("Tests_Get")
+    Call<Message_Test> GetTests(@Header("Authorization") String token);
+
+    @GET("Suggestion_Get")
+    Call<Message_Suggestion> GetSuggestion(@Header("Authorization") String token);
+
+    @GET("Home_Get")
+    Call<Message_Home> GetHome(@Header("Authorization") String token);
 }

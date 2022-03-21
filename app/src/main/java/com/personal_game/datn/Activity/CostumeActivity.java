@@ -158,43 +158,43 @@ public class CostumeActivity extends AppCompatActivity {
     }
 
     private void setSuitableOutfit(){
-        ArrayList<String> temp = new ArrayList<>();
-        for(int i = 0; i < 20; i ++){
-            temp.add("Sy");
-        }
-
-        suitableOutfit = new CostumeAdapter(temp, this, new CostumeAdapter.CostumeListeners() {
-            @Override
-            public void onClick(String costumeStyle) {
-
-            }
-        });
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
-        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
-
-        binding.rclSuitableOutfit.setLayoutManager(gridLayoutManager);
-        binding.rclSuitableOutfit.setAdapter(suitableOutfit);
+//        ArrayList<String> temp = new ArrayList<>();
+//        for(int i = 0; i < 20; i ++){
+//            temp.add("Sy");
+//        }
+//
+//        suitableOutfit = new CostumeAdapter(temp, this, new CostumeAdapter.CostumeListeners() {
+//            @Override
+//            public void onClick(String costumeStyle) {
+//
+//            }
+//        });
+//
+//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+//        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+//
+//        binding.rclSuitableOutfit.setLayoutManager(gridLayoutManager);
+//        binding.rclSuitableOutfit.setAdapter(suitableOutfit);
     }
 
     private void setRelatedCostumes(){
-        ArrayList<String> temp = new ArrayList<>();
-        for(int i = 0; i < 20; i ++){
-            temp.add("Sy");
-        }
-
-        costumeAdapter = new CostumeAdapter(temp, this, new CostumeAdapter.CostumeListeners() {
-            @Override
-            public void onClick(String costumeStyle) {
-
-            }
-        });
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
-        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
-
-        binding.rclRelatedCostumes.setLayoutManager(gridLayoutManager);
-        binding.rclRelatedCostumes.setAdapter(costumeAdapter);
+//        ArrayList<String> temp = new ArrayList<>();
+//        for(int i = 0; i < 20; i ++){
+//            temp.add("Sy");
+//        }
+//
+//        costumeAdapter = new CostumeAdapter(temp, this, new CostumeAdapter.CostumeListeners() {
+//            @Override
+//            public void onClick(String costumeStyle) {
+//
+//            }
+//        });
+//
+//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+//        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+//
+//        binding.rclRelatedCostumes.setLayoutManager(gridLayoutManager);
+//        binding.rclRelatedCostumes.setAdapter(costumeAdapter);
     }
 
     private void setStyle(){

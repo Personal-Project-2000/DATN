@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "886796506901",
+    "project_id": "datn-46a6f",
+    "storage_bucket": "datn-46a6f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886796506901:android:3fc40301f55ac92fa4bb1c",
+        "android_client_info": {
+          "package_name": "com.personal_game.datn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "886796506901-9j08471em9p0l7dbu6cmop8bfaqce4ed.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.personal_game.datn",
+            "certificate_hash": "30e069e08c34aea589ce000b833e2f7d3da90fb7"
+          }
+        },
+        {
+          "client_id": "886796506901-1e0ir61fi6u89423v02oopsncc8o0l10.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3GGkB0Hn2YFZH1HzJdLcG82u91nPg-ZE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "886796506901-1e0ir61fi6u89423v02oopsncc8o0l10.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

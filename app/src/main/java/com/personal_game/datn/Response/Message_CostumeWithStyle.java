@@ -5,9 +5,9 @@ import java.util.List;
 public class Message_CostumeWithStyle {
     private int status;
     private String notification;
-    private List<CostumeWithStyle> costumes;
+    private List<CostumeHome> costumes;
 
-    public Message_CostumeWithStyle(int status, String notification, List<CostumeWithStyle> costumes) {
+    public Message_CostumeWithStyle(int status, String notification, List<CostumeHome> costumes) {
         this.status = status;
         this.notification = notification;
         this.costumes = costumes;
@@ -29,11 +29,11 @@ public class Message_CostumeWithStyle {
         this.notification = notification;
     }
 
-    public List<CostumeWithStyle> getCostumes() {
+    public List<CostumeHome> getCostumes() {
         return costumes;
     }
 
-    public void setCostumes(List<CostumeWithStyle> costumes) {
+    public void setCostumes(List<CostumeHome> costumes) {
         this.costumes = costumes;
     }
 }

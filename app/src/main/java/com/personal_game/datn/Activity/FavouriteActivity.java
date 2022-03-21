@@ -37,23 +37,23 @@ public class FavouriteActivity extends AppCompatActivity {
     }
 
     private void setCostume(){
-        ArrayList<String> temp = new ArrayList<>();
-        for(int i = 0; i < 20; i ++){
-            temp.add("Sy");
-        }
-
-        costumeAdapter = new CostumeAdapter(temp, this, new CostumeAdapter.CostumeListeners() {
-            @Override
-            public void onClick(String costumeStyle) {
-
-            }
-        });
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
-        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
-
-        binding.rclCostume.setLayoutManager(gridLayoutManager);
-        binding.rclCostume.setAdapter(costumeAdapter);
+//        ArrayList<String> temp = new ArrayList<>();
+//        for(int i = 0; i < 20; i ++){
+//            temp.add("Sy");
+//        }
+//
+//        costumeAdapter = new CostumeAdapter(temp, this, new CostumeAdapter.CostumeListeners() {
+//            @Override
+//            public void onClick(String costumeStyle) {
+//
+//            }
+//        });
+//
+//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+//        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+//
+//        binding.rclCostume.setLayoutManager(gridLayoutManager);
+//        binding.rclCostume.setAdapter(costumeAdapter);
     }
 
     private void setListeners(){
