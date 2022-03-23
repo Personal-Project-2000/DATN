@@ -8,20 +8,20 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.personal_game.datn.Models.Body;
 import com.personal_game.datn.Models.PersonalStyle;
 import com.personal_game.datn.R;
 import com.personal_game.datn.databinding.ItemStyleBinding;
-import com.personal_game.datn.databinding.ItemSuggestionBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class StyleAdapter extends RecyclerView.Adapter<StyleAdapter.ViewHolder>{
-    private final List<PersonalStyle> styleList;
+public class BodyCostumeAdapter extends RecyclerView.Adapter<BodyCostumeAdapter.ViewHolder>{
+    private final List<Body> bodyList;
     private final Context context;
 
-    public StyleAdapter(List<PersonalStyle> styleList, Context context){
-        this.styleList = styleList;
+    public BodyCostumeAdapter(List<Body> bodyList, Context context){
+        this.bodyList = bodyList;
         this.context = context;
     }
 
@@ -38,12 +38,12 @@ public class StyleAdapter extends RecyclerView.Adapter<StyleAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.setData(styleList.get(position));
+        holder.setData(bodyList.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return styleList != null ? styleList.size() : 0;
+        return bodyList != null ? bodyList.size() : 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -55,7 +55,7 @@ public class StyleAdapter extends RecyclerView.Adapter<StyleAdapter.ViewHolder>{
             this.binding = binding;
         }
 
-        public void setData(PersonalStyle personalStyle) {
+        public void setData(Body body) {
             Picasso.Builder builder = new Picasso.Builder(context);
             builder.listener(new Picasso.Listener() {
                 @Override
@@ -64,9 +64,9 @@ public class StyleAdapter extends RecyclerView.Adapter<StyleAdapter.ViewHolder>{
                 }
             });
             Picasso pic = builder.build();
-            pic.load(personalStyle.getImg()).into(binding.imgMain);
+            pic.load(body.getImg()).into(binding.imgMain);
 
-            binding.txtName.setText(personalStyle.getName());
+            binding.txtName.setText(body.getName());
         }
     }
 }

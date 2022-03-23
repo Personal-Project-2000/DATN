@@ -9,6 +9,19 @@ public class Cart implements Serializable {
     private int quantity ;
     private Boolean state ;
 
+    public Cart(String costumeId, int quantity, Boolean state) {
+        this.costumeId = costumeId;
+        this.quantity = quantity;
+        this.state = state;
+    }
+
+    public Cart(String costumeId, String account, int quantity, Boolean state) {
+        this.costumeId = costumeId;
+        this.account = account;
+        this.quantity = quantity;
+        this.state = state;
+    }
+
     public Cart(String id, String costumeId, String account, int quantity, Boolean state) {
         this.id = id;
         this.costumeId = costumeId;

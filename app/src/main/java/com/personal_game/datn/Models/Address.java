@@ -14,6 +14,16 @@ public class Address implements Serializable {
     private Boolean addressDefault ;
     private String account ;
 
+    public Address(String id, String name, String ward, String district, String city, String street, String phone) {
+        this.id = id;
+        this.name = name;
+        this.ward = ward;
+        this.district = district;
+        this.city = city;
+        this.street = street;
+        this.phone = phone;
+    }
+
     public Address(String id, String name, String ward, String district, String city, String street, String phone, Boolean addressDefault) {
         this.id = id;
         this.name = name;

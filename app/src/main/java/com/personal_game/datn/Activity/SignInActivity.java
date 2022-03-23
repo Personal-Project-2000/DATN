@@ -113,9 +113,11 @@ public class SignInActivity extends AppCompatActivity {
                 if(response.body().getStatus() == 1){
                     Shared_Preferences shared_preferences = new Shared_Preferences(getApplicationContext());
                     shared_preferences.saveToken(response.body().getData().getToken());
+                    shared_preferences.saveAddress(response.body().getData().getAddressDefault());
+                    shared_preferences.saveName(response.body().getData().getName());
+                    shared_preferences.saveImg(response.body().getData().getImage());
 
                     Intent intent = new Intent(getApplication(), MainActivity.class);
-                    intent.putExtra("info", response.body().getData());
                     startActivity(intent);
 
                     notification = "Đăng nhập thành công";

@@ -1,26 +1,28 @@
 package com.personal_game.datn.Adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.personal_game.datn.Models.Picture;
+import com.personal_game.datn.R;
 import com.personal_game.datn.databinding.ItemCostumeBinding;
 import com.personal_game.datn.databinding.ItemCostumeImgBinding;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class CostumeImgAdapter extends RecyclerView.Adapter<CostumeImgAdapter.ViewHolder>{
-    private final List<String> costumeImgList;
+    private final List<Picture> costumeImgList;
     private final Context context;
-    private final CostumeImgListeners costumeImgListeners;
 
-    public CostumeImgAdapter(List<String> costumeImgList, Context context, CostumeImgListeners costumeImgListeners){
+    public CostumeImgAdapter(List<Picture> costumeImgList, Context context){
         this.costumeImgList = costumeImgList;
         this.context = context;
-        this.costumeImgListeners = costumeImgListeners;
     }
 
     @NonNull
@@ -52,12 +54,16 @@ public class CostumeImgAdapter extends RecyclerView.Adapter<CostumeImgAdapter.Vi
             this.binding = binding;
         }
 
-        public void setData(String costumeStyle) {
-
+        public void setData(Picture picture) {
+            Picasso.Builder builder = new Picasso.Builder(context);
+            builder.listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                    binding.imgMain.setImageResource(R.drawable.logo);
+                }
+            });
+            Picasso pic = builder.build();
+            pic.load(picture.getLink()).into(binding.imgMain);
         }
-    }
-
-    public interface CostumeImgListeners {
-        void onClick(String costumeStyle);
     }
 }

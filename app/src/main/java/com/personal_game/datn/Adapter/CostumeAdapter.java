@@ -1,6 +1,7 @@
 package com.personal_game.datn.Adapter;
 
 import static com.personal_game.datn.Api.RetrofitApi.getRetrofit;
+import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
 
 import android.content.Context;
 import android.content.Intent;
@@ -85,7 +86,7 @@ public class CostumeAdapter extends RecyclerView.Adapter<CostumeAdapter.ViewHold
                 }
 
                 binding.txtName.setText(costume.getCostume().getName());
-                binding.txtPrice.setText(costume.getCostume().getPrice()+"");
+                binding.txtPrice.setText(intConvertMoney(costume.getCostume().getPrice()));
 
                 if(costume.getFavourite()){
                     binding.imgFavourite.setImageResource(R.drawable.ic_baseline_favorite_24);
@@ -95,7 +96,9 @@ public class CostumeAdapter extends RecyclerView.Adapter<CostumeAdapter.ViewHold
             }
 
             binding.imgMain.setOnClickListener(v -> {
-
+                Intent intent = new Intent(context, CostumeActivity.class);
+                intent.putExtra("costumeId", costume.getCostume().getId());
+                context.startActivity(intent);
             });
 
             binding.imgFavourite.setOnClickListener(v -> {

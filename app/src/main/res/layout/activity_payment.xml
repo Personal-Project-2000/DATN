@@ -214,15 +214,17 @@
                         app:layout_constraintLeft_toLeftOf="parent"/>
 
                     <LinearLayout
+                        android:id="@+id/layoutPayment1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginTop="10dp">
 
                         <ImageView
+                            android:id="@+id/btnSelect1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/circle_none"/>
+                            android:src="@drawable/circle_check"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -240,12 +242,14 @@
                         app:layout_constraintTop_toBottomOf="@id/txt4" />
 
                     <LinearLayout
+                        android:id="@+id/layoutPayment2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginTop="10dp">
 
                         <ImageView
+                            android:id="@+id/btnSelect2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/circle_none"/>

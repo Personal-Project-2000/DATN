@@ -24,6 +24,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Adapter.CostumeStyleAdapter;
 import com.personal_game.datn.Api.ServiceApi.Service;
+import com.personal_game.datn.Backup.Shared_Preferences;
 import com.personal_game.datn.Models.CostumeStyle;
 import com.personal_game.datn.R;
 import com.personal_game.datn.Response.CostumeHome;
@@ -46,13 +47,13 @@ public class MainActivity extends AppCompatActivity {
     private CostumeAdapter costumeAdapter;
     private CostumeStyleAdapter costumeStyleAdapter;
 
+    private Shared_Preferences shared_preferences;
     private List<CostumeStyle> costumeStyles ;
     private List<CostumeHome> costumeHots ;
     private List<CostumeHome> costumeNews ;
 
     private TextView name;
     private ImageView img;
-    private Data data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init(){
+        shared_preferences = new Shared_Preferences(getApplicationContext());
+
         setInfo();
 
         ActionBar actionBar = getSupportActionBar();
@@ -77,9 +80,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setInfo(){
-        data = (Data) getIntent().getSerializableExtra("info");
-
-        if(data.getImage() != null){
+        if(shared_preferences.getImg() != null){
             Picasso.Builder builder = new Picasso.Builder(getApplicationContext());
             builder.listener(new Picasso.Listener() {
                 @Override
@@ -88,10 +89,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             Picasso pic = builder.build();
-            pic.load(data.getImage()).into(img);
+            pic.load(shared_preferences.getImg()).into(img);
         }
 
-        name.setText(data.getName());
+        name.setText(shared_preferences.getName());
 
         setHome();
     }
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setHome(){
         Service service = getRetrofit().create(Service.class);
-        Call<Message_Home> home = service.GetHome("bearer "+data.getToken());
+        Call<Message_Home> home = service.GetHome("bearer "+shared_preferences.getToken());
         home.enqueue(new Callback<Message_Home>() {
             @Override
             public void onResponse(Call<Message_Home> call, Response<Message_Home> response) {
