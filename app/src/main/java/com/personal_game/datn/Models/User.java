@@ -15,6 +15,11 @@ public class User implements Serializable {
     private int month ;
     private int year ;
 
+    public User(String fullName, Boolean sex) {
+        this.fullName = fullName;
+        this.sex = sex;
+    }
+
     public User(String fullName, String path, String phone) {
         this.fullName = fullName;
         this.path = path;

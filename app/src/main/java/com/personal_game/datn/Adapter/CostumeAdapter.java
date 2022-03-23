@@ -72,15 +72,17 @@ public class CostumeAdapter extends RecyclerView.Adapter<CostumeAdapter.ViewHold
 
         public void setData(CostumeHome costume) {
             if(costume != null){
-                Picasso.Builder builder = new Picasso.Builder(context);
-                builder.listener(new Picasso.Listener() {
-                    @Override
-                    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                        binding.imgMain.setImageResource(R.drawable.logo);
-                    }
-                });
-                Picasso pic = builder.build();
-                pic.load(costume.getImage().getLink()).into(binding.imgMain);
+                if(costume.getImage() != null) {
+                    Picasso.Builder builder = new Picasso.Builder(context);
+                    builder.listener(new Picasso.Listener() {
+                        @Override
+                        public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                            binding.imgMain.setImageResource(R.drawable.logo);
+                        }
+                    });
+                    Picasso pic = builder.build();
+                    pic.load(costume.getImage().getLink()).into(binding.imgMain);
+                }
 
                 binding.txtName.setText(costume.getCostume().getName());
                 binding.txtPrice.setText(costume.getCostume().getPrice()+"");

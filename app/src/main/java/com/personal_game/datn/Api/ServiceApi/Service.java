@@ -29,6 +29,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
@@ -48,10 +49,11 @@ public interface Service {
     Call<Message_Info> ForgetPass(@Header("Authorization") String token, @Query("passNew") String passNew);
 
     @POST("UpdateInfo_Post")
-    Call<Message_Info> UpdateInfo(@Header("Authorization") String token, @Body User newUser);
+    Call<Message> UpdateInfo(@Header("Authorization") String token, @Body User newUser);
 
     @POST("UpdateImg_Post")
-    Call<Message_Info> UpdateImg(@Header("Authorization") String token, @Part List<MultipartBody.Part> photo, @Query("domain") String domain);
+    @Multipart
+    Call<Message> UpdateImg(@Header("Authorization") String token, @Part MultipartBody.Part photo, @Query("domain") String domain);
 
     @GET("Favourite_Get")
     Call<Message> AddFavourite(@Header("Authorization") String token, @Query("costumeId") String costumeId);

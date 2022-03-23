@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Smart Fashion</string>
+    <string name="choose_file">Choose File</string>
 </resources>

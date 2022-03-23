@@ -11,6 +11,9 @@ public class TestInfo implements Serializable {
     private List<QuestionInfo> questions ;
     private List<TestResult> results ;
 
+    public TestInfo() {
+    }
+
     public TestInfo(Test test, List<QuestionInfo> questions, List<TestResult> results) {
         this.test = test;
         this.questions = questions;

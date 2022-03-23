@@ -8,18 +8,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.personal_game.datn.Adapter.CostumeAdapter;
-import com.personal_game.datn.Adapter.CostumeStyleAdapter;
-import com.personal_game.datn.Adapter.SuggestAdapter;
-import com.personal_game.datn.R;
-import com.personal_game.datn.databinding.ActivityRegistrationBinding;
+import com.personal_game.datn.Adapter.PersonalStyleAdapter;
+import com.personal_game.datn.Models.PersonalStyle;
 import com.personal_game.datn.databinding.ActivityStyleBinding;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class StyleActivity extends AppCompatActivity {
     private ActivityStyleBinding binding;
-    private SuggestAdapter suggestAdapter;
+    private PersonalStyleAdapter personalStyleAdapter;
+
+    private List<PersonalStyle> personalStyles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,19 +34,18 @@ public class StyleActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-        setStyle();
+        personalStyles = (List<PersonalStyle>)getIntent().getSerializableExtra("personalStyles");
+
+        if(personalStyles != null) {
+            setStyle();
+        }
         setListeners();
     }
 
     private void setStyle(){
-        ArrayList<String> temp = new ArrayList<>();
-        for(int i = 0; i < 20; i ++){
-            temp.add("Sy");
-        }
-
-        suggestAdapter = new SuggestAdapter(temp, this, new SuggestAdapter.SuggestListeners() {
+        personalStyleAdapter = new PersonalStyleAdapter(personalStyles, this, new PersonalStyleAdapter.SuggestListeners() {
             @Override
-            public void onClick(String suggest) {
+            public void onClick(PersonalStyle personalStyle, int postion) {
 
             }
         });
@@ -56,7 +54,7 @@ public class StyleActivity extends AppCompatActivity {
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
 
         binding.rclStyle.setLayoutManager(gridLayoutManager);
-        binding.rclStyle.setAdapter(suggestAdapter);
+        binding.rclStyle.setAdapter(personalStyleAdapter);
     }
 
     private void setListeners(){

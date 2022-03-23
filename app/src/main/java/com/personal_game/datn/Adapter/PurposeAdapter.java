@@ -1,27 +1,33 @@
 package com.personal_game.datn.Adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.personal_game.datn.Activity.SuggestionActivity;
+import com.personal_game.datn.Models.PersonalStyle;
+import com.personal_game.datn.Models.Purpose;
+import com.personal_game.datn.R;
 import com.personal_game.datn.databinding.ItemSuggestionBinding;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.ViewHolder>{
-    private final List<String> suggestList;
+public class PurposeAdapter extends RecyclerView.Adapter<PurposeAdapter.ViewHolder>{
+    private final List<Purpose> suggestList;
     private final Context context;
     private final SuggestListeners suggestListeners;
 
-    public SuggestAdapter(List<String> suggestList, Context context, SuggestListeners suggestListeners){
+    public PurposeAdapter(List<Purpose> suggestList, Context context, SuggestListeners suggestListeners){
         this.suggestList = suggestList;
         this.context = context;
         this.suggestListeners = suggestListeners;
     }
-
 
     @NonNull
     @Override
@@ -52,12 +58,23 @@ public class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.ViewHold
             this.binding = binding;
         }
 
-        public void setData(String suggest) {
+        public void setData(Purpose purpose) {
+            binding.txtTitle.setText(purpose.getName());
+            binding.txtContext.setText(purpose.getDescription());
+            if (true) {
+                binding.btnSelect.setImageResource(R.drawable.circle_none);
+                binding.layoutMain.setBackgroundColor(context.getResources().getColor(R.color.white));
+            }
 
+            binding.layoutMain.setOnClickListener(v -> {
+                binding.btnSelect.setImageResource(R.drawable.circle_check);
+                binding.layoutMain.setBackgroundColor(context.getResources().getColor(R.color.color5));
+                suggestListeners.onClick(purpose, getAdapterPosition());
+            });
         }
     }
 
     public interface SuggestListeners {
-        void onClick(String suggest);
+        void onClick(Purpose purpose, int position);
     }
 }
