@@ -46,7 +46,7 @@ public interface Service {
     Call<Message_Info> Info(@Header("Authorization") String token);
 
     @GET("ForgetPass_Get")
-    Call<Message_Info> ForgetPass(@Header("Authorization") String token, @Query("passNew") String passNew);
+    Call<Message> ForgetPass(@Header("Authorization") String token, @Query("phone") String phone, @Query("passNew") String passNew);
 
     @POST("UpdateInfo_Post")
     Call<Message> UpdateInfo(@Header("Authorization") String token, @Body User newUser);
@@ -69,6 +69,9 @@ public interface Service {
 
     @POST("UpdateCart_Post")
     Call<Message> UpdateCart(@Header("Authorization") String token, @Body Cart cart);
+
+    @POST("UpdateAllCart_Post")
+    Call<Message> UpdateAllCart(@Header("Authorization") String token);
 
     @POST("Address_Post")
     Call<Message> AddAddress(@Header("Authorization") String token, @Body Address newAddress);

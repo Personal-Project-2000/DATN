@@ -1,6 +1,13 @@
 package com.personal_game.datn.Activity;
 
 import static com.personal_game.datn.Api.RetrofitApi.getRetrofit;
+import static com.personal_game.datn.Backup.Constant.allBill;
+import static com.personal_game.datn.Backup.Constant.billCancel;
+import static com.personal_game.datn.Backup.Constant.billComplete;
+import static com.personal_game.datn.Backup.Constant.billHandle;
+import static com.personal_game.datn.Backup.Constant.billPaid;
+import static com.personal_game.datn.Backup.Constant.billTransported;
+import static com.personal_game.datn.Backup.Constant.billWait;
 
 import androidx.activity.result.ActivityResult;
 import androidx.appcompat.app.ActionBar;
@@ -19,6 +26,7 @@ import android.widget.Toast;
 import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Api.ServiceApi.Service;
 import com.personal_game.datn.Backup.Shared_Preferences;
+import com.personal_game.datn.Models.Address;
 import com.personal_game.datn.Models.User;
 import com.personal_game.datn.R;
 import com.personal_game.datn.Response.CostumeHome;
@@ -49,6 +57,7 @@ public class InfoActivity extends AppCompatActivity {
     private List<CostumeHome> costumeFavourites;
     private boolean isSex = true;
     private boolean checkImg = false;
+    private Uri imageUri;
     private String path;
     private User user;
 
@@ -70,6 +79,16 @@ public class InfoActivity extends AppCompatActivity {
 
         setListeners();
         getInfo();
+    }
+
+    private void loading(boolean value){
+        if(value){
+            binding.layoutMain1.setVisibility(View.GONE);
+            binding.progressBarMain.setVisibility(View.VISIBLE);
+        }else{
+            binding.layoutMain1.setVisibility(View.VISIBLE);
+            binding.progressBarMain.setVisibility(View.GONE);
+        }
     }
 
     private void changeLayoutHeader(boolean isChange){
@@ -147,7 +166,7 @@ public class InfoActivity extends AppCompatActivity {
         });
 
         binding.txtFavourite.setOnClickListener(v -> {
-            binding.layoutMain.setScrollY(500);
+            binding.layoutMain.setScrollY(650);
         });
 
         binding.imgCart.setOnClickListener(v -> {
@@ -170,7 +189,43 @@ public class InfoActivity extends AppCompatActivity {
 
         binding.btnBillCancel.setOnClickListener(v -> {
             Intent intent = new Intent(getApplication(), BillActivity.class);
-            intent.putExtra("code", 6);
+            intent.putExtra("code", billCancel);
+            startActivity(intent);
+        });
+
+        binding.btnBillComplete.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), BillActivity.class);
+            intent.putExtra("code", billComplete);
+            startActivity(intent);
+        });
+
+        binding.btnBillHandle.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), BillActivity.class);
+            intent.putExtra("code", billHandle);
+            startActivity(intent);
+        });
+
+        binding.btnBillTransported.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), BillActivity.class);
+            intent.putExtra("code", billTransported);
+            startActivity(intent);
+        });
+
+        binding.btnBillWaiting.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), BillActivity.class);
+            intent.putExtra("code", billWait);
+            startActivity(intent);
+        });
+
+        binding.btnBillPaid.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), BillActivity.class);
+            intent.putExtra("code", billPaid);
+            startActivity(intent);
+        });
+
+        binding.btnBillAll.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplication(), BillActivity.class);
+            intent.putExtra("code", allBill);
             startActivity(intent);
         });
 
@@ -202,25 +257,35 @@ public class InfoActivity extends AppCompatActivity {
                 upImg();
             }
         });
+
+        binding.btnBackBack.setOnClickListener(v -> {
+            finish();
+        });
     }
 
     private void getInfo(){
+        loading(true);
+
         Service service = getRetrofit().create(Service.class);
         Call<Message_Info> info = service.Info("bearer "+shared_preferences.getToken());
         info.enqueue(new Callback<Message_Info>() {
             @Override
             public void onResponse(Call<Message_Info> call, Response<Message_Info> response) {
                 if(response.body().getStatus() == 1){
-                    costumeFavourites = response.body().getUser().getCostumeFavourites();
                     UserInfo userInfo = response.body().getUser();
-                    binding.txtName.setText("Họ & Tên: "+userInfo.getUser().getFullName());
-                    binding.txtPhone.setText("Số điện thoại: "+userInfo.getUser().getPhone());
+                    costumeFavourites = response.body().getUser().getCostumeFavourites();
+                    user = userInfo.getUser();
+
+                    setLayoutInfo();
+                    setCostumeFavourite();
+
                     isSex = userInfo.getUser().getSex();
                     String sex = "Giới tính: Nam";
                     if(!isSex){
                         sex = "Giới tính: Nữ";
                     }
                     binding.txtSex.setText(sex);
+
                     Picasso.Builder builder = new Picasso.Builder(getApplicationContext());
                     builder.listener(new Picasso.Listener() {
                         @Override
@@ -229,10 +294,11 @@ public class InfoActivity extends AppCompatActivity {
                         }
                     });
                     Picasso pic = builder.build();
-                    pic.load(userInfo.getUser().getImg()).into(binding.imgMain);
+                    pic.load(shared_preferences.getImg()).into(binding.imgMain);
 
-                    user = userInfo.getUser();
-                    setLayoutInfo();
+                    binding.txtName.setText("Họ & Tên: "+userInfo.getUser().getFullName());
+                    binding.txtPhone.setText("Số điện thoại: "+userInfo.getUser().getPhone());
+                    binding.imgNumber.setText(response.body().getUser().getQuantityCart()+"");
 
                     if(userInfo.getAddressDefault() == null){
                         binding.txtNameAddress.setText("Bạn chưa có địa chỉ giao hàng");
@@ -247,16 +313,17 @@ public class InfoActivity extends AppCompatActivity {
                                 userInfo.getAddressDefault().getDistrict()+" - "+
                                 userInfo.getAddressDefault().getCity());
                     }
-
-                    setCostumeFavourite();
                 }
 
                 Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
+
+                loading(false);
             }
 
             @Override
             public void onFailure(Call<Message_Info> call, Throwable t) {
                 Toast.makeText(getApplication(), "Lấy dữ liệu thất bại", Toast.LENGTH_SHORT).show();
+                loading(false);
             }
         });
     }
@@ -270,7 +337,7 @@ public class InfoActivity extends AppCompatActivity {
             }
         });
         Picasso pic1 = builder1.build();
-        pic1.load(user.getImg()).into(binding.imgMain2);
+        pic1.load(shared_preferences.getImg()).into(binding.imgMain2);
 
         binding.txtPhoneLayoutInfo.setText(user.getPhone());
         binding.txtNameLayoutInfo.setText(user.getFullName());
@@ -282,7 +349,13 @@ public class InfoActivity extends AppCompatActivity {
     }
 
     private void setCostumeFavourite(){
-        costumeAdapter = new CostumeAdapter(costumeFavourites, this);
+        costumeAdapter = new CostumeAdapter(costumeFavourites, this, new CostumeAdapter.CostumeListeners() {
+            @Override
+            public void onClickFavourite(CostumeHome costume, int position) {
+                costumeFavourites.remove(position);
+                costumeAdapter.notifyItemRemoved(position);
+            }
+        });
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
@@ -300,7 +373,7 @@ public class InfoActivity extends AppCompatActivity {
 
                 if (result.getResultCode() == RESULT_OK) {
                     for (int i = 0; i < result.getData().getClipData().getItemCount(); i++) {
-                        Uri imageUri = result.getData().getClipData().getItemAt(i).getUri();
+                        imageUri = result.getData().getClipData().getItemAt(i).getUri();
                         if(requestCode == 10) {
                             path = getRealPathFromURI(imageUri);
                             binding.imgMain.setImageURI(imageUri);
@@ -330,6 +403,18 @@ public class InfoActivity extends AppCompatActivity {
         updateInfo.enqueue(new Callback<Message>() {
             @Override
             public void onResponse(Call<Message> call, Response<Message> response) {
+                if(response.body().getStatus() == 1){
+                    binding.txtName.setText("Họ & Tên: "+updateUser.getFullName());
+
+                    isSex = updateUser.getSex();
+                    String sex = "Giới tính: Nam";
+                    if(!isSex){
+                        sex = "Giới tính: Nữ";
+                    }
+                    binding.txtSex.setText(sex);
+
+                    shared_preferences.saveName(updateUser.getFullName());
+                }
                 Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
             }
 
@@ -356,6 +441,9 @@ public class InfoActivity extends AppCompatActivity {
         upImg.enqueue(new Callback<Message>() {
             @Override
             public void onResponse(Call<Message> call, Response<Message> response) {
+                if(response.body().getStatus() == 1){
+                    shared_preferences.saveImg(imageUri+"");
+                }
                 Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
             }
 
@@ -364,5 +452,19 @@ public class InfoActivity extends AppCompatActivity {
                 Toast.makeText(getApplication(), "Thay đổi ảnh thất bại", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Address addressTemp = shared_preferences.getAddress();
+
+        binding.txtNameAddress.setText(addressTemp.getName());
+        binding.txtPhoneAddress.setText(addressTemp.getPhone());
+        binding.txtAddress.setText(addressTemp.getStreet());
+        binding.txtAddress1.setText(addressTemp.getWard()+" - "+
+                addressTemp.getDistrict()+" - "+
+                addressTemp.getCity());
     }
 }

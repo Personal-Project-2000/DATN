@@ -6,6 +6,7 @@ import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -35,11 +36,13 @@ public class CostumeAdapter extends RecyclerView.Adapter<CostumeAdapter.ViewHold
     private final List<CostumeHome> costumeList;
     private final Context context;
     private final Shared_Preferences shared_preferences;
+    private final CostumeListeners costumeListeners;
 
-    public CostumeAdapter(List<CostumeHome> costumeList, Context context){
+    public CostumeAdapter(List<CostumeHome> costumeList, Context context, CostumeListeners costumeListeners){
         this.costumeList = costumeList;
         this.context = context;
         this.shared_preferences = new Shared_Preferences(context);
+        this.costumeListeners = costumeListeners;
     }
 
     @NonNull
@@ -102,41 +105,45 @@ public class CostumeAdapter extends RecyclerView.Adapter<CostumeAdapter.ViewHold
             });
 
             binding.imgFavourite.setOnClickListener(v -> {
-                if(setFavourite(costume.getCostume().getId())) {
-                    if (costume.getFavourite()) {
-                        binding.imgFavourite.setImageResource(R.drawable.ic_favourite_none);
-                        costume.setFavourite(false);
-                    } else {
-                        binding.imgFavourite.setImageResource(R.drawable.ic_baseline_favorite_24);
-                        costume.setFavourite(true);
+                Service service = getRetrofit().create(Service.class);
+                Call<Message> favourite = service.AddFavourite("bearer "+shared_preferences.getToken(), costume.getCostume().getId());
+                favourite.enqueue(new Callback<Message>() {
+                    @Override
+                    public void onResponse(Call<Message> call, Response<Message> response) {
+                        if(response.body().getStatus() == 1){
+                            boolean isFavourite = costume.getFavourite();
+                            int quantity = Integer.parseInt(shared_preferences.getQuantityFavorite());
+
+                            if (costume.getFavourite()) {
+                                binding.imgFavourite.setImageResource(R.drawable.ic_favourite_none);
+                                costume.setFavourite(false);
+
+                                quantity --;
+                            } else {
+                                binding.imgFavourite.setImageResource(R.drawable.ic_baseline_favorite_24);
+                                costume.setFavourite(true);
+
+                                quantity ++;
+                            }
+
+                            shared_preferences.saveQuantityFavorite(quantity);
+
+                            costumeListeners.onClickFavourite(costume, getAdapterPosition());
+                        }else{
+                            Toast.makeText(context, response.body().getNotification(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
+
+                    @Override
+                    public void onFailure(Call<Message> call, Throwable t) {
+
+                    }
+                });
             });
         }
     }
 
-    public boolean setFavourite(String costumeId){
-        final boolean[] check = {true};
-
-        Service service = getRetrofit().create(Service.class);
-        Call<Message> favourite = service.AddFavourite("bearer "+shared_preferences.getToken(), costumeId);
-        favourite.enqueue(new Callback<Message>() {
-            @Override
-            public void onResponse(Call<Message> call, Response<Message> response) {
-                if(response.body().getStatus() == 1){
-                    check[0] = true;
-                }else{
-                    check[0] = false;
-                    Toast.makeText(context, response.body().getNotification(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Message> call, Throwable t) {
-                check[0] = false;
-            }
-        });
-
-        return check[0];
+    public interface CostumeListeners{
+        void onClickFavourite(CostumeHome costume, int position);
     }
 }

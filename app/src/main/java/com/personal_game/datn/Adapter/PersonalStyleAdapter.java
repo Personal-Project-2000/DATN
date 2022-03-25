@@ -59,34 +59,29 @@ public class PersonalStyleAdapter extends RecyclerView.Adapter<PersonalStyleAdap
         }
 
         public void setData(PersonalStyle personalStyle) {
-            binding.layoutMain.setVisibility(View.VISIBLE);
-            if(personalStyle.getSex() == SuggestionActivity.isSexSuggest) {
-                binding.txtTitle.setText(personalStyle.getName());
-                binding.txtContext.setText(personalStyle.getDescription());
+            binding.txtTitle.setText(personalStyle.getName());
+            binding.txtContext.setText(personalStyle.getDescription());
 
-                Picasso.Builder builder = new Picasso.Builder(context);
-                builder.listener(new Picasso.Listener() {
-                    @Override
-                    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                        binding.imgMain.setImageResource(R.drawable.logo);
-                    }
-                });
-                Picasso pic = builder.build();
-                pic.load(personalStyle.getImg()).into(binding.imgMain);
-
-                if (true) {
-                    binding.btnSelect.setImageResource(R.drawable.circle_none);
-                    binding.layoutMain.setBackgroundColor(context.getResources().getColor(R.color.white));
+            Picasso.Builder builder = new Picasso.Builder(context);
+            builder.listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                    binding.imgMain.setImageResource(R.drawable.logo);
                 }
+            });
+            Picasso pic = builder.build();
+            pic.load(personalStyle.getImg()).into(binding.imgMain);
 
-                binding.layoutMain.setOnClickListener(v -> {
-                    binding.btnSelect.setImageResource(R.drawable.circle_check);
-                    binding.layoutMain.setBackgroundColor(context.getResources().getColor(R.color.color5));
-                    suggestListeners.onClick(personalStyle, getAdapterPosition());
-                });
-            }else{
-                binding.layoutMain.setVisibility(View.GONE);
+            if (true) {
+                binding.btnSelect.setImageResource(R.drawable.circle_none);
+                binding.layoutMain.setBackgroundColor(context.getResources().getColor(R.color.white));
             }
+
+            binding.layoutMain.setOnClickListener(v -> {
+                binding.btnSelect.setImageResource(R.drawable.circle_check);
+                binding.layoutMain.setBackgroundColor(context.getResources().getColor(R.color.color5));
+                suggestListeners.onClick(personalStyle, getAdapterPosition());
+            });
         }
     }
 

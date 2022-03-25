@@ -352,6 +352,10 @@ public class DeliveryAddressActivity extends AppCompatActivity {
 
             AddAddress(newAddress);
         });
+
+        binding.btnBackBack.setOnClickListener(v -> {
+            finish();
+        });
     }
 
     private void loading(boolean Loading) {

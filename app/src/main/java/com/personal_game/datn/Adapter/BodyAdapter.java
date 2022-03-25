@@ -60,34 +60,29 @@ public class BodyAdapter extends RecyclerView.Adapter<BodyAdapter.ViewHolder>{
         }
 
         public void setData(Body body) {
-            binding.layoutMain.setVisibility(View.VISIBLE);
-            if(body.getSex() == SuggestionActivity.isSexSuggest) {
-                binding.txtTitle.setText(body.getName());
-                binding.txtContext.setText(body.getDescription());
+            binding.txtTitle.setText(body.getName());
+            binding.txtContext.setText(body.getDescription());
 
-                Picasso.Builder builder = new Picasso.Builder(context);
-                builder.listener(new Picasso.Listener() {
-                    @Override
-                    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                        binding.imgMain.setImageResource(R.drawable.logo);
-                    }
-                });
-                Picasso pic = builder.build();
-                pic.load(body.getImg()).into(binding.imgMain);
-
-                if (true) {
-                    binding.btnSelect.setImageResource(R.drawable.circle_none);
-                    binding.layoutMain.setBackgroundColor(context.getResources().getColor(R.color.white));
+            Picasso.Builder builder = new Picasso.Builder(context);
+            builder.listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                    binding.imgMain.setImageResource(R.drawable.logo);
                 }
+            });
+            Picasso pic = builder.build();
+            pic.load(body.getImg()).into(binding.imgMain);
 
-                binding.layoutMain.setOnClickListener(v -> {
-                    binding.btnSelect.setImageResource(R.drawable.circle_check);
-                    binding.layoutMain.setBackgroundColor(context.getResources().getColor(R.color.color5));
-                    suggestListeners.onClick(body, getAdapterPosition());
-                });
-            }else{
-                binding.layoutMain.setVisibility(View.GONE);
+            if (true) {
+                binding.btnSelect.setImageResource(R.drawable.circle_none);
+                binding.layoutMain.setBackgroundColor(context.getResources().getColor(R.color.white));
             }
+
+            binding.layoutMain.setOnClickListener(v -> {
+                binding.btnSelect.setImageResource(R.drawable.circle_check);
+                binding.layoutMain.setBackgroundColor(context.getResources().getColor(R.color.color5));
+                suggestListeners.onClick(body, getAdapterPosition());
+            });
         }
     }
 

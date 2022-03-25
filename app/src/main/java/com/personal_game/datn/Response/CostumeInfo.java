@@ -14,19 +14,17 @@ public class CostumeInfo implements Serializable {
     private List<PersonalStyle> personalStyles ;
     private Boolean isFavourite ;
     private List<CostumeHome> relatedCostumes ;
+    private List<CostumeHome> suitableOutfitCostumes ;
     private int quantityCart ;
     private int quantityFavourite ;
     private List<Picture> images ;
 
-    public CostumeInfo(Costume costume, List<Body> bodies, List<PersonalStyle> personalStyles, Boolean isFavourite, List<CostumeHome> relatedCostumes, int quantityCart, int quantityFavourite, List<Picture> images) {
-        this.costume = costume;
-        this.bodies = bodies;
-        this.personalStyles = personalStyles;
-        this.isFavourite = isFavourite;
-        this.relatedCostumes = relatedCostumes;
-        this.quantityCart = quantityCart;
-        this.quantityFavourite = quantityFavourite;
-        this.images = images;
+    public List<CostumeHome> getSuitableOutfitCostumes() {
+        return suitableOutfitCostumes;
+    }
+
+    public void setSuitableOutfitCostumes(List<CostumeHome> suitableOutfitCostumes) {
+        this.suitableOutfitCostumes = suitableOutfitCostumes;
     }
 
     public Costume getCostume() {

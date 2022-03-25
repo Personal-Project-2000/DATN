@@ -40,7 +40,7 @@ public class CartActivity extends AppCompatActivity {
     private CostumeCartAdapter costumeCartAdapter;
 
     private Shared_Preferences shared_preferences;
-    private List<Costume_Cart> costumeCarts;
+    private List<Costume_Cart> costumeCarts = new ArrayList<>();
     private boolean isAll = true;
 
     @Override
@@ -83,9 +83,25 @@ public class CartActivity extends AppCompatActivity {
                 }
             }
 
-            Intent intent = new Intent(getApplication(), PaymentActivity.class);
-            intent.putExtra("costumeBills", (Serializable) costumeBills);
-            startActivity(intent);
+            if(costumeBills.size() > 0){
+                Intent intent = new Intent(getApplication(), PaymentActivity.class);
+                intent.putExtra("costumeBills", (Serializable) costumeBills);
+                startActivity(intent);
+            }else{
+                Toast.makeText(getApplication(), "Bạn cần trang phục để mua!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        binding.btnAll.setOnClickListener(v -> {
+            if(!isAll){
+                updateAllCart();
+            }else{
+                binding.btnAll.setImageResource(R.drawable.circle_none);
+            }
+        });
+
+        binding.btnBackBack.setOnClickListener(v -> {
+            finish();
         });
     }
 
@@ -186,6 +202,44 @@ public class CartActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Message> call, Throwable t) {
                 Toast.makeText(getApplication(), "Cập nhật dữ liệu thất bại", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateAllCart(){
+        Service service = getRetrofit().create(Service.class);
+        Call<Message> call = service.UpdateAllCart("bearer "+shared_preferences.getToken());
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if(response.body().getStatus() == 1){
+                    for (int i = 0; i < costumeCarts.size(); i++) {
+                        costumeCarts.get(i).setState(true);
+                    }
+                    costumeCartAdapter.notifyDataSetChanged();
+
+                    int total = 0;
+                    isAll = true;
+                    for(int i = 0; i < costumeCarts.size(); i++){
+                        if(!costumeCarts.get(i).getState()){
+                            isAll = false;
+                        }else{
+                            total += (costumeCarts.get(i).getQuantity()*costumeCarts.get(i).getCostume().getPrice());
+                        }
+                    }
+
+                    if(isAll)
+                        binding.btnAll.setImageResource(R.drawable.circle_check);
+                    else
+                        binding.btnAll.setImageResource(R.drawable.circle_none);
+
+                    binding.txtTotal.setText(intConvertMoney(total));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+
             }
         });
     }

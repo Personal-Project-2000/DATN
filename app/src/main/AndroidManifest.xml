@@ -7,6 +7,11 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <queries>
+        <package android:name="vn.com.vng.zalopay" />
+        <package android:name="vn.com.vng.zalopay.sbmc" />
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_logo"
@@ -17,28 +22,32 @@
         android:theme="@style/Theme.DATN">
         <activity
             android:name=".Activity.BillActivity"
-            android:exported="true" >
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-        </activity>
+            android:exported="true" ></activity>
         <activity
             android:name=".Activity.TestActivity"
+            android:exported="false"></activity>
+        <activity
+            android:name=".Activity.StyleActivity"
             android:exported="false"></activity>
         <activity
             android:name=".Activity.DeliveryAddressActivity"
             android:exported="false"></activity>
         <activity
-            android:name=".Activity.StyleActivity"
-            android:exported="false" />
-        <activity
             android:name=".Activity.AddressActivity"
             android:exported="false" />
         <activity
             android:name=".Activity.PaymentActivity"
-            android:exported="false" />
+            android:exported="true"
+            android:launchMode="singleTask">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="demozpdk"
+                    android:host="app" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Activity.NotificationActivity"
             android:exported="false" />
@@ -47,7 +56,20 @@
             android:exported="false" />
         <activity
             android:name=".Activity.CostumeActivity"
-            android:exported="false" />
+            android:exported="true" >
+
+            <intent-filter >
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="smartfashion.covid21tsp.space"
+                    android:pathPrefix="/Share/Index"
+                    android:scheme="https"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Activity.SuggestionActivity"
             android:exported="false" />

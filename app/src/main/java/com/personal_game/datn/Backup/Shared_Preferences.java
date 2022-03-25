@@ -2,8 +2,13 @@ package com.personal_game.datn.Backup;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.personal_game.datn.Models.Address;
+
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 public class Shared_Preferences {
     private Context context;
@@ -23,8 +28,25 @@ public class Shared_Preferences {
     }
 
     public void saveToken(String token){
+        long millis=System.currentTimeMillis();
+        java.sql.Date date1=new java.sql.Date(millis);
+
+        Date date=new java.util.Date();
+
+        String temp[] = (date+"").split(" ");
+        String temp1 = date1+" "+temp[3];
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("token", token);
+        editor.putString("timeSave", temp1);
+        editor.apply();
+        editor.commit();
+    }
+
+    public void saveToken1(String token){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("token", token);
+        editor.putString("timeSave", "");
         editor.apply();
         editor.commit();
     }
@@ -56,6 +78,26 @@ public class Shared_Preferences {
         editor.commit();
     }
 
+    public void saveQuantityCart(int quantity){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("quantityCart", quantity+"");
+        editor.apply();
+        editor.commit();
+    }
+
+    public String getQuantityCart(){
+        return sharedPreferences.getString("quantityCart", "");
+    }
+
+    public void saveQuantityFavorite(int quantity){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("quantityFavourite", quantity+"");
+        editor.apply();
+        editor.commit();
+    }
+
+    public String getQuantityFavorite(){ return sharedPreferences.getString("quantityFavourite", ""); }
+
     public String getAccount(){
         return sharedPreferences.getString("Account", "");
     }
@@ -68,13 +110,15 @@ public class Shared_Preferences {
         return sharedPreferences.getString("token", "");
     }
 
+    public String getTime(){
+        return sharedPreferences.getString("timeSave", "");
+    }
+
     public String getName(){
         return sharedPreferences.getString("name", "");
     }
 
-    public String getImg(){
-        return sharedPreferences.getString("img", "");
-    }
+    public String getImg(){ return sharedPreferences.getString("img", ""); }
 
     public Address getAddress(){
         //String id, String name, String ward, String district, String city, String street, String phone

@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -16,6 +18,8 @@ import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Adapter.CostumeCartAdapter;
 import com.personal_game.datn.Api.ServiceApi.Service;
 import com.personal_game.datn.Backup.Shared_Preferences;
+import com.personal_game.datn.Helper.AppInfo;
+import com.personal_game.datn.Helper.CreateOrder;
 import com.personal_game.datn.Models.Address;
 import com.personal_game.datn.Models.Cart;
 import com.personal_game.datn.R;
@@ -26,12 +30,18 @@ import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.databinding.ActivityInfoBinding;
 import com.personal_game.datn.databinding.ActivityPaymentBinding;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import vn.zalopay.sdk.Environment;
+import vn.zalopay.sdk.ZaloPayError;
+import vn.zalopay.sdk.ZaloPaySDK;
+import vn.zalopay.sdk.listeners.PayOrderListener;
 
 public class PaymentActivity extends AppCompatActivity {
     private ActivityPaymentBinding binding;
@@ -41,6 +51,7 @@ public class PaymentActivity extends AppCompatActivity {
     private List<Costume_Cart> costumes;
     private Address addressDefault;
     private int paymentMethods = 1;
+    private int totalBill = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +59,12 @@ public class PaymentActivity extends AppCompatActivity {
         binding = ActivityPaymentBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+
+        StrictMode.ThreadPolicy policy = new
+                StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        ZaloPaySDK.init(AppInfo.APP_ID, Environment.SANDBOX);
 
         init();
     }
@@ -59,12 +76,11 @@ public class PaymentActivity extends AppCompatActivity {
         costumes = (List<Costume_Cart>)getIntent().getSerializableExtra("costumeBills");
         shared_preferences = new Shared_Preferences(getApplicationContext());
 
-        int total = 0;
         for(int i = 0; i < costumes.size(); i ++){
-             total += (costumes.get(i).getQuantity()*costumes.get(i).getCostume().getPrice());
+            totalBill += (costumes.get(i).getQuantity()*costumes.get(i).getCostume().getPrice());
         }
 
-        binding.txtTotal.setText(intConvertMoney(total));
+        binding.txtTotal.setText(intConvertMoney(totalBill));
 
         addressDefault = shared_preferences.getAddress();
 
@@ -143,18 +159,61 @@ public class PaymentActivity extends AppCompatActivity {
                 costumeBills.add(costumeBill);
             }
 
-            Request_Bill bill = new Request_Bill(addressDefault.getId(), costumeBills);
-
             if(paymentMethods == 1){
+                Request_Bill bill = new Request_Bill(addressDefault.getId(), costumeBills, false);
+                loading(true);
                 addBill(bill);
             }else{
-
+                Request_Bill bill = new Request_Bill(addressDefault.getId(), costumeBills, true);
+                loading(true);
+                paymentZaloPay(totalBill+"", bill);
             }
+        });
+
+        binding.btnBackBack.setOnClickListener(v -> {
+            finish();
         });
     }
 
-    private void paymentZaloPay(){
+    private void paymentZaloPay(String amount, Request_Bill bill){
+        CreateOrder orderApi = new CreateOrder();
+        try {
+            JSONObject data = orderApi.createOrder(amount);
+            String code = data.getString("returncode");
 
+            Log.e("code", code);
+            if (code.equals("1")) {
+
+                String token = data.getString("zptranstoken");
+
+                ZaloPaySDK.getInstance().payOrder(PaymentActivity.this, token, "demozpdk://app", new PayOrderListener() {
+                    @Override
+                    public void onPaymentSucceeded(final String  transactionId, final String transToken, final String appTransID) {
+                        Toast.makeText(getApplication(), "Thanh toán thành công", Toast.LENGTH_SHORT).show();
+                        addBill(bill);
+                    }
+
+                    @Override
+                    public void onPaymentCanceled(String zpTransToken, String appTransID) {
+                        Toast.makeText(getApplication(), "Thanh toán bị hủy", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onPaymentError(ZaloPayError zaloPayError, String zpTransToken, String appTransID) {
+                        Toast.makeText(getApplication(), "Thanh toán thất bại", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(getApplication(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        ZaloPaySDK.getInstance().onResult(intent);
     }
 
     private void updateCart(Cart updateCart, int position){
@@ -169,14 +228,14 @@ public class PaymentActivity extends AppCompatActivity {
 
                     costumeCartAdapter.notifyItemChanged(position);
 
-                    int total = 0;
+                    totalBill = 0;
                     for(int i = 0; i < costumes.size(); i++){
                         if(costumes.get(i).getState()){
-                            total += (costumes.get(i).getQuantity()*costumes.get(i).getCostume().getPrice());
+                            totalBill += (costumes.get(i).getQuantity()*costumes.get(i).getCostume().getPrice());
                         }
                     }
 
-                    binding.txtTotal.setText(intConvertMoney(total));
+                    binding.txtTotal.setText(intConvertMoney(totalBill));
                 }else{
                     Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
                 }
@@ -190,7 +249,6 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     private void addBill(Request_Bill bill){
-        loading(true);
         Service service = getRetrofit().create(Service.class);
         Call<Message> call = service.AddBill("bearer "+shared_preferences.getToken(), bill);
         call.enqueue(new Callback<Message>() {
@@ -210,5 +268,17 @@ public class PaymentActivity extends AppCompatActivity {
                 Toast.makeText(getApplication(), "Thêm hóa đơn thất bại", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        addressDefault = shared_preferences.getAddress();
+
+        binding.txtName.setText(addressDefault.getName());
+        binding.txtPhone.setText(addressDefault.getPhone());
+        binding.txtAddress.setText(addressDefault.getStreet());
+        binding.txtAddress1.setText(addressDefault.getWard() + " - "+addressDefault.getDistrict()+" - "+addressDefault.getCity());
     }
 }

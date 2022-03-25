@@ -24,11 +24,14 @@
             android:background="@drawable/vien"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/txtName"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="iwbfiwefiwehoio"
+            android:textSize="20sp"
             app:layout_constraintTop_toTopOf="@id/imgMain"
             app:layout_constraintLeft_toRightOf="@id/imgMain"
+            app:layout_constraintRight_toRightOf="parent"
             android:layout_marginLeft="5dp"/>
 
         <TextView
@@ -44,10 +47,10 @@
             android:layout_marginLeft="5dp"/>
 
         <TextView
+            android:id="@+id/txtQuantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="x1"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginRight="10dp"

@@ -100,41 +100,12 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
                         address.getPhone(),
                         !checkDefault);
 
-                if(updateAddress(address1)){
-                    checkDefault = !checkDefault;
-
-                    addressListeners.onClickDefault(getAdapterPosition(), checkDefault);
-                }
+                addressListeners.onClickDefault(getAdapterPosition(), address1);
             });
         }
     }
 
-    private boolean updateAddress(Address updateAddress){
-        final boolean[] check = {true};
-
-        Service service = getRetrofit().create(Service.class);
-        Call<Message> updateAddess = service.UpdateAddess("bearer "+shared_preferences.getToken(), updateAddress);
-        updateAddess.enqueue(new Callback<Message>() {
-            @Override
-            public void onResponse(Call<Message> call, Response<Message> response) {
-                if(response.body().getStatus() == 1){
-                    check[0] = true;
-                }else{
-                    check[0] = false;
-                    Toast.makeText(context, response.body().getNotification(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Message> call, Throwable t) {
-                check[0] = false;
-            }
-        });
-
-        return check[0];
-    }
-
     public interface AddressListeners{
-        void onClickDefault(int position, boolean addressDefault);
+        void onClickDefault(int position, Address updateAddress);
     }
 }

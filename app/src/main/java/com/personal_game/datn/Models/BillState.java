@@ -3,37 +3,37 @@ package com.personal_game.datn.Models;
 import java.io.Serializable;
 
 public class BillState implements Serializable {
-    private String Id ;
-    private String Name ;
-    private String Description ;
+    private String id ;
+    private String name ;
+    private String description ;
 
     public BillState(String id, String name, String description) {
-        Id = id;
-        Name = name;
-        Description = description;
+        this.id = id;
+        this.name = name;
+        this.description = description;
     }
 
     public String getId() {
-        return Id;
+        return id;
     }
 
     public void setId(String id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 }

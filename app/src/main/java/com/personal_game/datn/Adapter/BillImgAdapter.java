@@ -1,22 +1,28 @@
 package com.personal_game.datn.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.personal_game.datn.Activity.CostumeActivity;
+import com.personal_game.datn.R;
+import com.personal_game.datn.Response.CostumeBill;
 import com.personal_game.datn.databinding.ItemBillImgBinding;
 import com.personal_game.datn.databinding.ItemCostumeImgBinding;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class BillImgAdapter extends RecyclerView.Adapter<BillImgAdapter.ViewHolder>{
-    private final List<String> costumeImgList;
+    private final List<CostumeBill> costumeImgList;
     private final Context context;
 
-    public BillImgAdapter(List<String> costumeImgList, Context context){
+    public BillImgAdapter(List<CostumeBill> costumeImgList, Context context){
         this.costumeImgList = costumeImgList;
         this.context = context;
     }
@@ -50,8 +56,22 @@ public class BillImgAdapter extends RecyclerView.Adapter<BillImgAdapter.ViewHold
             this.binding = binding;
         }
 
-        public void setData(String costumeStyle) {
+        public void setData(CostumeBill costume) {
+            Picasso.Builder builder = new Picasso.Builder(context);
+            builder.listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                    binding.imgMain.setImageResource(R.drawable.logo);
+                }
+            });
+            Picasso pic = builder.build();
+            pic.load(costume.getImage().getLink()).into(binding.imgMain);
 
+            binding.imgMain.setOnClickListener(v -> {
+                Intent intent = new Intent(context, CostumeActivity.class);
+                intent.putExtra("costumeId", costume.getCostume().getId());
+                context.startActivity(intent);
+            });
         }
     }
 }

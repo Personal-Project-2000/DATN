@@ -1,7 +1,9 @@
 package com.personal_game.datn.Activity;
 
 import static com.personal_game.datn.Api.RetrofitApi.getRetrofit;
+import static com.personal_game.datn.Backup.Constant.token_client;
 import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
+import static com.personal_game.datn.ultilities.RangeTime.getBetweenDayToCurrent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Toast;
@@ -59,7 +62,8 @@ public class CostumeActivity extends AppCompatActivity {
     private List<Picture> pictures;
     private List<PersonalStyle> personalStyles;
     private List<Body> bodyList;
-    private List<CostumeHome> relatedCostumes;
+    private List<CostumeHome> relatedCostumes = new ArrayList<>();
+    private List<CostumeHome> suitableOutfitCostumes = new ArrayList<>();
     private boolean isFavorite = false;
 
     @Override
@@ -77,10 +81,32 @@ public class CostumeActivity extends AppCompatActivity {
         actionBar.hide();
 
         shared_preferences = new Shared_Preferences(getApplicationContext());
-        costumeId = getIntent().getStringExtra("costumeId");
+        String temp = getIntent().getStringExtra("costumeId");
+
+        if(temp == null){
+            Uri uri = getIntent().getData();
+
+            if(uri != null){
+                String path = uri.toString();
+                String[] parameter = path.split("/");
+                costumeId = parameter[5];
+            }
+        }else{
+            costumeId = temp;
+        }
 
         getCostumeInfo();
         setListeners();
+    }
+
+    private void loading(boolean value){
+        if(value){
+            binding.layoutMain1.setVisibility(View.GONE);
+            binding.progressBarMain.setVisibility(View.VISIBLE);
+        }else{
+            binding.layoutMain1.setVisibility(View.VISIBLE);
+            binding.progressBarMain.setVisibility(View.GONE);
+        }
     }
 
     private void setListeners(){
@@ -133,10 +159,6 @@ public class CostumeActivity extends AppCompatActivity {
             }
         });
 
-        binding.btnAddCart.setOnClickListener(v -> {
-
-        });
-
         binding.layoutDes1.setOnClickListener(v -> {
             binding.layoutDescription.setVisibility(View.VISIBLE);
         });
@@ -175,7 +197,7 @@ public class CostumeActivity extends AppCompatActivity {
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My application name");
                 String shareMessage= costumeName+"\n\n";
-                shareMessage = shareMessage + "https://ps.covid21tsp.space/Share/Code/" + costumeId;
+                shareMessage = shareMessage + "https://smartfashion.covid21tsp.space/Share/Index/" + costumeId;
                 shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
                 startActivity(Intent.createChooser(shareIntent, "choose one"));
             } catch(Exception e) {
@@ -195,6 +217,10 @@ public class CostumeActivity extends AppCompatActivity {
         binding.imgCart.setOnClickListener(v -> {
             Intent intent = new Intent(getApplication(), CartActivity.class);
             startActivity(intent);
+        });
+
+        binding.btnBackBack.setOnClickListener(v -> {
+            finish();
         });
     }
 
@@ -220,6 +246,7 @@ public class CostumeActivity extends AppCompatActivity {
                     }
 
                     binding.txtNumberFavourite.setText(quantity +"");
+                    shared_preferences.saveQuantityCart(quantity);
                 }
             }
 
@@ -238,11 +265,12 @@ public class CostumeActivity extends AppCompatActivity {
             public void onResponse(Call<Message> call, Response<Message> response) {
                 if(response.body().getStatus() == 1){
                     //0 có nghĩa là sản phẩm đã sẳn trong giỏ hàng
-                    if(response.body().getId() == "0") {
+                    if(response.body().getId().equals("0")) {
                         int quantity = Integer.parseInt(binding.txtNumber.getText() + "");
 
                         quantity++;
                         binding.txtNumber.setText(quantity + "");
+                        shared_preferences.saveQuantityCart(quantity);
                     }
                 }
 
@@ -267,27 +295,45 @@ public class CostumeActivity extends AppCompatActivity {
     }
 
     private void getSuitableOutfit(){
-//        ArrayList<String> temp = new ArrayList<>();
-//        for(int i = 0; i < 20; i ++){
-//            temp.add("Sy");
-//        }
-//
-//        suitableOutfit = new CostumeAdapter(temp, this, new CostumeAdapter.CostumeListeners() {
-//            @Override
-//            public void onClick(String costumeStyle) {
-//
-//            }
-//        });
-//
-//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
-//        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
-//
-//        binding.rclSuitableOutfit.setLayoutManager(gridLayoutManager);
-//        binding.rclSuitableOutfit.setAdapter(suitableOutfit);
+        suitableOutfit = new CostumeAdapter(suitableOutfitCostumes, this, new CostumeAdapter.CostumeListeners() {
+            @Override
+            public void onClickFavourite(CostumeHome costume, int position) {
+                binding.txtNumberFavourite.setText(shared_preferences.getQuantityFavorite());
+
+                for(int i = 0; i < relatedCostumes.size(); i++){
+                    if(relatedCostumes.get(i).getCostume().getId().equals(costume.getCostume().getId())){
+                        relatedCostumes.get(i).setFavourite(costume.getFavourite());
+
+                        costumeAdapter.notifyItemChanged(i);
+                        i = suitableOutfitCostumes.size()+1;
+                    }
+                }
+            }
+        });
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+
+        binding.rclSuitableOutfit.setLayoutManager(gridLayoutManager);
+        binding.rclSuitableOutfit.setAdapter(suitableOutfit);
     }
 
     private void getRelatedCostumes(){
-        costumeAdapter = new CostumeAdapter(relatedCostumes, this);
+        costumeAdapter = new CostumeAdapter(relatedCostumes, this, new CostumeAdapter.CostumeListeners() {
+            @Override
+            public void onClickFavourite(CostumeHome costume, int position) {
+                binding.txtNumberFavourite.setText(shared_preferences.getQuantityFavorite());
+
+                for(int i = 0; i < suitableOutfitCostumes.size(); i++){
+                    if(suitableOutfitCostumes.get(i).getCostume().getId().equals(costume.getCostume().getId())){
+                        suitableOutfitCostumes.get(i).setFavourite(costume.getFavourite());
+
+                        suitableOutfit.notifyItemChanged(i);
+                        i = suitableOutfitCostumes.size()+1;
+                    }
+                }
+            }
+        });
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
@@ -322,8 +368,15 @@ public class CostumeActivity extends AppCompatActivity {
     }
 
     private void getCostumeInfo(){
+        loading(true);
+
+        String token = shared_preferences.getToken();
+        if(getBetweenDayToCurrent(shared_preferences.getTime()) > 0){
+            token = token_client;
+        }
+
         Service service = getRetrofit().create(Service.class);
-        Call<Message_Costume> costumeCall = service.GetCostume("bearer "+shared_preferences.getToken(), costumeId);
+        Call<Message_Costume> costumeCall = service.GetCostume("bearer "+token, costumeId);
         costumeCall.enqueue(new Callback<Message_Costume>() {
             @Override
             public void onResponse(Call<Message_Costume> call, Response<Message_Costume> response) {
@@ -332,6 +385,7 @@ public class CostumeActivity extends AppCompatActivity {
                     personalStyles = response.body().getCostume().getPersonalStyles();
                     bodyList = response.body().getCostume().getBodies();
                     relatedCostumes = response.body().getCostume().getRelatedCostumes();
+                    suitableOutfitCostumes = response.body().getCostume().getSuitableOutfitCostumes();
                     isFavorite = response.body().getCostume().getFavourite();
                     costumeName = response.body().getCostume().getCostume().getName();
 
@@ -339,6 +393,7 @@ public class CostumeActivity extends AppCompatActivity {
                     getStyle();
                     getBody();
                     getRelatedCostumes();
+                    getSuitableOutfit();
 
                     Picasso.Builder builder = new Picasso.Builder(getApplication());
                     builder.listener(new Picasso.Listener() {
@@ -354,17 +409,28 @@ public class CostumeActivity extends AppCompatActivity {
                     binding.txtPrice.setText(intConvertMoney(response.body().getCostume().getCostume().getPrice()));
                     binding.txtNumber.setText(response.body().getCostume().getQuantityCart()+"");
                     binding.txtNumberFavourite.setText(response.body().getCostume().getQuantityFavourite()+"");
+                    binding.txtPosition.setText("1/"+pictures.size());
+
+                    String descriptionCostume = response.body().getCostume().getCostume().getDescription();
+                    String description = " ";
+                    String descriptionList[] = descriptionCostume.split(",");
+                    for (int i = 0; i< descriptionList.length; i++){
+                        description += descriptionList[i] +"\n";
+                    }
+                    binding.txtDescription.setText(description);
 
                     if(isFavorite)
                         binding.imgFavourite.setImageResource(R.drawable.ic_baseline_favorite_24);
                     else
                         binding.imgFavourite.setImageResource(R.drawable.ic_favourite_none);
                 }
+                loading(false);
             }
 
             @Override
             public void onFailure(Call<Message_Costume> call, Throwable t) {
                 Toast.makeText(getApplication(), "Lấy dữ liệu thất bại", Toast.LENGTH_SHORT).show();
+                loading(false);
             }
         });
     }

@@ -68,11 +68,15 @@ public class CostumeStyleAdapter extends RecyclerView.Adapter<CostumeStyleAdapte
                 pic.load(costumeStyle.getImg()).into(binding.imgMain);
 
                 binding.txtTitle.setText((costumeStyle.getName()));
+
+                binding.layoutMain.setOnClickListener(v -> {
+                    costumeStyleListeners.onClick(costumeStyle.getId());
+                });
             }
         }
     }
 
     public interface CostumeStyleListeners {
-        void onClick(String costumeStyle);
+        void onClick(String styleId);
     }
 }

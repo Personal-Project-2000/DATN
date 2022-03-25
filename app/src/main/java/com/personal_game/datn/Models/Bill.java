@@ -14,6 +14,7 @@ public class Bill implements Serializable {
     private int day ;
     private int month ;
     private int year ;
+    private boolean isPayment;
     private int total ;
 
     public Bill(String id, String account, String name, String street, String address, String phone, String stateId, String date, int day, int month, int year, int total) {
@@ -29,6 +30,14 @@ public class Bill implements Serializable {
         this.month = month;
         this.year = year;
         this.total = total;
+    }
+
+    public boolean isPayment() {
+        return isPayment;
+    }
+
+    public void setPayment(boolean payment) {
+        isPayment = payment;
     }
 
     public String getId() {

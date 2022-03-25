@@ -8,9 +8,25 @@
     tools:context=".Activity.MainActivity">
 
     <LinearLayout
+        android:id="@+id/progressBarMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:visibility="visible"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layoutMenu"
@@ -259,5 +275,4 @@
         app:menu="@menu/drawer_main"
         app:itemIconTint="#85052B"
         app:itemTextColor="#057A85"/>
-
 </androidx.drawerlayout.widget.DrawerLayout>

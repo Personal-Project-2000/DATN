@@ -47,8 +47,8 @@ public class SuggestionActivity extends AppCompatActivity {
 
     private Shared_Preferences shared_preferences;
     private List<CostumeHome> costumeSuggest;
-    private List<PersonalStyle> personalStyles;
-    private List<Body> bodies;
+    private List<PersonalStyle> personalStyles = new ArrayList<>();
+    private List<Body> bodies = new ArrayList<>();
     private List<Purpose> purposes;
     private int prevPositionStyle = -1;
     private int prevBody = -1;
@@ -120,8 +120,33 @@ public class SuggestionActivity extends AppCompatActivity {
             binding.txtSelectSexStyle.setText("Giới tính: Nam");
         }
         isSexSuggest = !isSexSuggest;
-        bodyAdapter.notifyDataSetChanged();
-        personalStyleAdapter.notifyDataSetChanged();
+//        bodyAdapter.notifyDataSetChanged();
+//        personalStyleAdapter.notifyDataSetChanged();
+
+        List<PersonalStyle> personalStyleTemps = new ArrayList<>();
+        for(PersonalStyle personalStyle: personalStyles){
+            if(personalStyle.getSex() == isSexSuggest){
+                personalStyleTemps.add(personalStyle);
+            }
+        }
+
+        List<Body> bodyTemps = new ArrayList<>();
+        for(Body body: bodies){
+            if(body.getSex() == isSexSuggest){
+                bodyTemps.add(body);
+            }
+        }
+
+        getBody(bodyTemps);
+        getPersonalStyle(personalStyleTemps);
+
+        prevPositionStyle = -1;
+        prevBody = -1;
+
+        binding.txtSelectBody.setText("Vóc dáng");
+        binding.txtSelectStyle.setText("Phong cách");
+
+        setRequestCostume();
     }
 
     private void loading(boolean value){
@@ -135,7 +160,12 @@ public class SuggestionActivity extends AppCompatActivity {
     }
 
     private void setCostume(){
-        costumeAdapter = new CostumeAdapter(costumeSuggest, this);
+        costumeAdapter = new CostumeAdapter(costumeSuggest, this, new CostumeAdapter.CostumeListeners() {
+            @Override
+            public void onClickFavourite(CostumeHome costume, int position) {
+
+            }
+        });
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
@@ -188,6 +218,10 @@ public class SuggestionActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplication(), TestActivity.class);
             startActivity(intent);
         });
+
+        binding.btnBackBack.setOnClickListener(v -> {
+            finish();
+        });
     }
 
     private void setRequestCostume(){
@@ -195,12 +229,26 @@ public class SuggestionActivity extends AppCompatActivity {
         String purposeId = "";
         String personalStyleId = "";
 
+        List<PersonalStyle> personalStyleTemps = new ArrayList<>();
+        for(PersonalStyle personalStyle: personalStyles){
+            if(personalStyle.getSex() == isSexSuggest){
+                personalStyleTemps.add(personalStyle);
+            }
+        }
+
+        List<Body> bodyTemps = new ArrayList<>();
+        for(Body body: bodies){
+            if(body.getSex() == isSexSuggest){
+                bodyTemps.add(body);
+            }
+        }
+
         if(prevBody != -1)
-            bodyId = bodies.get(prevBody).getId();
+            bodyId = bodyTemps.get(prevBody).getId();
         if(prevPurpose != -1)
             purposeId = purposes.get(prevPurpose).getId();
         if(prevPositionStyle != -1)
-            personalStyleId = personalStyles.get(prevPositionStyle).getId();
+            personalStyleId = personalStyleTemps.get(prevPositionStyle).getId();
 
         getCostumeWithSuggests(new Request_Suggestion(bodyId,
                 personalStyleId,
@@ -219,10 +267,23 @@ public class SuggestionActivity extends AppCompatActivity {
                     bodies = response.body().getSuggestion().getBodies();
                     purposes = response.body().getSuggestion().getPurposes();
 
-                    costumeSuggest = new ArrayList<>();
-                    setCostume();
-                    getPersonalStyle();
-                    getBody();
+                    List<PersonalStyle> personalStyleTemps = new ArrayList<>();
+                    for(PersonalStyle personalStyle: personalStyles){
+                        if(personalStyle.getSex() == isSexSuggest){
+                            personalStyleTemps.add(personalStyle);
+                        }
+                    }
+
+                    List<Body> bodyTemps = new ArrayList<>();
+                    for(Body body: bodies){
+                        if(body.getSex() == isSexSuggest){
+                            bodyTemps.add(body);
+                        }
+                    }
+
+                    setRequestCostume();
+                    getPersonalStyle(personalStyleTemps);
+                    getBody(bodyTemps);
                     getPurpose();
                 }
 
@@ -236,8 +297,8 @@ public class SuggestionActivity extends AppCompatActivity {
         });
     }
 
-    private void getPersonalStyle(){
-        personalStyleAdapter = new PersonalStyleAdapter(personalStyles, this, new PersonalStyleAdapter.SuggestListeners() {
+    private void getPersonalStyle(List<PersonalStyle> personals){
+        personalStyleAdapter = new PersonalStyleAdapter(personals, this, new PersonalStyleAdapter.SuggestListeners() {
             @Override
             public void onClick(PersonalStyle personalStyle, int position) {
                 if(prevPositionStyle != position) {
@@ -261,8 +322,8 @@ public class SuggestionActivity extends AppCompatActivity {
         binding.rclStyle.setAdapter(personalStyleAdapter);
     }
 
-    private void getBody(){
-        bodyAdapter = new BodyAdapter(bodies, this, new BodyAdapter.SuggestListeners() {
+    private void getBody(List<Body> bodyList){
+        bodyAdapter = new BodyAdapter(bodyList, this, new BodyAdapter.SuggestListeners() {
             @Override
             public void onClick(Body body, int position) {
                 if(prevBody != position) {
@@ -319,7 +380,6 @@ public class SuggestionActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Message_CostumeWithStyle> call, Response<Message_CostumeWithStyle> response) {
                 if(response.body().getStatus() == 1){
-
                     costumeSuggest = response.body().getCostumes();
 
                     setCostume();

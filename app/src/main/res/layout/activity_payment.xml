@@ -32,7 +32,7 @@
             android:id="@+id/btnBackBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_close_24"
+            android:src="@drawable/backback"
             app:layout_constraintTop_toTopOf="@id/txtTitle"
             app:layout_constraintBottom_toBottomOf="@id/txtTitle"
             app:layout_constraintLeft_toLeftOf="parent"

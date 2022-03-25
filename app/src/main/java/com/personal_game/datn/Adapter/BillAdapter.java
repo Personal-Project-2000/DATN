@@ -1,5 +1,7 @@
 package com.personal_game.datn.Adapter;
 
+import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -8,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.personal_game.datn.Response.BillInfo;
+import com.personal_game.datn.Response.CostumeBill;
 import com.personal_game.datn.databinding.ItemAddressBinding;
 import com.personal_game.datn.databinding.ItemBillBinding;
 
@@ -15,12 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder>{
-    private final List<String> billList;
+    private final List<BillInfo> billList;
     private final Context context;
     private final BillListeners billListeners;
     private BillImgAdapter billImgAdapter;
 
-    public BillAdapter(List<String> billList, Context context, BillListeners billListeners){
+    public BillAdapter(List<BillInfo> billList, Context context, BillListeners billListeners){
         this.billList = billList;
         this.context = context;
         this.billListeners = billListeners;
@@ -56,8 +60,20 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder>{
             this.binding = binding;
         }
 
-        public void setData(String bill) {
-            setImg(binding);
+        public void setData(BillInfo bill) {
+            List<CostumeBill> costume = bill.getCostumes();
+            setImg(binding, costume);
+
+            binding.txtTotal.setText(intConvertMoney(bill.getBill().getTotal()));
+
+            String str = "(Đã thanh toán)";
+            if(!bill.getBill().isPayment()){
+                str = "(Chưa thanh toán)";
+            }
+            binding.txtPayment.setText(str);
+            binding.txtState.setText(bill.getBillState().getName());
+            binding.txtBillId.setText("Đơn hàng: "+bill.getBill().getId());
+            binding.txtCreateAt.setText("Ngày tạo: "+bill.getBill().getDate());
 
             binding.layoutMain.setOnClickListener(v -> {
                 billListeners.onClick(bill);
@@ -66,16 +82,16 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder>{
     }
 
     public interface BillListeners {
-        void onClick(String bill);
+        void onClick(BillInfo bill);
     }
 
-    public void setImg(ItemBillBinding binding){
+    public void setImg(ItemBillBinding binding, List<CostumeBill> costume){
         ArrayList<String> temp = new ArrayList<>();
         for(int i = 0; i < 20; i ++){
             temp.add("Sy");
         }
 
-        billImgAdapter = new BillImgAdapter(temp, context);
+        billImgAdapter = new BillImgAdapter(costume, context);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 1);
         gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);

@@ -76,7 +76,13 @@ public class FavouriteActivity extends AppCompatActivity {
     }
 
     private void setCostume(){
-        costumeAdapter = new CostumeAdapter(costumeFavourites, this);
+        costumeAdapter = new CostumeAdapter(costumeFavourites, this, new CostumeAdapter.CostumeListeners() {
+            @Override
+            public void onClickFavourite(CostumeHome costume, int position) {
+                costumeFavourites.remove(position);
+                costumeAdapter.notifyItemRemoved(position);
+            }
+        });
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
@@ -89,6 +95,10 @@ public class FavouriteActivity extends AppCompatActivity {
         binding.imgCart.setOnClickListener(v -> {
             Intent intent = new Intent(getApplication(), CartActivity.class);
             startActivity(intent);
+        });
+
+        binding.btnBackBack.setOnClickListener(v -> {
+            finish();
         });
     }
 }

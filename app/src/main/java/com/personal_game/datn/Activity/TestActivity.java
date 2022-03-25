@@ -123,6 +123,10 @@ public class TestActivity extends AppCompatActivity {
         binding.btnExitQuestion.setOnClickListener(v -> {
             changeLayout(layoutTest);
         });
+
+        binding.btnBackBack.setOnClickListener(v -> {
+            finish();
+        });
     }
 
     private void setRclTest(){

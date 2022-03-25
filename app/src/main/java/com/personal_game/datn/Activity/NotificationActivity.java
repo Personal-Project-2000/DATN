@@ -11,6 +11,7 @@ import android.view.View;
 import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Adapter.CostumeStyleAdapter;
 import com.personal_game.datn.Adapter.NotificationAdapter;
+import com.personal_game.datn.Backup.Shared_Preferences;
 import com.personal_game.datn.databinding.ActivityInfoBinding;
 import com.personal_game.datn.databinding.ActivityNotiBinding;
 
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 public class NotificationActivity extends AppCompatActivity {
     private ActivityNotiBinding binding;
     private NotificationAdapter notificationAdapter;
+
+    private Shared_Preferences shared_preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,10 @@ public class NotificationActivity extends AppCompatActivity {
     private void init(){
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
+
+        shared_preferences = new Shared_Preferences(getApplication());
+        binding.imgNumberFavourite.setText(shared_preferences.getQuantityFavorite());
+        binding.imgNumber.setText(shared_preferences.getQuantityCart());
 
         setNotification();
         setListeners();
@@ -67,6 +74,10 @@ public class NotificationActivity extends AppCompatActivity {
         binding.imgFavourite.setOnClickListener(v -> {
             Intent intent = new Intent(getApplication(), FavouriteActivity.class);
             startActivity(intent);
+        });
+
+        binding.btnBackBack.setOnClickListener(v -> {
+            finish();
         });
     }
 }

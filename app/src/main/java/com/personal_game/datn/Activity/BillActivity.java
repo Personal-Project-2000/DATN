@@ -1,26 +1,60 @@
 package com.personal_game.datn.Activity;
 
+import static com.personal_game.datn.Api.RetrofitApi.getRetrofit;
+import static com.personal_game.datn.Backup.Constant.allBill;
+import static com.personal_game.datn.Backup.Constant.billCancel;
+import static com.personal_game.datn.Backup.Constant.billCancelId;
+import static com.personal_game.datn.Backup.Constant.billComplete;
+import static com.personal_game.datn.Backup.Constant.billCompleteId;
+import static com.personal_game.datn.Backup.Constant.billHandle;
+import static com.personal_game.datn.Backup.Constant.billHandleId;
+import static com.personal_game.datn.Backup.Constant.billPaid;
+import static com.personal_game.datn.Backup.Constant.billTransported;
+import static com.personal_game.datn.Backup.Constant.billTransportedId;
+import static com.personal_game.datn.Backup.Constant.billWait;
+import static com.personal_game.datn.Backup.Constant.billWaitId;
+import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.personal_game.datn.Adapter.BillAdapter;
-import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Adapter.CostumeBillAdapter;
+import com.personal_game.datn.Api.ServiceApi.Service;
+import com.personal_game.datn.Backup.Constant;
+import com.personal_game.datn.Backup.Shared_Preferences;
 import com.personal_game.datn.R;
+import com.personal_game.datn.Request.Request_UpdateBill;
+import com.personal_game.datn.Response.BillInfo;
+import com.personal_game.datn.Response.CostumeBill;
+import com.personal_game.datn.Response.Message;
+import com.personal_game.datn.Response.Message_Bill;
 import com.personal_game.datn.databinding.ActivityBillBinding;
-import com.personal_game.datn.databinding.ActivityCostumeBinding;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class BillActivity extends AppCompatActivity {
     private ActivityBillBinding binding;
     private BillAdapter billAdapter;
     private CostumeBillAdapter costumeBillAdapter;
+
+    private Shared_Preferences shared_preferences;
+    private List<BillInfo> billInfos = new ArrayList<>();
+    private List<BillInfo> temp = new ArrayList<>();
+    private int showBillAsState = 1;
+    private String stateId = billCancelId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,34 +71,59 @@ public class BillActivity extends AppCompatActivity {
         actionBar.hide();
 
         Intent intent = getIntent();
-        int code = intent.getIntExtra("code", 1);
-        changeSelectStateBill(code);
+        showBillAsState = intent.getIntExtra("code", allBill);
+        changeSelectStateBill(showBillAsState);
+
+        shared_preferences = new Shared_Preferences(getApplicationContext());
+        billInfos = new ArrayList<>();
 
         setListeners();
-        setBill();
+        getBill();
     }
 
-    //state => 1: all, 2: wait, 3:handle, 4: transported, 5: complete, 6: cancel
     private void changeSelectStateBill(int state){
         switch (state){
-            case 1:
+            case allBill:
                 billAll();
                 break;
-            case 2:
+            case billWait:
                 billWaiting();
                 break;
-            case 3:
+            case billHandle:
                 billHandle();
                 break;
-            case 4:
+            case billTransported:
                 billTransported();
                 break;
-            case 5:
+            case billComplete:
                 billComplete();
                 break;
-            case 6:
+            case billCancel:
                 billCancel();
                 break;
+            case billPaid:
+                billPaid();
+                break;
+        }
+    }
+
+    private void loading(boolean value){
+        if(value){
+            binding.layoutMain.setVisibility(View.GONE);
+            binding.progressBarMain.setVisibility(View.VISIBLE);
+        }else{
+            binding.layoutMain.setVisibility(View.VISIBLE);
+            binding.progressBarMain.setVisibility(View.GONE);
+        }
+    }
+
+    private void loadingUpdate(boolean value){
+        if(value){
+            binding.btnCancel.setVisibility(View.GONE);
+            binding.progressBar.setVisibility(View.VISIBLE);
+        }else{
+            binding.btnCancel.setVisibility(View.VISIBLE);
+            binding.progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -81,6 +140,10 @@ public class BillActivity extends AppCompatActivity {
         binding.taskbarBillCancel.setVisibility(View.GONE);
         binding.txt17.setTextColor(getResources().getColor(R.color.secondary_text, null));
         binding.taskbarBillAll.setVisibility(View.GONE);
+        binding.txt24.setTextColor(getResources().getColor(R.color.secondary_text, null));
+        binding.taskbarBillPaid.setVisibility(View.GONE);
+
+        selectRclBill(billWait);
     }
 
     private void billHandle(){
@@ -96,6 +159,10 @@ public class BillActivity extends AppCompatActivity {
         binding.taskbarBillCancel.setVisibility(View.GONE);
         binding.txt17.setTextColor(getResources().getColor(R.color.secondary_text, null));
         binding.taskbarBillAll.setVisibility(View.GONE);
+        binding.txt24.setTextColor(getResources().getColor(R.color.secondary_text, null));
+        binding.taskbarBillPaid.setVisibility(View.GONE);
+
+        selectRclBill(billHandle);
     }
 
     private void billTransported(){
@@ -111,6 +178,10 @@ public class BillActivity extends AppCompatActivity {
         binding.taskbarBillCancel.setVisibility(View.GONE);
         binding.txt17.setTextColor(getResources().getColor(R.color.secondary_text, null));
         binding.taskbarBillAll.setVisibility(View.GONE);
+        binding.txt24.setTextColor(getResources().getColor(R.color.secondary_text, null));
+        binding.taskbarBillPaid.setVisibility(View.GONE);
+
+        selectRclBill(billTransported);
     }
 
     private void billComplete(){
@@ -126,6 +197,10 @@ public class BillActivity extends AppCompatActivity {
         binding.taskbarBillCancel.setVisibility(View.GONE);
         binding.txt17.setTextColor(getResources().getColor(R.color.secondary_text, null));
         binding.taskbarBillAll.setVisibility(View.GONE);
+        binding.txt24.setTextColor(getResources().getColor(R.color.secondary_text, null));
+        binding.taskbarBillPaid.setVisibility(View.GONE);
+
+        selectRclBill(billComplete);
     }
 
     private void billCancel(){
@@ -141,6 +216,10 @@ public class BillActivity extends AppCompatActivity {
         binding.taskbarBillCancel.setVisibility(View.VISIBLE);
         binding.txt17.setTextColor(getResources().getColor(R.color.secondary_text, null));
         binding.taskbarBillAll.setVisibility(View.GONE);
+        binding.txt24.setTextColor(getResources().getColor(R.color.secondary_text, null));
+        binding.taskbarBillPaid.setVisibility(View.GONE);
+
+        selectRclBill(billCancel);
     }
 
     private void billAll(){
@@ -156,6 +235,29 @@ public class BillActivity extends AppCompatActivity {
         binding.taskbarBillCancel.setVisibility(View.GONE);
         binding.txt17.setTextColor(getResources().getColor(R.color.black, null));
         binding.taskbarBillAll.setVisibility(View.VISIBLE);
+        binding.txt24.setTextColor(getResources().getColor(R.color.secondary_text, null));
+        binding.taskbarBillPaid.setVisibility(View.GONE);
+
+        selectRclBill(allBill);
+    }
+
+    private void billPaid(){
+        binding.txt12.setTextColor(getResources().getColor(R.color.secondary_text, null));
+        binding.taskbarBillWaiting.setVisibility(View.GONE);
+        binding.txt13.setTextColor(getResources().getColor(R.color.secondary_text, null));
+        binding.taskbarBillHandle.setVisibility(View.GONE);
+        binding.txt14.setTextColor(getResources().getColor(R.color.secondary_text, null));
+        binding.taskbarBillTransported.setVisibility(View.GONE);
+        binding.txt15.setTextColor(getResources().getColor(R.color.secondary_text, null));
+        binding.taskbarBillComplete.setVisibility(View.GONE);
+        binding.txt16.setTextColor(getResources().getColor(R.color.secondary_text, null));
+        binding.taskbarBillCancel.setVisibility(View.GONE);
+        binding.txt17.setTextColor(getResources().getColor(R.color.secondary_text, null));
+        binding.taskbarBillAll.setVisibility(View.GONE);
+        binding.txt24.setTextColor(getResources().getColor(R.color.black, null));
+        binding.taskbarBillPaid.setVisibility(View.VISIBLE);
+
+        selectRclBill(billPaid);
     }
 
     private void setListeners(){
@@ -186,20 +288,95 @@ public class BillActivity extends AppCompatActivity {
         binding.btnClose.setOnClickListener(v -> {
             binding.layoutBill.setVisibility(View.GONE);
         });
+
+        binding.layoutBillPaid.setOnClickListener(v -> {
+            changeSelectStateBill(7);
+        });
+
+        binding.layoutD.setOnClickListener(v ->{
+            binding.layoutBill.setVisibility(View.GONE);
+        });
+
+        binding.btnBackBack.setOnClickListener(v -> {
+            finish();
+        });
+
+        binding.layoutD.setOnClickListener(v -> {
+            binding.layoutBill.setVisibility(View.GONE);
+        });
     }
 
-    private void setBill(){
-        ArrayList<String> temp = new ArrayList<>();
-        for(int i = 0; i < 20; i ++){
-            temp.add("Sy");
+    private void selectRclBill(int code){
+        String state = "";
+
+        switch (code){
+            case billWait:
+                state = billWaitId;
+                break;
+            case billCancel:
+                state = billCancelId;
+                break;
+            case billComplete:
+                state = billCompleteId;
+                break;
+            case billHandle:
+                state = billHandleId;
+                break;
+            case billTransported:
+                state = billTransportedId;
+                break;
+            default:
+                state = "";
+                break;
         }
 
+        Log.e("notification", code +" "+state);
+
+        if(code == allBill){
+            temp = billInfos;
+            setRclBill();
+        }else{
+            temp = new ArrayList<>();
+            if(billInfos != null) {
+                for (int i = 0; i < billInfos.size(); i ++) {
+                    if(code != billPaid) {
+                        if (billInfos.get(i).getBillState().getId().equals(state)) {
+                            temp.add(billInfos.get(i));
+                        }
+                    }else{
+                        if (billInfos.get(i).getBill().isPayment()) {
+                            temp.add(billInfos.get(i));
+                        }
+                    }
+                }
+
+                setRclBill();
+            }
+        }
+    }
+
+    private void setRclBill(){
         billAdapter = new BillAdapter(temp, this, new BillAdapter.BillListeners() {
             @Override
-            public void onClick(String bill) {
+            public void onClick(BillInfo bill) {
                 binding.layoutBill.setVisibility(View.VISIBLE);
+                binding.txtName.setText(bill.getBill().getName());
+                binding.txtPhone.setText(bill.getBill().getPhone());
+                binding.txtAddress.setText(bill.getBill().getStreet());
+                binding.txtAddress1.setText(bill.getBill().getAddress());
+                binding.txtTotal.setText(intConvertMoney(bill.getBill().getTotal()));
+                binding.txtTitleBill.setText("Chi tiết đơn hàng: "+bill.getBill().getId());
 
-                setBillDetail();
+                binding.btnCancel.setOnClickListener(v -> {
+                    if(!bill.getBillState().getId().equals(billWaitId)){
+                        Toast.makeText(getApplication(), "Hóa đơn này không thể hủy!", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Request_UpdateBill updateBill = new Request_UpdateBill(bill.getBill().getId(), billCancelId);
+                        updateBill(updateBill);
+                    }
+                });
+
+                setRclBillDetail(bill.getCostumes());
             }
         });
 
@@ -210,16 +387,13 @@ public class BillActivity extends AppCompatActivity {
         binding.rclBill.setAdapter(billAdapter);
     }
 
-    private void setBillDetail(){
-        ArrayList<String> temp = new ArrayList<>();
-        for(int i = 0; i < 20; i ++){
-            temp.add("Sy");
-        }
-
-        costumeBillAdapter = new CostumeBillAdapter(temp, this, new CostumeBillAdapter.CostumeBillListeners() {
+    private void setRclBillDetail(List<CostumeBill> costumes){
+        costumeBillAdapter = new CostumeBillAdapter(costumes, this, new CostumeBillAdapter.CostumeBillListeners() {
             @Override
-            public void onClick(String costume) {
-
+            public void onClick(CostumeBill costume) {
+                Intent intent = new Intent(getApplication(), CostumeActivity.class);
+                intent.putExtra("costumeId", costume.getCostume().getId());
+                startActivity(intent);
             }
         });
 
@@ -228,5 +402,75 @@ public class BillActivity extends AppCompatActivity {
 
         binding.rclCostume.setLayoutManager(gridLayoutManager);
         binding.rclCostume.setAdapter(costumeBillAdapter);
+    }
+
+    private void getBill(){
+        loading(true);
+
+        Service service = getRetrofit().create(Service.class);
+        Call<Message_Bill> billCall = service.BillsWithUser("bearer "+shared_preferences.getToken());
+        billCall.enqueue(new Callback<Message_Bill>() {
+            @Override
+            public void onResponse(Call<Message_Bill> call, Response<Message_Bill> response) {
+                if(response.body().getStatus() == 1){
+                    billInfos = response.body().getBills();
+
+                    selectRclBill(showBillAsState);
+                }
+
+                loading(false);
+            }
+
+            @Override
+            public void onFailure(Call<Message_Bill> call, Throwable t) {
+                Toast.makeText(getApplication(), "Lấy dữ liệu thất bại", Toast.LENGTH_SHORT).show();
+                loading(false);
+            }
+        });
+    }
+
+    private void updateBill(Request_UpdateBill updateBill){
+        loadingUpdate(true);
+
+        Service service = getRetrofit().create(Service.class);
+        Call<Message> billCall = service.UpdateBill("bearer "+shared_preferences.getToken(), updateBill);
+        billCall.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if(response.body().getStatus() == 1){
+                    for(int i = 0; i < temp.size(); i ++){
+                        if(temp.get(i).getBill().getId().equals(updateBill.getBillId())){
+                            temp.get(i).getBillState().setId(billCancelId);
+                            temp.get(i).getBillState().setName("Đã hủy");
+
+                            billAdapter.notifyItemChanged(i);
+                            i = temp.size()+1;
+                        }
+                    }
+
+                    for (int i = 0; i < billInfos.size(); i ++){
+                        if(billInfos.get(i).getBill().getId().equals(updateBill.getBillId())){
+                            billInfos.get(i).getBillState().setId(billCancelId);
+                            billInfos.get(i).getBillState().setName("Đã hủy");
+
+                            i = temp.size()+1;
+                        }
+                    }
+
+                    binding.layoutBill.setVisibility(View.GONE);
+                }
+
+                Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
+
+                loadingUpdate(false);
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                Toast.makeText(getApplication(), "Cập nhật hóa đơn thất bại", Toast.LENGTH_SHORT).show();
+
+                loadingUpdate(false);
+            }
+        });
     }
 }

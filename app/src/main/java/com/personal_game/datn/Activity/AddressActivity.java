@@ -16,6 +16,7 @@ import com.personal_game.datn.Adapter.CostumeCartAdapter;
 import com.personal_game.datn.Api.ServiceApi.Service;
 import com.personal_game.datn.Backup.Shared_Preferences;
 import com.personal_game.datn.Models.Address;
+import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.Response.Message_Address;
 import com.personal_game.datn.Response.Message_Info;
 import com.personal_game.datn.databinding.ActivityAddressBinding;
@@ -79,8 +80,8 @@ public class AddressActivity extends AppCompatActivity {
     private void setAddress(){
         addressAdapter = new AddressAdapter(addressList, this, new AddressAdapter.AddressListeners() {
             @Override
-            public void onClickDefault(int position, boolean addressDefault) {
-                setAddressDefault(position, addressDefault);
+            public void onClickDefault(int position, Address updateAddress) {
+                updateAddress(updateAddress, position);
             }
         });
 
@@ -91,8 +92,28 @@ public class AddressActivity extends AppCompatActivity {
         binding.rclAddress.setAdapter(addressAdapter);
     }
 
-    private void setAddressDefault(int position, boolean isDefault){
-        if(isDefault){
+    private void updateAddress(Address updateAddress, int position){
+        Service service = getRetrofit().create(Service.class);
+        Call<Message> updateAddess = service.UpdateAddess("bearer "+shared_preferences.getToken(), updateAddress);
+        updateAddess.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if(response.body().getStatus() == 1){
+                    setAddressDefault(position, updateAddress);
+                }else{
+                    Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void setAddressDefault(int position, Address updateAddress){
+        if(updateAddress.getDefault()){
             for (int i = 0; i < addressList.size(); i ++) {
                 if(addressList.get(i).getDefault()){
                     addressList.get(i).setDefault(false);
@@ -100,12 +121,16 @@ public class AddressActivity extends AppCompatActivity {
                     break;
                 }
             }
+
+            shared_preferences.saveAddress(updateAddress);
         }else{
             addressList.get(0).setDefault(true);
             addressAdapter.notifyItemChanged(0);
+
+            shared_preferences.saveAddress(addressList.get(0));
         }
 
-        addressList.get(position).setDefault(isDefault);
+        addressList.get(position).setDefault(updateAddress.getDefault());
         addressAdapter.notifyItemChanged(position);
     }
 
@@ -113,6 +138,10 @@ public class AddressActivity extends AppCompatActivity {
         binding.btnAddAddress.setOnClickListener(v -> {
             Intent intent = new Intent(getApplication(), DeliveryAddressActivity.class);
             startActivity(intent);
+        });
+
+        binding.btnBackBack.setOnClickListener(v -> {
+            finish();
         });
     }
 }

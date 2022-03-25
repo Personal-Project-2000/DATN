@@ -1,6 +1,7 @@
 package com.personal_game.datn.Activity;
 
 import static com.personal_game.datn.Api.RetrofitApi.getRetrofit;
+import static com.personal_game.datn.Backup.Constant.billCancel;
 import static com.personal_game.datn.Backup.Constant.token_client;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Adapter.CostumeStyleAdapter;
 import com.personal_game.datn.Api.ServiceApi.Service;
 import com.personal_game.datn.Backup.Shared_Preferences;
+import com.personal_game.datn.Models.Address;
 import com.personal_game.datn.Models.CostumeStyle;
 import com.personal_game.datn.R;
 import com.personal_game.datn.Response.CostumeHome;
@@ -44,7 +46,8 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding activityMainBinding;
-    private CostumeAdapter costumeAdapter;
+    private CostumeAdapter costumeHotAdapter;
+    private CostumeAdapter costumeNewAdapter;
     private CostumeStyleAdapter costumeStyleAdapter;
 
     private Shared_Preferences shared_preferences;
@@ -79,8 +82,18 @@ public class MainActivity extends AppCompatActivity {
         setListeners();
     }
 
+    private void loading(boolean value){
+        if(value){
+            activityMainBinding.layoutMain.setVisibility(View.GONE);
+            activityMainBinding.progressBarMain.setVisibility(View.VISIBLE);
+        }else{
+            activityMainBinding.layoutMain.setVisibility(View.VISIBLE);
+            activityMainBinding.progressBarMain.setVisibility(View.GONE);
+        }
+    }
+
     private void setInfo(){
-        if(shared_preferences.getImg() != null){
+        if(!shared_preferences.getImg().equals("")){
             Picasso.Builder builder = new Picasso.Builder(getApplicationContext());
             builder.listener(new Picasso.Listener() {
                 @Override
@@ -94,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
         name.setText(shared_preferences.getName());
 
-        setHome();
+        getHome();
     }
 
     private void setListeners(){
@@ -123,6 +136,11 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                     case R.id.nav_signout: {
+                        shared_preferences.saveToken1("");
+                        shared_preferences.saveAddress(new Address());
+                        shared_preferences.saveName("");
+                        shared_preferences.saveImg("");
+
                         Intent intent = new Intent(getApplication(), SignInActivity.class);
                         startActivity(intent);
                         break;
@@ -143,7 +161,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setHome(){
+    private void getHome(){
+        loading(true);
         Service service = getRetrofit().create(Service.class);
         Call<Message_Home> home = service.GetHome("bearer "+shared_preferences.getToken());
         home.enqueue(new Callback<Message_Home>() {
@@ -159,13 +178,17 @@ public class MainActivity extends AppCompatActivity {
                     setCostumeStyle();
                     setCostume();
                     setPromotion();
+
+                    shared_preferences.saveQuantityFavorite(response.body().getHome().getQuantityFavourite());
                 }
 
                 Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
+                loading(false);
             }
 
             @Override
             public void onFailure(Call<Message_Home> call, Throwable t) {
+                loading(false);
                 Intent intent = new Intent(getApplication(), SignInActivity.class);
                 startActivity(intent);
             }
@@ -175,8 +198,10 @@ public class MainActivity extends AppCompatActivity {
     private void setCostumeStyle(){
         costumeStyleAdapter = new CostumeStyleAdapter(costumeStyles, this, new CostumeStyleAdapter.CostumeStyleListeners() {
             @Override
-            public void onClick(String costumeStyle) {
-
+            public void onClick(String styleId) {
+                Intent intent = new Intent(MainActivity.this, StyleActivity.class);
+                intent.putExtra("styleId", styleId);
+                startActivity(intent);
             }
         });
 
@@ -188,22 +213,67 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setPromotion(){
-        costumeAdapter = new CostumeAdapter(costumeNews, this);
+        costumeNewAdapter = new CostumeAdapter(costumeNews, this, new CostumeAdapter.CostumeListeners() {
+            @Override
+            public void onClickFavourite(CostumeHome costume, int position) {
+                for(int i = 0; i < costumeHots.size(); i++){
+                    if(costumeHots.get(i).getCostume().getId().equals(costume.getCostume().getId())){
+                        costumeHots.get(i).setFavourite(costume.getFavourite());
+
+                        costumeHotAdapter.notifyItemChanged(i);
+                        i = costumeHots.size()+1;
+                    }
+                }
+            }
+        });
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
 
         activityMainBinding.rclPromotion.setLayoutManager(gridLayoutManager);
-        activityMainBinding.rclPromotion.setAdapter(costumeAdapter);
+        activityMainBinding.rclPromotion.setAdapter(costumeNewAdapter);
     }
 
     private void setCostume(){
-        costumeAdapter = new CostumeAdapter(costumeHots, this);
+        costumeHotAdapter = new CostumeAdapter(costumeHots, this, new CostumeAdapter.CostumeListeners() {
+            @Override
+            public void onClickFavourite(CostumeHome costume, int position) {
+                for(int i = 0; i < costumeNews.size(); i++){
+                    if(costumeNews.get(i).getCostume().getId().equals(costume.getCostume().getId())){
+                        costumeNews.get(i).setFavourite(costume.getFavourite());
+
+                        costumeNewAdapter.notifyItemChanged(i);
+                        i = costumeNews.size()+1;
+                    }
+                }
+            }
+        });
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
 
         activityMainBinding.rclCostume.setLayoutManager(gridLayoutManager);
-        activityMainBinding.rclCostume.setAdapter(costumeAdapter);
+        activityMainBinding.rclCostume.setAdapter(costumeHotAdapter);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(!shared_preferences.getImg().equals("")){
+            Picasso.Builder builder = new Picasso.Builder(getApplicationContext());
+            builder.listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                    img.setImageResource(R.drawable.logo);
+                }
+            });
+            Picasso pic = builder.build();
+            pic.load(shared_preferences.getImg()).into(img);
+        }
+
+        name.setText(shared_preferences.getName());
+
+        activityMainBinding.imgNumber.setText(shared_preferences.getQuantityCart());
     }
 }

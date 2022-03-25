@@ -7,15 +7,17 @@ import java.util.List;
 
 public class Home implements Serializable {
     private int quantityCart ;
+    private int quantityFavourite ;
     private List<CostumeStyle> costumeStyles ;
     private List<CostumeHome> costumeHots ;
     private List<CostumeHome> costumeNews ;
 
-    public Home(int quantityCart, List<CostumeStyle> costumeStyles, List<CostumeHome> costumeHots, List<CostumeHome> costumeNews) {
-        this.quantityCart = quantityCart;
-        this.costumeStyles = costumeStyles;
-        this.costumeHots = costumeHots;
-        this.costumeNews = costumeNews;
+    public int getQuantityFavourite() {
+        return quantityFavourite;
+    }
+
+    public void setQuantityFavourite(int quantityFavourite) {
+        this.quantityFavourite = quantityFavourite;
     }
 
     public int getQuantityCart() {
