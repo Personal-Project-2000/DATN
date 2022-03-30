@@ -6,11 +6,14 @@ public class Purpose implements Serializable {
     private String id ;
     private String name ;
     private String description ;
+    private String img ;
 
-    public Purpose(String id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 
     public String getId() {

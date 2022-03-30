@@ -53,7 +53,7 @@ public class SuggestionActivity extends AppCompatActivity {
     private int prevPositionStyle = -1;
     private int prevBody = -1;
     private int prevPurpose = -1;
-    public static boolean isSexSuggest = true;
+    private boolean isSexSuggest = true;
 
     private final int layoutMain = 1;
     private final int layoutInfoStyle = 2;

@@ -166,7 +166,7 @@ public class InfoActivity extends AppCompatActivity {
         });
 
         binding.txtFavourite.setOnClickListener(v -> {
-            binding.layoutMain.setScrollY(650);
+            binding.layoutMain.setScrollY(810);
         });
 
         binding.imgCart.setOnClickListener(v -> {
@@ -296,6 +296,16 @@ public class InfoActivity extends AppCompatActivity {
                     Picasso pic = builder.build();
                     pic.load(shared_preferences.getImg()).into(binding.imgMain);
 
+                    Picasso.Builder builder1 = new Picasso.Builder(getApplicationContext());
+                    builder1.listener(new Picasso.Listener() {
+                        @Override
+                        public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                            binding.imgMain1.setImageResource(R.drawable.logo);
+                        }
+                    });
+                    Picasso pic1 = builder1.build();
+                    pic1.load(shared_preferences.getImg()).into(binding.imgMain1);
+
                     binding.txtName.setText("Họ & Tên: "+userInfo.getUser().getFullName());
                     binding.txtPhone.setText("Số điện thoại: "+userInfo.getUser().getPhone());
                     binding.imgNumber.setText(response.body().getUser().getQuantityCart()+"");
@@ -341,7 +351,7 @@ public class InfoActivity extends AppCompatActivity {
 
         binding.txtPhoneLayoutInfo.setText(user.getPhone());
         binding.txtNameLayoutInfo.setText(user.getFullName());
-        if(isSex){
+        if(user.getSex()){
             binding.btnSexMale.setImageResource(R.drawable.circle_check);
         }else{
             binding.btnSexFemale.setImageResource(R.drawable.circle_check);
@@ -378,6 +388,7 @@ public class InfoActivity extends AppCompatActivity {
                             path = getRealPathFromURI(imageUri);
                             binding.imgMain.setImageURI(imageUri);
                             binding.imgMain2.setImageURI(imageUri);
+                            binding.imgMain1.setImageURI(imageUri);
                             checkImg = true;
                         }
                     }

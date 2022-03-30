@@ -96,6 +96,12 @@ public class CostumeAdapter extends RecyclerView.Adapter<CostumeAdapter.ViewHold
                 }else{
                     binding.imgFavourite.setImageResource(R.drawable.ic_favourite_none);
                 }
+
+                if(costume.getCostume().getSex()){
+                    binding.imgSex.setImageResource(R.drawable.ic_baseline_boy_24);
+                }else{
+                    binding.imgSex.setImageResource(R.drawable.ic_baseline_girl_24);
+                }
             }
 
             binding.imgMain.setOnClickListener(v -> {

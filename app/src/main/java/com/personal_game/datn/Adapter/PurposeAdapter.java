@@ -61,6 +61,17 @@ public class PurposeAdapter extends RecyclerView.Adapter<PurposeAdapter.ViewHold
         public void setData(Purpose purpose) {
             binding.txtTitle.setText(purpose.getName());
             binding.txtContext.setText(purpose.getDescription());
+
+            Picasso.Builder builder = new Picasso.Builder(context);
+            builder.listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                    binding.imgMain.setImageResource(R.drawable.logo);
+                }
+            });
+            Picasso pic = builder.build();
+            pic.load(purpose.getImg()).into(binding.imgMain);
+
             if (true) {
                 binding.btnSelect.setImageResource(R.drawable.circle_none);
                 binding.layoutMain.setBackgroundColor(context.getResources().getColor(R.color.white));

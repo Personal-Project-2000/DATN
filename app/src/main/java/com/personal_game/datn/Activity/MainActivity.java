@@ -180,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
                     setPromotion();
 
                     shared_preferences.saveQuantityFavorite(response.body().getHome().getQuantityFavourite());
+                    shared_preferences.saveQuantityCart(response.body().getHome().getQuantityCart());
                 }
 
                 Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
