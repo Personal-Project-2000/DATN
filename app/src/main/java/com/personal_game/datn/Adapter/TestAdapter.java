@@ -8,18 +8,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.personal_game.datn.Models.Test;
-import com.personal_game.datn.Response.TestInfo;
-import com.personal_game.datn.databinding.ItemQuestionBinding;
 import com.personal_game.datn.databinding.ItemTestBinding;
 
 import java.util.List;
 
 public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ViewHolder>{
-    private final List<TestInfo> testList;
+    private final List<Test> testList;
     private final Context context;
     private final TestListeners testListeners;
 
-    public TestAdapter(List<TestInfo> testList, Context context, TestListeners testListeners){
+    public TestAdapter(List<Test> testList, Context context, TestListeners testListeners){
         this.testList = testList;
         this.context = context;
         this.testListeners = testListeners;
@@ -54,8 +52,8 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ViewHolder>{
             this.binding = binding;
         }
 
-        public void setData(TestInfo test) {
-            binding.txtTitle.setText(test.getTest().getName());
+        public void setData(Test test) {
+            binding.txtTitle.setText(test.getName());
 
             binding.layoutMain.setOnClickListener(v -> {
                 testListeners.onClick(test);
@@ -64,6 +62,6 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ViewHolder>{
     }
 
     public interface TestListeners {
-        void onClick(TestInfo test);
+        void onClick(Test test);
     }
 }

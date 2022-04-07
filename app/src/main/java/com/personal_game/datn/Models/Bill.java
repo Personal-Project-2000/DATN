@@ -1,6 +1,7 @@
 package com.personal_game.datn.Models;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Bill implements Serializable {
     private String id ;
@@ -16,6 +17,7 @@ public class Bill implements Serializable {
     private int year ;
     private boolean isPayment;
     private int total ;
+    private List<BillDetail> billDetails;
 
     public Bill(String id, String account, String name, String street, String address, String phone, String stateId, String date, int day, int month, int year, int total) {
         this.id = id;
@@ -30,6 +32,14 @@ public class Bill implements Serializable {
         this.month = month;
         this.year = year;
         this.total = total;
+    }
+
+    public List<BillDetail> getBillDetails() {
+        return billDetails;
+    }
+
+    public void setBillDetails(List<BillDetail> billDetails) {
+        this.billDetails = billDetails;
     }
 
     public boolean isPayment() {

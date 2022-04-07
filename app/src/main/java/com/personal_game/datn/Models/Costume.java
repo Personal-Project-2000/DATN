@@ -1,6 +1,7 @@
 package com.personal_game.datn.Models;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Costume implements Serializable {
     private String id ;
@@ -12,17 +13,41 @@ public class Costume implements Serializable {
     private int quantity ;
     private int quantityBuy ;
     private String description ;
+    private List<String> bodies;
+    private List<String> personalStyles;
+    private List<String> purposes;
+    private List<Picture> pictures;
 
-    public Costume(String id, String name, int price, Boolean sex, String costumeStyleId, Boolean state, int quantity, int quantityBuy, String description) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.sex = sex;
-        this.costumeStyleId = costumeStyleId;
-        this.state = state;
-        this.quantity = quantity;
-        this.quantityBuy = quantityBuy;
-        this.description = description;
+    public List<String> getBodies() {
+        return bodies;
+    }
+
+    public void setBodies(List<String> bodies) {
+        this.bodies = bodies;
+    }
+
+    public List<String> getPersonalStyles() {
+        return personalStyles;
+    }
+
+    public void setPersonalStyles(List<String> personalStyles) {
+        this.personalStyles = personalStyles;
+    }
+
+    public List<String> getPurposes() {
+        return purposes;
+    }
+
+    public void setPurposes(List<String> purposes) {
+        this.purposes = purposes;
+    }
+
+    public List<Picture> getPictures() {
+        return pictures;
+    }
+
+    public void setPictures(List<Picture> pictures) {
+        this.pictures = pictures;
     }
 
     public String getId() {

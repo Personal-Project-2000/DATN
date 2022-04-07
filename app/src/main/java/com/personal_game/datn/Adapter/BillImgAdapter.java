@@ -10,19 +10,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.personal_game.datn.Activity.CostumeActivity;
+import com.personal_game.datn.Models.Costume;
 import com.personal_game.datn.R;
-import com.personal_game.datn.Response.CostumeBill;
 import com.personal_game.datn.databinding.ItemBillImgBinding;
-import com.personal_game.datn.databinding.ItemCostumeImgBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class BillImgAdapter extends RecyclerView.Adapter<BillImgAdapter.ViewHolder>{
-    private final List<CostumeBill> costumeImgList;
+    private final List<Costume> costumeImgList;
     private final Context context;
 
-    public BillImgAdapter(List<CostumeBill> costumeImgList, Context context){
+    public BillImgAdapter(List<Costume> costumeImgList, Context context){
         this.costumeImgList = costumeImgList;
         this.context = context;
     }
@@ -56,7 +55,7 @@ public class BillImgAdapter extends RecyclerView.Adapter<BillImgAdapter.ViewHold
             this.binding = binding;
         }
 
-        public void setData(CostumeBill costume) {
+        public void setData(Costume costume) {
             Picasso.Builder builder = new Picasso.Builder(context);
             builder.listener(new Picasso.Listener() {
                 @Override
@@ -65,11 +64,11 @@ public class BillImgAdapter extends RecyclerView.Adapter<BillImgAdapter.ViewHold
                 }
             });
             Picasso pic = builder.build();
-            pic.load(costume.getImage().getLink()).into(binding.imgMain);
+            pic.load(costume.getPictures().get(0).getLink()).into(binding.imgMain);
 
             binding.imgMain.setOnClickListener(v -> {
                 Intent intent = new Intent(context, CostumeActivity.class);
-                intent.putExtra("costumeId", costume.getCostume().getId());
+                intent.putExtra("costumeId", costume.getId());
                 context.startActivity(intent);
             });
         }

@@ -17,7 +17,6 @@ public class CostumeInfo implements Serializable {
     private List<CostumeHome> suitableOutfitCostumes ;
     private int quantityCart ;
     private int quantityFavourite ;
-    private List<Picture> images ;
 
     public List<CostumeHome> getSuitableOutfitCostumes() {
         return suitableOutfitCostumes;
@@ -81,13 +80,5 @@ public class CostumeInfo implements Serializable {
 
     public void setQuantityFavourite(int quantityFavourite) {
         this.quantityFavourite = quantityFavourite;
-    }
-
-    public List<Picture> getImages() {
-        return images;
-    }
-
-    public void setImages(List<Picture> images) {
-        this.images = images;
     }
 }

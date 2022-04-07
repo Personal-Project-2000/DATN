@@ -381,7 +381,7 @@ public class CostumeActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Message_Costume> call, Response<Message_Costume> response) {
                 if(response.body().getStatus() == 1){
-                    pictures = response.body().getCostume().getImages();
+                    pictures = response.body().getCostume().getCostume().getPictures();
                     personalStyles = response.body().getCostume().getPersonalStyles();
                     bodyList = response.body().getCostume().getBodies();
                     relatedCostumes = response.body().getCostume().getRelatedCostumes();

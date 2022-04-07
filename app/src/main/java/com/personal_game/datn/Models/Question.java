@@ -1,24 +1,18 @@
 package com.personal_game.datn.Models;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Question implements Serializable {
-    private String id ;
     private String topic ;
-    private String testId ;
+    private List<Answer> answers;
 
-    public Question(String id, String topic, String testId) {
-        this.id = id;
-        this.topic = topic;
-        this.testId = testId;
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
     }
 
     public String getTopic() {
@@ -27,13 +21,5 @@ public class Question implements Serializable {
 
     public void setTopic(String topic) {
         this.topic = topic;
-    }
-
-    public String getTestId() {
-        return testId;
-    }
-
-    public void setTestId(String testId) {
-        this.testId = testId;
     }
 }

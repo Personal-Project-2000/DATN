@@ -2,6 +2,7 @@ package com.personal_game.datn.Response;
 
 import com.personal_game.datn.Models.Bill;
 import com.personal_game.datn.Models.BillState;
+import com.personal_game.datn.Models.Costume;
 
 import java.io.Serializable;
 import java.util.List;
@@ -9,9 +10,9 @@ import java.util.List;
 public class BillInfo implements Serializable {
     private Bill bill ;
     private BillState billState ;
-    private List<CostumeBill> costumes ;
+    private List<Costume> costumes ;
 
-    public BillInfo(Bill bill, BillState billState, List<CostumeBill> costumes) {
+    public BillInfo(Bill bill, BillState billState, List<Costume> costumes) {
         this.bill = bill;
         this.billState = billState;
         this.costumes = costumes;
@@ -33,11 +34,11 @@ public class BillInfo implements Serializable {
         this.billState = billState;
     }
 
-    public List<CostumeBill> getCostumes() {
+    public List<Costume> getCostumes() {
         return costumes;
     }
 
-    public void setCostumes(List<CostumeBill> costumes) {
+    public void setCostumes(List<Costume> costumes) {
         this.costumes = costumes;
     }
 }

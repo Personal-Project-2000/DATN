@@ -11,23 +11,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.personal_game.datn.Adapter.AddressAdapter;
 import com.personal_game.datn.Adapter.QuestionAdapter;
 import com.personal_game.datn.Adapter.TestAdapter;
 import com.personal_game.datn.Api.ServiceApi.Service;
 import com.personal_game.datn.Backup.Shared_Preferences;
 import com.personal_game.datn.Dialog.TestResultDialog;
-import com.personal_game.datn.Dialog.VerifyOTPDialog;
 import com.personal_game.datn.Models.Test;
-import com.personal_game.datn.Models.TestResult;
-import com.personal_game.datn.Response.Message_Suggestion;
 import com.personal_game.datn.Response.Message_Test;
-import com.personal_game.datn.Response.QuestionInfo;
-import com.personal_game.datn.Response.TestInfo;
-import com.personal_game.datn.databinding.ActivitySuggestionBinding;
 import com.personal_game.datn.databinding.ActivityTestBinding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -40,8 +32,8 @@ public class TestActivity extends AppCompatActivity {
     private TestAdapter testAdapter;
 
     private Shared_Preferences shared_preferences;
-    private List<TestInfo> tests;
-    private TestInfo testInfo;
+    private List<Test> tests;
+    private Test testInfo;
 
     private final int layoutTest = 1;
     private final int layoutQuestion = 2;
@@ -66,7 +58,7 @@ public class TestActivity extends AppCompatActivity {
         actionBar.hide();
 
         shared_preferences = new Shared_Preferences(getApplicationContext());
-        testInfo = new TestInfo();
+        testInfo = new Test();
 
         setListeners();
         getTest();
@@ -132,10 +124,10 @@ public class TestActivity extends AppCompatActivity {
     private void setRclTest(){
         testAdapter = new TestAdapter(tests, this, new TestAdapter.TestListeners() {
             @Override
-            public void onClick(TestInfo test) {
+            public void onClick(Test test) {
                 testInfo = test;
 
-                binding.txtQuestionTitle.setText(test.getTest().getName());
+                binding.txtQuestionTitle.setText(test.getName());
 
                 setQuestion();
                 changeLayout(layoutQuestion);

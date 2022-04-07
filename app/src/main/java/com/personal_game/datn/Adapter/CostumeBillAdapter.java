@@ -10,20 +10,19 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.personal_game.datn.Models.Costume;
 import com.personal_game.datn.R;
-import com.personal_game.datn.Response.CostumeBill;
 import com.personal_game.datn.databinding.ItemCostumeBillBinding;
-import com.personal_game.datn.databinding.ItemCostumeCartBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class CostumeBillAdapter extends RecyclerView.Adapter<CostumeBillAdapter.ViewHolder>{
-    private final List<CostumeBill> costumeList;
+    private final List<Costume> costumeList;
     private final Context context;
     private final CostumeBillListeners costumeBillListeners;
 
-    public CostumeBillAdapter(List<CostumeBill> costumeList, Context context, CostumeBillListeners costumeBillListeners){
+    public CostumeBillAdapter(List<Costume> costumeList, Context context, CostumeBillListeners costumeBillListeners){
         this.costumeList = costumeList;
         this.context = context;
         this.costumeBillListeners = costumeBillListeners;
@@ -58,7 +57,7 @@ public class CostumeBillAdapter extends RecyclerView.Adapter<CostumeBillAdapter.
             this.binding = binding;
         }
 
-        public void setData(CostumeBill costume) {
+        public void setData(Costume costume) {
             Picasso.Builder builder = new Picasso.Builder(context);
             builder.listener(new Picasso.Listener() {
                 @Override
@@ -67,15 +66,15 @@ public class CostumeBillAdapter extends RecyclerView.Adapter<CostumeBillAdapter.
                 }
             });
             Picasso pic = builder.build();
-            pic.load(costume.getImage().getLink()).into(binding.imgMain);
+            pic.load(costume.getPictures().get(0).getLink()).into(binding.imgMain);
 
-            binding.txtName.setText(costume.getCostume().getName());
-            binding.txtPrice.setText(intConvertMoney(costume.getCostume().getPrice()));
-            binding.txtQuantity.setText("x"+costume.getCostume().getQuantity());
+            binding.txtName.setText(costume.getName());
+            binding.txtPrice.setText(intConvertMoney(costume.getPrice()));
+            binding.txtQuantity.setText("x"+costume.getQuantity());
         }
     }
 
     public interface CostumeBillListeners {
-        void onClick(CostumeBill costume);
+        void onClick(Costume costume);
     }
 }

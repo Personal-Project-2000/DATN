@@ -88,7 +88,7 @@ public class CostumeCartAdapter extends RecyclerView.Adapter<CostumeCartAdapter.
                 }
             });
             Picasso pic = builder.build();
-            pic.load(costume.getImage().getLink()).into(binding.imgMain);
+            pic.load(costume.getCostume().getPictures().get(0).getLink()).into(binding.imgMain);
 
             binding.txtName.setText(costume.getCostume().getName());
             binding.txtPrice.setText(intConvertMoney(costume.getCostume().getPrice()));

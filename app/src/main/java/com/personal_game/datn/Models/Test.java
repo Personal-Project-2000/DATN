@@ -1,21 +1,29 @@
 package com.personal_game.datn.Models;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Test implements Serializable {
     private String id ;
     private String name ;
     private boolean sex;
+    private List<Question> questions;
+    private List<TestResult> results;
 
-    public Test(String id, String name) {
-        this.id = id;
-        this.name = name;
+    public List<Question> getQuestions() {
+        return questions;
     }
 
-    public Test(String id, String name, boolean sex) {
-        this.id = id;
-        this.name = name;
-        this.sex = sex;
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
+    }
+
+    public List<TestResult> getResults() {
+        return results;
+    }
+
+    public void setResults(List<TestResult> results) {
+        this.results = results;
     }
 
     public String getId() {

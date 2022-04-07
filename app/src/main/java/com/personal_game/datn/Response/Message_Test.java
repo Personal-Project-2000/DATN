@@ -1,14 +1,16 @@
 package com.personal_game.datn.Response;
 
+import com.personal_game.datn.Models.Test;
+
 import java.io.Serializable;
 import java.util.List;
 
 public class Message_Test implements Serializable {
     private int status;
     private String notification;
-    private List<TestInfo> tests;
+    private List<Test> tests;
 
-    public Message_Test(int status, String notification, List<TestInfo> tests) {
+    public Message_Test(int status, String notification, List<Test> tests) {
         this.status = status;
         this.notification = notification;
         this.tests = tests;
@@ -30,11 +32,11 @@ public class Message_Test implements Serializable {
         this.notification = notification;
     }
 
-    public List<TestInfo> getTests() {
+    public List<Test> getTests() {
         return tests;
     }
 
-    public void setTests(List<TestInfo> tests) {
+    public void setTests(List<Test> tests) {
         this.tests = tests;
     }
 }

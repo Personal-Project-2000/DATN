@@ -76,7 +76,7 @@ public class CostumeAdapter extends RecyclerView.Adapter<CostumeAdapter.ViewHold
 
         public void setData(CostumeHome costume) {
             if(costume != null){
-                if(costume.getImage() != null) {
+                if(costume.getCostume().getPictures() != null) {
                     Picasso.Builder builder = new Picasso.Builder(context);
                     builder.listener(new Picasso.Listener() {
                         @Override
@@ -85,7 +85,7 @@ public class CostumeAdapter extends RecyclerView.Adapter<CostumeAdapter.ViewHold
                         }
                     });
                     Picasso pic = builder.build();
-                    pic.load(costume.getImage().getLink()).into(binding.imgMain);
+                    pic.load(costume.getCostume().getPictures().get(0).getLink()).into(binding.imgMain);
                 }
 
                 binding.txtName.setText(costume.getCostume().getName());

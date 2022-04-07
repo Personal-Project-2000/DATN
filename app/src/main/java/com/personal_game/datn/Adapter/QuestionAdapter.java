@@ -10,21 +10,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.personal_game.datn.Models.Answer;
-import com.personal_game.datn.Models.TestResult;
+import com.personal_game.datn.Models.Question;
 import com.personal_game.datn.R;
-import com.personal_game.datn.Response.QuestionInfo;
 import com.personal_game.datn.databinding.ItemQuestionBinding;
-import com.personal_game.datn.databinding.ItemSuggestionBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHolder>{
-    private final List<QuestionInfo> questionList;
+    private final List<Question> questionList;
     private final Context context;
     private final QuestionListeners questionListeners;
 
-    public QuestionAdapter(List<QuestionInfo> questionList, Context context, QuestionListeners questionListeners){
+    public QuestionAdapter(List<Question> questionList, Context context, QuestionListeners questionListeners){
         this.questionList = questionList;
         this.context = context;
         this.questionListeners = questionListeners;
@@ -66,10 +64,10 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.ViewHo
             this.binding = binding;
         }
 
-        public void setData(QuestionInfo question) {
-            binding.txtTitle.setText(question.getQuestion().getTopic());
+        public void setData(Question question) {
+            binding.txtTitle.setText(question.getTopic());
 
-            if(question.getQuestion() != null){
+            if(question != null){
                 List<Answer> answers = question.getAnswers();
 
                 if(!answers.get(0).getImg().equals("")){

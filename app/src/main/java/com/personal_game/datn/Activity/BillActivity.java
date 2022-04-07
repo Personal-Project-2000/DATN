@@ -28,12 +28,11 @@ import android.widget.Toast;
 import com.personal_game.datn.Adapter.BillAdapter;
 import com.personal_game.datn.Adapter.CostumeBillAdapter;
 import com.personal_game.datn.Api.ServiceApi.Service;
-import com.personal_game.datn.Backup.Constant;
 import com.personal_game.datn.Backup.Shared_Preferences;
+import com.personal_game.datn.Models.Costume;
 import com.personal_game.datn.R;
 import com.personal_game.datn.Request.Request_UpdateBill;
 import com.personal_game.datn.Response.BillInfo;
-import com.personal_game.datn.Response.CostumeBill;
 import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.Response.Message_Bill;
 import com.personal_game.datn.databinding.ActivityBillBinding;
@@ -387,12 +386,12 @@ public class BillActivity extends AppCompatActivity {
         binding.rclBill.setAdapter(billAdapter);
     }
 
-    private void setRclBillDetail(List<CostumeBill> costumes){
+    private void setRclBillDetail(List<Costume> costumes){
         costumeBillAdapter = new CostumeBillAdapter(costumes, this, new CostumeBillAdapter.CostumeBillListeners() {
             @Override
-            public void onClick(CostumeBill costume) {
+            public void onClick(Costume costume) {
                 Intent intent = new Intent(getApplication(), CostumeActivity.class);
-                intent.putExtra("costumeId", costume.getCostume().getId());
+                intent.putExtra("costumeId", costume.getId());
                 startActivity(intent);
             }
         });

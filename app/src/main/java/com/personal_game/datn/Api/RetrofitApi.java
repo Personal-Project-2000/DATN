@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitApi {
     private static Retrofit retrofit;
-    private final static String BASE_URL="https://smartfashion.covid21tsp.space/api/";
+    private final static String BASE_URL="https://ps.covid21tsp.space/api/";
 
     public static Retrofit getRetrofit(){
         if(retrofit==null){
