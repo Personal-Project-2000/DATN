@@ -38,10 +38,10 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import vn.zalopay.sdk.Environment;
-import vn.zalopay.sdk.ZaloPayError;
-import vn.zalopay.sdk.ZaloPaySDK;
-import vn.zalopay.sdk.listeners.PayOrderListener;
+//import vn.zalopay.sdk.Environment;
+//import vn.zalopay.sdk.ZaloPayError;
+//import vn.zalopay.sdk.ZaloPaySDK;
+//import vn.zalopay.sdk.listeners.PayOrderListener;
 
 public class PaymentActivity extends AppCompatActivity {
     private ActivityPaymentBinding binding;
@@ -64,7 +64,7 @@ public class PaymentActivity extends AppCompatActivity {
                 StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        ZaloPaySDK.init(AppInfo.APP_ID, Environment.SANDBOX);
+//        ZaloPaySDK.init(AppInfo.APP_ID, Environment.SANDBOX);
 
         init();
     }
@@ -186,23 +186,23 @@ public class PaymentActivity extends AppCompatActivity {
 
                 String token = data.getString("zptranstoken");
 
-                ZaloPaySDK.getInstance().payOrder(PaymentActivity.this, token, "demozpdk://app", new PayOrderListener() {
-                    @Override
-                    public void onPaymentSucceeded(final String  transactionId, final String transToken, final String appTransID) {
-                        Toast.makeText(getApplication(), "Thanh toán thành công", Toast.LENGTH_SHORT).show();
-                        addBill(bill);
-                    }
-
-                    @Override
-                    public void onPaymentCanceled(String zpTransToken, String appTransID) {
-                        Toast.makeText(getApplication(), "Thanh toán bị hủy", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onPaymentError(ZaloPayError zaloPayError, String zpTransToken, String appTransID) {
-                        Toast.makeText(getApplication(), "Thanh toán thất bại", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                ZaloPaySDK.getInstance().payOrder(PaymentActivity.this, token, "demozpdk://app", new PayOrderListener() {
+//                    @Override
+//                    public void onPaymentSucceeded(final String  transactionId, final String transToken, final String appTransID) {
+//                        Toast.makeText(getApplication(), "Thanh toán thành công", Toast.LENGTH_SHORT).show();
+//                        addBill(bill);
+//                    }
+//
+//                    @Override
+//                    public void onPaymentCanceled(String zpTransToken, String appTransID) {
+//                        Toast.makeText(getApplication(), "Thanh toán bị hủy", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                    @Override
+//                    public void onPaymentError(ZaloPayError zaloPayError, String zpTransToken, String appTransID) {
+//                        Toast.makeText(getApplication(), "Thanh toán thất bại", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
             }
 
         } catch (Exception e) {
@@ -213,7 +213,7 @@ public class PaymentActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        ZaloPaySDK.getInstance().onResult(intent);
+//        ZaloPaySDK.getInstance().onResult(intent);
     }
 
     private void updateCart(Cart updateCart, int position){

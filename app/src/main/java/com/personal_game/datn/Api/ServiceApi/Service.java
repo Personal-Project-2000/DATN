@@ -108,4 +108,7 @@ public interface Service {
 
     @GET("Home_Get")
     Call<Message_Home> GetHome(@Header("Authorization") String token);
+
+    @POST("CostumeSearch_Post")
+    Call<Message_CostumeWithStyle> CostumeSearch(@Header("Authorization") String token, @Query("inputSearch") String inputSearch);
 }

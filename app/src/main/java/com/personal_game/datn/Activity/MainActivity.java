@@ -4,6 +4,10 @@ import static com.personal_game.datn.Api.RetrofitApi.getRetrofit;
 import static com.personal_game.datn.Backup.Constant.billCancel;
 import static com.personal_game.datn.Backup.Constant.token_client;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,9 +16,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.speech.RecognizerIntent;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,6 +41,7 @@ import com.personal_game.datn.Models.CostumeStyle;
 import com.personal_game.datn.R;
 import com.personal_game.datn.Response.CostumeHome;
 import com.personal_game.datn.Response.Data;
+import com.personal_game.datn.Response.Message_CostumeWithStyle;
 import com.personal_game.datn.Response.Message_Home;
 import com.personal_game.datn.Response.Message_Login;
 import com.personal_game.datn.databinding.ActivityMainBinding;
@@ -39,6 +50,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -54,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
     private List<CostumeStyle> costumeStyles ;
     private List<CostumeHome> costumeHots ;
     private List<CostumeHome> costumeNews ;
+
+    private Timer timer = new Timer();
+    private final long DELAY = 300; // in ms
 
     private TextView name;
     private ImageView img;
@@ -159,7 +177,63 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplication(), CartActivity.class);
             startActivity(intent);
         });
+
+        activityMainBinding.imageViewMic.setOnClickListener(v -> {
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "hãy nói gì đi");
+            try {
+                activityResultLauncher.launch(intent);
+            } catch (Exception e) {
+                Toast.makeText(MainActivity.this, "Error",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        activityMainBinding.inputSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(timer != null)
+                    timer.cancel();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.length() > 0) {
+                    timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            getCostumeSearch(s+"");
+                        }
+
+                    }, DELAY);
+                }else{
+                    activityMainBinding.layoutMain1.setVisibility(View.VISIBLE);
+                    activityMainBinding.rclCostumeSearch.setVisibility(View.GONE);
+                }
+            }
+        });
     }
+
+    ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                if (result.getData() != null) {
+                    ArrayList<String> data = result.getData().getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    activityMainBinding.inputSearch.setText(Objects.requireNonNull(data).get(0));
+                } else {
+                    Toast.makeText(getApplication(),"Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    });
 
     private void getHome(){
         loading(true);
@@ -255,6 +329,37 @@ public class MainActivity extends AppCompatActivity {
 
         activityMainBinding.rclCostume.setLayoutManager(gridLayoutManager);
         activityMainBinding.rclCostume.setAdapter(costumeHotAdapter);
+    }
+
+    private void getCostumeSearch(String input){
+        Service service = getRetrofit().create(Service.class);
+        Call<Message_CostumeWithStyle> call = service.CostumeSearch("bearer "+shared_preferences.getToken(), input);
+        call.enqueue(new Callback<Message_CostumeWithStyle>() {
+            @Override
+            public void onResponse(Call<Message_CostumeWithStyle> call, Response<Message_CostumeWithStyle> response) {
+                if(response.body().getStatus() == 1){
+                    activityMainBinding.layoutMain1.setVisibility(View.GONE);
+                    activityMainBinding.rclCostumeSearch.setVisibility(View.VISIBLE);
+                    CostumeAdapter costumeAdapter = new CostumeAdapter(response.body().getCostumes(), getApplication(), new CostumeAdapter.CostumeListeners() {
+                        @Override
+                        public void onClickFavourite(CostumeHome costume, int position) {
+
+                        }
+                    });
+
+                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+                    gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+
+                    activityMainBinding.rclCostumeSearch.setLayoutManager(gridLayoutManager);
+                    activityMainBinding.rclCostumeSearch.setAdapter(costumeAdapter);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message_CostumeWithStyle> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override
