@@ -17,6 +17,8 @@ public class Costume implements Serializable {
     private List<String> personalStyles;
     private List<String> purposes;
     private List<Picture> pictures;
+    private List<ColorObject> colors;
+    private List<Size> sizes;
 
     public List<String> getBodies() {
         return bodies;
@@ -120,5 +122,21 @@ public class Costume implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<ColorObject> getColors() {
+        return colors;
+    }
+
+    public void setColors(List<ColorObject> colors) {
+        this.colors = colors;
+    }
+
+    public List<Size> getSizes() {
+        return sizes;
+    }
+
+    public void setSizes(List<Size> sizes) {
+        this.sizes = sizes;
     }
 }

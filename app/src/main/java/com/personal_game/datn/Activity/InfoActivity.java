@@ -8,6 +8,7 @@ import static com.personal_game.datn.Backup.Constant.billHandle;
 import static com.personal_game.datn.Backup.Constant.billPaid;
 import static com.personal_game.datn.Backup.Constant.billTransported;
 import static com.personal_game.datn.Backup.Constant.billWait;
+import static com.personal_game.datn.Backup.Constant.trousersId;
 
 import androidx.activity.result.ActivityResult;
 import androidx.appcompat.app.ActionBar;
@@ -25,8 +26,14 @@ import android.widget.Toast;
 
 import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Api.ServiceApi.Service;
+import com.personal_game.datn.Backup.Constant;
 import com.personal_game.datn.Backup.Shared_Preferences;
+import com.personal_game.datn.Dialog.SizeDialog;
+import com.personal_game.datn.Dialog.SizeGuideDialog;
 import com.personal_game.datn.Models.Address;
+import com.personal_game.datn.Models.CostumeStyle;
+import com.personal_game.datn.Models.Size;
+import com.personal_game.datn.Models.SizeUser;
 import com.personal_game.datn.Models.User;
 import com.personal_game.datn.R;
 import com.personal_game.datn.Response.CostumeHome;
@@ -55,6 +62,7 @@ public class InfoActivity extends AppCompatActivity {
     private Shared_Preferences shared_preferences;
 
     private List<CostumeHome> costumeFavourites;
+    private List<CostumeStyle> costumeStyles = new ArrayList<>();
     private boolean isSex = true;
     private boolean checkImg = false;
     private Uri imageUri;
@@ -89,6 +97,37 @@ public class InfoActivity extends AppCompatActivity {
             binding.layoutMain1.setVisibility(View.VISIBLE);
             binding.progressBarMain.setVisibility(View.GONE);
         }
+    }
+
+    private void loadingSave(boolean value){
+        if(value){
+            binding.btnSave.setVisibility(View.GONE);
+            binding.progressBar.setVisibility(View.VISIBLE);
+        }else {
+            binding.btnSave.setVisibility(View.VISIBLE);
+            binding.progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void showSizeDialog(CostumeStyle costumeStyle, String id){
+        List<Size> sizes = costumeStyle.getMenSizes();
+
+        if(!isSex){
+            sizes = costumeStyle.getWomenSizes();
+        }
+        SizeDialog dialog = new SizeDialog(InfoActivity.this, sizes, new SizeDialog.SizeDialogListeners() {
+            @Override
+            public void onClick(Size size) {
+                if(id.equals(Constant.shirtId))
+                    binding.txtSizeAo.setText(size.getName());
+                else if(id.equals(Constant.trousersId))
+                    binding.txtSizeQuan.setText(size.getName());
+                else if(id.equals(Constant.shoeId))
+                    binding.txtSizeGiay.setText(size.getName());
+            }
+        });
+
+        dialog.show();
     }
 
     private void changeLayoutHeader(boolean isChange){
@@ -248,7 +287,11 @@ public class InfoActivity extends AppCompatActivity {
 
         binding.btnSave.setOnClickListener(v -> {
             if(!user.getFullName().equals(binding.txtNameLayoutInfo.getText()+"") || user.getSex() != isSex){
-                User updateInfo = new User(binding.txtNameLayoutInfo.getText()+"", isSex);
+                List<SizeUser> sizeUsers = new ArrayList<>();
+                sizeUsers.add(new SizeUser(Constant.shirtId, binding.txtSizeAo.getText()+""));
+                sizeUsers.add(new SizeUser(Constant.trousersId, binding.txtSizeQuan.getText()+""));
+                sizeUsers.add(new SizeUser(Constant.shoeId, binding.txtSizeGiay.getText()+""));
+                User updateInfo = new User(binding.txtNameLayoutInfo.getText()+"", isSex, sizeUsers);
 
                 upInfo(updateInfo);
             }
@@ -260,6 +303,42 @@ public class InfoActivity extends AppCompatActivity {
 
         binding.btnBackBack.setOnClickListener(v -> {
             finish();
+        });
+
+        binding.layoutSizeAo.setOnClickListener(v -> {
+            CostumeStyle costumeStyle = new CostumeStyle();
+
+            for(CostumeStyle style: costumeStyles){
+                if(style.getId().equals(Constant.shirtId)){
+                    costumeStyle = style;
+                }
+            }
+
+            showSizeDialog(costumeStyle, Constant.shirtId);
+        });
+
+        binding.layoutSizeQuan.setOnClickListener(v -> {
+            CostumeStyle costumeStyle = new CostumeStyle();
+
+            for(CostumeStyle style: costumeStyles){
+                if(style.getId().equals(Constant.trousersId)){
+                    costumeStyle = style;
+                }
+            }
+
+            showSizeDialog(costumeStyle, trousersId);
+        });
+
+        binding.layoutSizeGiay.setOnClickListener(v -> {
+            CostumeStyle costumeStyle = new CostumeStyle();
+
+            for(CostumeStyle style: costumeStyles){
+                if(style.getId().equals(Constant.shoeId)){
+                    costumeStyle = style;
+                }
+            }
+
+            showSizeDialog(costumeStyle, Constant.shoeId);
         });
     }
 
@@ -275,6 +354,7 @@ public class InfoActivity extends AppCompatActivity {
                     UserInfo userInfo = response.body().getUser();
                     costumeFavourites = response.body().getUser().getCostumeFavourites();
                     user = userInfo.getUser();
+                    costumeStyles = userInfo.getCostumeStyles();
 
                     setLayoutInfo();
                     setCostumeFavourite();
@@ -310,6 +390,19 @@ public class InfoActivity extends AppCompatActivity {
                     binding.txtPhone.setText("Số điện thoại: "+userInfo.getUser().getPhone());
                     binding.imgNumber.setText(response.body().getUser().getQuantityCart()+"");
 
+                    List<SizeUser> sizeUsers = user.getSizes();
+                    if(sizeUsers != null){
+                        for(SizeUser sizeUser: sizeUsers){
+                            if(sizeUser.getCostumeId().equals(Constant.shirtId)){
+                                binding.txtSizeAo.setText(sizeUser.getSize());
+                            }else if(sizeUser.getCostumeId().equals(Constant.trousersId)){
+                                binding.txtSizeQuan.setText(sizeUser.getSize());
+                            }else if(sizeUser.getCostumeId().equals(Constant.shoeId)){
+                                binding.txtSizeGiay.setText(sizeUser.getSize());
+                            }
+                        }
+                    }
+
                     if(userInfo.getAddressDefault() == null){
                         binding.txtNameAddress.setText("Bạn chưa có địa chỉ giao hàng");
                         binding.txtPhoneAddress.setText("");
@@ -324,8 +417,6 @@ public class InfoActivity extends AppCompatActivity {
                                 userInfo.getAddressDefault().getCity());
                     }
                 }
-
-                Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
 
                 loading(false);
             }
@@ -409,6 +500,7 @@ public class InfoActivity extends AppCompatActivity {
     }
 
     private void upInfo(User updateUser){
+        loadingSave(true);
         Service service = getRetrofit().create(Service.class);
         Call<Message> updateInfo = service.UpdateInfo("bearer " + shared_preferences.getToken(), updateUser);
         updateInfo.enqueue(new Callback<Message>() {
@@ -427,11 +519,13 @@ public class InfoActivity extends AppCompatActivity {
                     shared_preferences.saveName(updateUser.getFullName());
                 }
                 Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
+                loadingSave(false);
             }
 
             @Override
             public void onFailure(Call<Message> call, Throwable t) {
                 Toast.makeText(getApplication(), "Cập nhật dữ liệu thất bại", Toast.LENGTH_SHORT).show();
+                loadingSave(false);
             }
         });
     }

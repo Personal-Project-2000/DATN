@@ -154,7 +154,7 @@ public class PaymentActivity extends AppCompatActivity {
             List<Request_CostumeBill> costumeBills = new ArrayList<>();
 
             for (Costume_Cart costume: costumes) {
-                Request_CostumeBill costumeBill = new Request_CostumeBill(costume.getCostume().getId(), costume.getQuantity());
+                Request_CostumeBill costumeBill = new Request_CostumeBill(costume.getCostume().getId(), costume.getQuantity(), costume.getColor(), costume.getSize());
 
                 costumeBills.add(costumeBill);
             }

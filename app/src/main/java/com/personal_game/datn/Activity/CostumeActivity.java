@@ -16,29 +16,31 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.Toast;
 
-import com.personal_game.datn.Adapter.BodyAdapter;
 import com.personal_game.datn.Adapter.BodyCostumeAdapter;
+import com.personal_game.datn.Adapter.ColorAdapter;
 import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Adapter.CostumeImgAdapter;
-import com.personal_game.datn.Adapter.CostumeStyleAdapter;
+import com.personal_game.datn.Adapter.SizeAdapter;
 import com.personal_game.datn.Adapter.StyleAdapter;
 import com.personal_game.datn.Api.ServiceApi.Service;
 import com.personal_game.datn.Backup.Shared_Preferences;
+import com.personal_game.datn.Dialog.SizeGuideDialog;
 import com.personal_game.datn.Models.Body;
+import com.personal_game.datn.Models.ColorObject;
 import com.personal_game.datn.Models.PersonalStyle;
 import com.personal_game.datn.Models.Picture;
+import com.personal_game.datn.Models.Size;
 import com.personal_game.datn.R;
+import com.personal_game.datn.Request.Request_AddCart;
 import com.personal_game.datn.Response.CostumeHome;
 import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.Response.Message_Costume;
-import com.personal_game.datn.Response.Message_Suggestion;
 import com.personal_game.datn.databinding.ActivityCostumeBinding;
-import com.personal_game.datn.databinding.ActivityMainBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -53,18 +55,25 @@ public class CostumeActivity extends AppCompatActivity {
     private CostumeImgAdapter costumeImgAdapter;
     private CostumeAdapter suitableOutfit;
     private CostumeAdapter costumeAdapter;
+    private SizeAdapter sizeAdapter;
+    private ColorAdapter colorAdapter;
     private StyleAdapter styleAdapter;
     private BodyCostumeAdapter bodyAdapter;
 
     private Shared_Preferences shared_preferences;
     private String costumeId = "";
     private String costumeName = "";
+    private String costumeStyleId = "";
     private List<Picture> pictures;
     private List<PersonalStyle> personalStyles;
     private List<Body> bodyList;
     private List<CostumeHome> relatedCostumes = new ArrayList<>();
     private List<CostumeHome> suitableOutfitCostumes = new ArrayList<>();
+    private List<Size> sizeList = new ArrayList<>();
+    private List<ColorObject> colorList = new ArrayList<>();
     private boolean isFavorite = false;
+    private int preColor = -1;
+    private int preSize = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +116,37 @@ public class CostumeActivity extends AppCompatActivity {
             binding.layoutMain1.setVisibility(View.VISIBLE);
             binding.progressBarMain.setVisibility(View.GONE);
         }
+    }
+
+    private void sizeGuide(){
+        SizeGuideDialog dialog = new SizeGuideDialog(CostumeActivity.this, sizeList, new SizeGuideDialog.SizeGuideListeners() {
+            @Override
+            public void onClick(String result) {
+                int position = 0;
+                for(int i = 0; i < sizeList.size(); i ++){
+                    if(sizeList.get(i).getName().equals(result)){
+                        position = i;
+                        break;
+                    }
+                }
+
+                if(preSize != -1){
+                    sizeList.get(preSize).setCheck(false);
+                    sizeAdapter.notifyItemChanged(preSize);
+                }
+
+                preSize = position;
+                sizeList.get(position).setCheck(true);
+                binding.txtSize.setText(getApplication().getString(R.string.size)+"  "+result);
+
+                sizeAdapter.notifyItemChanged(position);
+
+                binding.errorSize.setVisibility(View.GONE);
+            }
+        }, costumeStyleId);
+
+        dialog.show();
+        dialog.getWindow().setLayout(700, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     private void setListeners(){
@@ -180,7 +220,8 @@ public class CostumeActivity extends AppCompatActivity {
         });
 
         binding.layoutSize.setOnClickListener(v -> {
-            binding.layoutSize1.setVisibility(View.VISIBLE);
+            //binding.layoutSize1.setVisibility(View.VISIBLE);
+            sizeGuide();
         });
 
         binding.btnCloseSize.setOnClickListener(v -> {
@@ -257,34 +298,64 @@ public class CostumeActivity extends AppCompatActivity {
         });
     }
 
-    public void addCart(){
-        Service service = getRetrofit().create(Service.class);
-        Call<Message> cart = service.AddCart("bearer "+shared_preferences.getToken(), costumeId);
-        cart.enqueue(new Callback<Message>() {
-            @Override
-            public void onResponse(Call<Message> call, Response<Message> response) {
-                if(response.body().getStatus() == 1){
-                    //0 có nghĩa là sản phẩm đã sẳn trong giỏ hàng
-                    if(response.body().getId().equals("0")) {
-                        int quantity = Integer.parseInt(binding.txtNumber.getText() + "");
+    private boolean validateAddCate(){
+        boolean is = true;
 
-                        quantity++;
-                        binding.txtNumber.setText(quantity + "");
-                        shared_preferences.saveQuantityCart(quantity);
-                    }
-                }
+        if(preColor == -1 && sizeList != null){
+            is = false;
+            binding.errorColor.setVisibility(View.VISIBLE);
+        }
 
-                Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
-            }
+        if(preSize == -1 && colorList != null){
+            is = false;
+            binding.errorSize.setVisibility(View.VISIBLE);
+        }
 
-            @Override
-            public void onFailure(Call<Message> call, Throwable t) {
-                Toast.makeText(getApplication(), "Thêm dữ liệu thất bại", Toast.LENGTH_SHORT).show();
-            }
-        });
+        return is;
     }
 
-    private void getImg(){
+    public void addCart(){
+        if(validateAddCate()) {
+            ColorObject color = new ColorObject();
+            if(preColor != -1)
+                color = colorList.get(preColor);
+
+            String size = "";
+            if(preSize != -1)
+                size = sizeList.get(preSize).getName();
+
+            Service service = getRetrofit().create(Service.class);
+            Call<Message> cart = service.AddCart("bearer " + shared_preferences.getToken(), new Request_AddCart(
+                    costumeId,
+                    color,
+                    size
+            ));
+            cart.enqueue(new Callback<Message>() {
+                @Override
+                public void onResponse(Call<Message> call, Response<Message> response) {
+                    if (response.body().getStatus() == 1) {
+                        //0 có nghĩa là sản phẩm đã sẳn trong giỏ hàng
+                        if (response.body().getId().equals("0")) {
+                            int quantity = Integer.parseInt(binding.txtNumber.getText() + "");
+
+                            quantity++;
+                            binding.txtNumber.setText(quantity + "");
+                            shared_preferences.saveQuantityCart(quantity);
+                        }
+                    }
+
+                    Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(Call<Message> call, Throwable t) {
+                    Toast.makeText(getApplication(), "Thêm dữ liệu thất bại", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void setImg(){
         costumeImgAdapter = new CostumeImgAdapter(pictures, this);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
@@ -294,7 +365,7 @@ public class CostumeActivity extends AppCompatActivity {
         binding.rclImg.setAdapter(costumeImgAdapter);
     }
 
-    private void getSuitableOutfit(){
+    private void setSuitableOutfit(){
         suitableOutfit = new CostumeAdapter(suitableOutfitCostumes, this, new CostumeAdapter.CostumeListeners() {
             @Override
             public void onClickFavourite(CostumeHome costume, int position) {
@@ -318,7 +389,7 @@ public class CostumeActivity extends AppCompatActivity {
         binding.rclSuitableOutfit.setAdapter(suitableOutfit);
     }
 
-    private void getRelatedCostumes(){
+    private void setRelatedCostumes(){
         costumeAdapter = new CostumeAdapter(relatedCostumes, this, new CostumeAdapter.CostumeListeners() {
             @Override
             public void onClickFavourite(CostumeHome costume, int position) {
@@ -342,7 +413,7 @@ public class CostumeActivity extends AppCompatActivity {
         binding.rclRelatedCostumes.setAdapter(costumeAdapter);
     }
 
-    private void getStyle(){
+    private void setStyle(){
         ArrayList<String> temp = new ArrayList<>();
         for(int i = 0; i < 20; i ++){
             temp.add("Sy");
@@ -357,14 +428,72 @@ public class CostumeActivity extends AppCompatActivity {
         binding.rclStyles.setAdapter(styleAdapter);
     }
 
-    private void getBody(){
-       bodyAdapter = new BodyCostumeAdapter(bodyList, this);
+    private void setBody(){
+        bodyAdapter = new BodyCostumeAdapter(bodyList, this);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
         gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
 
         binding.rclBodys.setLayoutManager(gridLayoutManager);
         binding.rclBodys.setAdapter(bodyAdapter);
+    }
+
+    private void setSize(){
+        sizeAdapter = new SizeAdapter(sizeList, this, new SizeAdapter.SizeListeners() {
+            @Override
+            public void onClick(Size size, int position) {
+                if(size.isCheck()) {
+                    if(preSize != -1){
+                        sizeList.get(preSize).setCheck(false);
+                        sizeAdapter.notifyItemChanged(preSize);
+                    }
+
+                    preSize = position;
+                    sizeList.get(position).setCheck(size.isCheck());
+                    binding.txtSize.setText(getApplication().getString(R.string.size)+"  "+size.getName());
+
+                    binding.errorSize.setVisibility(View.GONE);
+                }else{
+                    preSize = -1;
+                    binding.txtSize.setText(getApplication().getString(R.string.size));
+                }
+            }
+        }, 1);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
+        gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
+
+        binding.rclSize.setLayoutManager(gridLayoutManager);
+        binding.rclSize.setAdapter(sizeAdapter);
+    }
+
+    private void setColor(){
+        colorAdapter = new ColorAdapter(colorList, this, new ColorAdapter.ColorListeners() {
+            @Override
+            public void onClick(int position, ColorObject colorObject) {
+                if(colorObject.isCheck()) {
+                    if(preColor != -1){
+                        colorList.get(preColor).setCheck(false);
+                        colorAdapter.notifyItemChanged(preColor);
+                    }
+
+                    preColor = position;
+                    colorList.get(position).setCheck(colorObject.isCheck());
+                    binding.txtColor.setText(getApplication().getString(R.string.color)+" "+colorObject.getName());
+
+                    binding.errorColor.setVisibility(View.GONE);
+                }else{
+                    preColor = -1;
+                    binding.txtColor.setText(getApplication().getString(R.string.color));
+                }
+            }
+        });
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
+        gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
+
+        binding.rclColor.setLayoutManager(gridLayoutManager);
+        binding.rclColor.setAdapter(colorAdapter);
     }
 
     private void getCostumeInfo(){
@@ -388,12 +517,32 @@ public class CostumeActivity extends AppCompatActivity {
                     suitableOutfitCostumes = response.body().getCostume().getSuitableOutfitCostumes();
                     isFavorite = response.body().getCostume().getFavourite();
                     costumeName = response.body().getCostume().getCostume().getName();
+                    colorList = response.body().getCostume().getCostume().getColors();
+                    sizeList = response.body().getCostume().getCostume().getSizes();
+                    costumeStyleId = response.body().getCostume().getCostume().getCostumeStyleId();
 
-                    getImg();
-                    getStyle();
-                    getBody();
-                    getRelatedCostumes();
-                    getSuitableOutfit();
+                    setImg();
+                    setStyle();
+                    setBody();
+                    setRelatedCostumes();
+                    setSuitableOutfit();
+                    if(sizeList != null)
+                    {
+                        for(int i = 0; i < sizeList.size(); i ++){
+                            if(sizeList.get(i).isCheck()){
+                                preSize = i;
+                                binding.txtSize.setText(getApplication().getString(R.string.size)+"  "+sizeList.get(i).getName());
+                                break;
+                            }
+                        }
+                        setSize();
+                    }else{
+                        binding.layoutSizeCostume.setVisibility(View.GONE);
+                    }
+                    if(colorList != null)
+                        setColor();
+                    else
+                        binding.layoutColor.setVisibility(View.GONE);
 
                     Picasso.Builder builder = new Picasso.Builder(getApplication());
                     builder.listener(new Picasso.Listener() {

@@ -1,6 +1,7 @@
 package com.personal_game.datn.Models;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class User implements Serializable {
     private String id ;
@@ -14,16 +15,23 @@ public class User implements Serializable {
     private int day ;
     private int month ;
     private int year ;
+    private List<SizeUser> sizes;
 
     public User(String fullName, Boolean sex) {
         this.fullName = fullName;
         this.sex = sex;
     }
 
-    public User(String fullName, String path, String phone) {
+    public User(String fullName, String pass, String phone) {
         this.fullName = fullName;
-        this.path = path;
+        this.pass = pass;
         this.phone = phone;
+    }
+
+    public User(String fullName, Boolean sex, List<SizeUser> sizes) {
+        this.fullName = fullName;
+        this.sex = sex;
+        this.sizes = sizes;
     }
 
     public User(String id, String fullName, String pass, String img, String path, String phone, Boolean sex, String date, int day, int month, int year) {
@@ -38,6 +46,14 @@ public class User implements Serializable {
         this.day = day;
         this.month = month;
         this.year = year;
+    }
+
+    public List<SizeUser> getSizes() {
+        return sizes;
+    }
+
+    public void setSizes(List<SizeUser> sizes) {
+        this.sizes = sizes;
     }
 
     public String getId() {

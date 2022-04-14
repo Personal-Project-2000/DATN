@@ -8,6 +8,8 @@ public class Cart implements Serializable {
     private String account ;
     private int quantity ;
     private Boolean state ;
+    private ColorObject color;
+    private String size;
 
     public Cart(String costumeId, int quantity, Boolean state) {
         this.costumeId = costumeId;
@@ -68,5 +70,21 @@ public class Cart implements Serializable {
 
     public void setState(Boolean state) {
         this.state = state;
+    }
+
+    public ColorObject getColor() {
+        return color;
+    }
+
+    public void setColor(ColorObject color) {
+        this.color = color;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 }

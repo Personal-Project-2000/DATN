@@ -5,6 +5,7 @@ import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -93,6 +94,17 @@ public class CostumeCartAdapter extends RecyclerView.Adapter<CostumeCartAdapter.
             binding.txtName.setText(costume.getCostume().getName());
             binding.txtPrice.setText(intConvertMoney(costume.getCostume().getPrice()));
             binding.txtQuantity.setText(costume.getQuantity()+"");
+            if(!costume.getSize().isEmpty())
+                binding.txtSize.setText(context.getString(R.string.size)+" "+costume.getSize());
+            else
+                binding.txtSize.setVisibility(View.GONE);
+
+            if(!costume.getColor().getCode().isEmpty())
+                binding.color.setBackgroundColor(Color.parseColor(costume.getColor().getCode()));
+            else {
+                binding.color.setVisibility(View.GONE);
+                binding.txtColor.setVisibility(View.GONE);
+            }
 
             if(costume.getState())
                 binding.btnSelect.setImageResource(R.drawable.circle_check);

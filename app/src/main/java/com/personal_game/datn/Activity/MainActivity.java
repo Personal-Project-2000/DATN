@@ -257,7 +257,6 @@ public class MainActivity extends AppCompatActivity {
                     shared_preferences.saveQuantityCart(response.body().getHome().getQuantityCart());
                 }
 
-                Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
                 loading(false);
             }
 

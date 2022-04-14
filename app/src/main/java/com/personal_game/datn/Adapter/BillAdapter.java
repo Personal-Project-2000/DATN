@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.personal_game.datn.Models.BillDetail;
 import com.personal_game.datn.Models.Costume;
 import com.personal_game.datn.Response.BillInfo;
 import com.personal_game.datn.databinding.ItemBillBinding;
@@ -60,7 +61,7 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder>{
         }
 
         public void setData(BillInfo bill) {
-            List<Costume> costume = bill.getCostumes();
+            List<BillDetail> costume = bill.getBill().getBillDetails();
             setImg(binding, costume);
 
             binding.txtTotal.setText(intConvertMoney(bill.getBill().getTotal()));
@@ -84,12 +85,7 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder>{
         void onClick(BillInfo bill);
     }
 
-    public void setImg(ItemBillBinding binding, List<Costume> costume){
-        ArrayList<String> temp = new ArrayList<>();
-        for(int i = 0; i < 20; i ++){
-            temp.add("Sy");
-        }
-
+    public void setImg(ItemBillBinding binding, List<BillDetail> costume){
         billImgAdapter = new BillImgAdapter(costume, context);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 1);

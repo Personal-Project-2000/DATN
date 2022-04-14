@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Smart Fashion</string>
     <string name="choose_file">Choose File</string>
+    <string name="size">Kích cỡ:</string>
+    <string name="color">Màu sắc:</string>
+    <string name="no_right_size">Không có kích cỡ phù hợp</string>
 </resources>

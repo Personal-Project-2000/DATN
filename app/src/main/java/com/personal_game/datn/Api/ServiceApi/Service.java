@@ -5,6 +5,7 @@ import com.personal_game.datn.Api.ModelLocation.ProvinceModel;
 import com.personal_game.datn.Models.Address;
 import com.personal_game.datn.Models.Cart;
 import com.personal_game.datn.Models.User;
+import com.personal_game.datn.Request.Request_AddCart;
 import com.personal_game.datn.Request.Request_Bill;
 import com.personal_game.datn.Request.Request_Suggestion;
 import com.personal_game.datn.Request.Request_UpdateBill;
@@ -61,8 +62,8 @@ public interface Service {
     @GET("Favourites_Get")
     Call<Message_Favourite> GetFavourites(@Header("Authorization") String token);
 
-    @GET("Cart_Get")
-    Call<Message> AddCart(@Header("Authorization") String token, @Query("costumeId") String costumeId);
+    @POST("Cart_Post")
+    Call<Message> AddCart(@Header("Authorization") String token, @Body Request_AddCart input);
 
     @GET("Carts_Get")
     Call<Message_Cart> GetCart(@Header("Authorization") String token);

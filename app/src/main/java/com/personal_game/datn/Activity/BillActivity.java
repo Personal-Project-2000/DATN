@@ -29,6 +29,7 @@ import com.personal_game.datn.Adapter.BillAdapter;
 import com.personal_game.datn.Adapter.CostumeBillAdapter;
 import com.personal_game.datn.Api.ServiceApi.Service;
 import com.personal_game.datn.Backup.Shared_Preferences;
+import com.personal_game.datn.Models.BillDetail;
 import com.personal_game.datn.Models.Costume;
 import com.personal_game.datn.R;
 import com.personal_game.datn.Request.Request_UpdateBill;
@@ -375,7 +376,7 @@ public class BillActivity extends AppCompatActivity {
                     }
                 });
 
-                setRclBillDetail(bill.getCostumes());
+                setRclBillDetail(bill.getBill().getBillDetails());
             }
         });
 
@@ -386,7 +387,7 @@ public class BillActivity extends AppCompatActivity {
         binding.rclBill.setAdapter(billAdapter);
     }
 
-    private void setRclBillDetail(List<Costume> costumes){
+    private void setRclBillDetail(List<BillDetail> costumes){
         costumeBillAdapter = new CostumeBillAdapter(costumes, this, new CostumeBillAdapter.CostumeBillListeners() {
             @Override
             public void onClick(Costume costume) {

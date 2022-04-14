@@ -154,7 +154,6 @@ public class CartActivity extends AppCompatActivity {
                     binding.txtTotal.setText(intConvertMoney(total));
                 }
 
-                Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
                 loading(false);
             }
 

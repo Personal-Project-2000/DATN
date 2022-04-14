@@ -1,6 +1,7 @@
 package com.personal_game.datn.Response;
 
 import com.personal_game.datn.Models.Address;
+import com.personal_game.datn.Models.CostumeStyle;
 import com.personal_game.datn.Models.User;
 
 import java.io.Serializable;
@@ -10,13 +11,22 @@ public class UserInfo implements Serializable {
     private User user ;
     private Address addressDefault ;
     private List<CostumeHome> costumeFavourites ;
-    private int quantityCart ;
+    private int quantityCart;
+    private List<CostumeStyle> costumeStyles;
 
     public UserInfo(User user, Address addressDefault, List<CostumeHome> costumeFavourites, int quantityCart) {
         this.user = user;
         this.addressDefault = addressDefault;
         this.costumeFavourites = costumeFavourites;
         this.quantityCart = quantityCart;
+    }
+
+    public List<CostumeStyle> getCostumeStyles() {
+        return costumeStyles;
+    }
+
+    public void setCostumeStyles(List<CostumeStyle> costumeStyles) {
+        this.costumeStyles = costumeStyles;
     }
 
     public User getUser() {

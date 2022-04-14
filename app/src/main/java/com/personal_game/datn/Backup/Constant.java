@@ -16,4 +16,9 @@ public class Constant {
     public static final String billTransportedId = "6233fd77ce455495b3c7b4e2";
     public static final String billCompleteId = "6233fd7fce455495b3c7b4e3";
     public static final String billCancelId = "6233fd8ace455495b3c7b4e4";
+    public static final String shirtId="623338f0c02ad9fa46582a5a";
+    public static final String trousersId="623338bac02ad9fa46582a55";
+    public static final String shoeId="623338fec02ad9fa46582a5c";
+    public static final String unitHeight = "cm)";
+    public static final String unitWeight = "kg)";
 }

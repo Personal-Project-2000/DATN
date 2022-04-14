@@ -1,5 +1,6 @@
 package com.personal_game.datn.Response;
 
+import com.personal_game.datn.Models.ColorObject;
 import com.personal_game.datn.Models.Costume;
 import com.personal_game.datn.Models.Picture;
 
@@ -10,6 +11,8 @@ public class Costume_Cart implements Serializable {
     //số lượng được trong giỏ hàng
     private int quantity ;
     private Boolean state ;
+    private ColorObject color;
+    private String size;
 
     public Boolean getState() {
         return state;
@@ -33,5 +36,21 @@ public class Costume_Cart implements Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public ColorObject getColor() {
+        return color;
+    }
+
+    public void setColor(ColorObject color) {
+        this.color = color;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 }
