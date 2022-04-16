@@ -68,12 +68,14 @@ public class CostumeActivity extends AppCompatActivity {
     private List<PersonalStyle> personalStyles;
     private List<Body> bodyList;
     private List<CostumeHome> relatedCostumes = new ArrayList<>();
+    private List<Picture> newPictures;
     private List<CostumeHome> suitableOutfitCostumes = new ArrayList<>();
     private List<Size> sizeList = new ArrayList<>();
     private List<ColorObject> colorList = new ArrayList<>();
     private boolean isFavorite = false;
     private int preColor = -1;
     private int preSize = -1;
+    private int preIndexImg = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,7 +193,8 @@ public class CostumeActivity extends AppCompatActivity {
                 switch (newState) {
                     case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
                         LinearLayoutManager linearLayoutManager = (LinearLayoutManager) binding.rclImg.getLayoutManager();
-                        binding.txtPosition.setText((linearLayoutManager.findFirstVisibleItemPosition()+1)+"/"+pictures.size());
+                        preIndexImg = linearLayoutManager.findFirstVisibleItemPosition();
+                        binding.txtPosition.setText((preIndexImg+1)+"/"+pictures.size());
                         break;
                     default:
                         break;
@@ -355,8 +358,8 @@ public class CostumeActivity extends AppCompatActivity {
         }
     }
 
-    private void setImg(){
-        costumeImgAdapter = new CostumeImgAdapter(pictures, this);
+    private void setImg(List<Picture> data){
+        costumeImgAdapter = new CostumeImgAdapter(data, this);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
         gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
@@ -482,9 +485,23 @@ public class CostumeActivity extends AppCompatActivity {
                     binding.txtColor.setText(getApplication().getString(R.string.color)+" "+colorObject.getName());
 
                     binding.errorColor.setVisibility(View.GONE);
+
+                    newPictures = new ArrayList<>();
+                    for (int i = 0; i < pictures.size(); i++) {
+                        if(pictures.get(i).getCodeColor().equals(colorObject.getCode())){
+                            newPictures.add(pictures.get(i));
+                        }
+                    }
+
+                    if(newPictures.size() != pictures.size()) {
+                        setImg(newPictures);
+                        binding.txtPosition.setText((preIndexImg + 1) + "/" + newPictures.size());
+                    }
                 }else{
                     preColor = -1;
                     binding.txtColor.setText(getApplication().getString(R.string.color));
+                    setImg(pictures);
+                    binding.txtPosition.setText((preIndexImg+1)+"/"+pictures.size());
                 }
             }
         });
@@ -521,7 +538,7 @@ public class CostumeActivity extends AppCompatActivity {
                     sizeList = response.body().getCostume().getCostume().getSizes();
                     costumeStyleId = response.body().getCostume().getCostume().getCostumeStyleId();
 
-                    setImg();
+                    setImg(pictures);
                     setStyle();
                     setBody();
                     setRelatedCostumes();

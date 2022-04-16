@@ -6,6 +6,15 @@ public class Size implements Serializable {
     private String name;
     private String description;
     private boolean isCheck;
+    private int quantity;
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
     public Size(String name) {
         this.name = name;
