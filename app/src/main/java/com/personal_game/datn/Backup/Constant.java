@@ -21,4 +21,11 @@ public class Constant {
     public static final String shoeId="623338fec02ad9fa46582a5c";
     public static final String unitHeight = "cm)";
     public static final String unitWeight = "kg)";
+
+    public static final int codeMinus = 1;
+    public static final int codeSelect = 2;
+    public static final int codePlus = 3;
+
+    public static final int paymentDefault = 4;
+    public static final int paymentZalo = 5;
 }

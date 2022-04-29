@@ -4,13 +4,13 @@ import java.io.Serializable;
 
 public class Favourite implements Serializable {
     private String id ;
-    private String account ;
+    private String userId ;
     private String costumeId ;
     private String date ;
 
-    public Favourite(String id, String account, String costumeId, String date) {
+    public Favourite(String id, String userId, String costumeId, String date) {
         this.id = id;
-        this.account = account;
+        this.userId = userId;
         this.costumeId = costumeId;
         this.date = date;
     }
@@ -23,12 +23,12 @@ public class Favourite implements Serializable {
         this.id = id;
     }
 
-    public String getAccount() {
-        return account;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getCostumeId() {

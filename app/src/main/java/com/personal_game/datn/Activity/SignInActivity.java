@@ -141,7 +141,8 @@ public class SignInActivity extends AppCompatActivity {
                 if(response.body().getStatus() == 1){
                     Shared_Preferences shared_preferences = new Shared_Preferences(getApplicationContext());
                     shared_preferences.saveToken(response.body().getData().getToken());
-                    shared_preferences.saveAddress(response.body().getData().getAddressDefault());
+                    if(response.body().getData().getAddressDefault() != null)
+                        shared_preferences.saveAddress(response.body().getData().getAddressDefault());
                     shared_preferences.saveName(response.body().getData().getName());
                     if(shared_preferences.getImg().equals("")) {
                         shared_preferences.saveImg(response.body().getData().getImage());

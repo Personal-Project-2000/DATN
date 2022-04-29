@@ -188,11 +188,47 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/layoutPayment"
+                android:id="@+id/layoutPromotion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 app:layout_constraintTop_toBottomOf="@id/layoutTransport">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="5dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Khuyễn mãi của bạn"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="15sp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rclPromotion"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/txt4"
+                        app:layout_constraintLeft_toLeftOf="parent"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/layoutPayment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                app:layout_constraintTop_toBottomOf="@id/layoutPromotion">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -300,11 +336,12 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rclCostumeCart"
-                        android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/txt4"
-                        app:layout_constraintLeft_toLeftOf="parent"/>
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/txt4" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -338,6 +375,18 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/layoutCreateBill"
             app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <TextView
+            android:id="@+id/txtTotalPromotion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100.000đ"
+            android:textColor="@color/black"
+            android:visibility="gone"
+            android:textSize="15sp"
+            android:layout_marginRight="5dp"
+            app:layout_constraintTop_toTopOf="@id/txt5"
+            app:layout_constraintRight_toLeftOf="@id/txtTotal"/>
 
         <TextView
             android:id="@+id/txtTotal"

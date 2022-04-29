@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Bill implements Serializable {
     private String id ;
-    private String account ;
+    private String userId ;
     private String name ;
     private String street ;
     private String address ;
@@ -18,10 +18,11 @@ public class Bill implements Serializable {
     private boolean isPayment;
     private int total ;
     private List<BillDetail> billDetails;
+    private Promotion promotion;
 
-    public Bill(String id, String account, String name, String street, String address, String phone, String stateId, String date, int day, int month, int year, int total) {
+    public Bill(String id, String userId, String name, String street, String address, String phone, String stateId, String date, int day, int month, int year, int total) {
         this.id = id;
-        this.account = account;
+        this.userId = userId;
         this.name = name;
         this.street = street;
         this.address = address;
@@ -32,6 +33,14 @@ public class Bill implements Serializable {
         this.month = month;
         this.year = year;
         this.total = total;
+    }
+
+    public Promotion getPromotion() {
+        return promotion;
+    }
+
+    public void setPromotion(Promotion promotion) {
+        this.promotion = promotion;
     }
 
     public List<BillDetail> getBillDetails() {
@@ -58,12 +67,12 @@ public class Bill implements Serializable {
         this.id = id;
     }
 
-    public String getAccount() {
-        return account;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getName() {

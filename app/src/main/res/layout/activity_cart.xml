@@ -96,6 +96,38 @@
                 app:layout_constraintBottom_toBottomOf="@id/layoutPayment"
                 app:layout_constraintRight_toLeftOf="@id/layoutPayment"/>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutPromotionTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/layoutPayment"
+                app:layout_constraintBottom_toBottomOf="@id/layoutPayment"
+                app:layout_constraintRight_toLeftOf="@id/layoutPayment"
+                android:layout_marginRight="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/txtPromotionTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100.000đ"
+                    android:textColor="@color/color1"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/txtPromotionDiscount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100.000đ"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:layout_constraintRight_toRightOf="@id/txtPromotionTotal"
+                    app:layout_constraintTop_toBottomOf="@id/txtPromotionTotal" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <FrameLayout
                 android:id="@+id/layoutPayment"
                 android:layout_width="0dp"

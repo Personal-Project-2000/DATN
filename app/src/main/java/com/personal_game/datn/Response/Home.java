@@ -8,6 +8,7 @@ import java.util.List;
 public class Home implements Serializable {
     private int quantityCart ;
     private int quantityFavourite ;
+    private List<Event> events;
     private List<CostumeStyle> costumeStyles ;
     private List<CostumeHome> costumeHots ;
     private List<CostumeHome> costumeNews ;
@@ -18,6 +19,14 @@ public class Home implements Serializable {
 
     public void setQuantityFavourite(int quantityFavourite) {
         this.quantityFavourite = quantityFavourite;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
     }
 
     public int getQuantityCart() {

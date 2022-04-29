@@ -12,7 +12,7 @@ public class Address implements Serializable {
     private String street ;
     private String phone ;
     private Boolean addressDefault ;
-    private String account ;
+    private String userId ;
 
     public Address(){
         this.id = "";
@@ -45,7 +45,7 @@ public class Address implements Serializable {
         this.addressDefault = addressDefault;
     }
 
-    public Address(String name, String ward, String district, String city, String street, String phone, Boolean addressDefault, String account) {
+    public Address(String name, String ward, String district, String city, String street, String phone, Boolean addressDefault, String userId) {
         this.name = name;
         this.ward = ward;
         this.district = district;
@@ -53,7 +53,7 @@ public class Address implements Serializable {
         this.street = street;
         this.phone = phone;
         this.addressDefault = addressDefault;
-        this.account = account;
+        this.userId = userId;
     }
 
     public String getId() {
@@ -120,11 +120,11 @@ public class Address implements Serializable {
         addressDefault = aDefault;
     }
 
-    public String getAccount() {
-        return account;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

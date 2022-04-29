@@ -16,6 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -32,8 +35,10 @@ import com.personal_game.datn.Backup.Shared_Preferences;
 import com.personal_game.datn.Dialog.SizeGuideDialog;
 import com.personal_game.datn.Models.Body;
 import com.personal_game.datn.Models.ColorObject;
+import com.personal_game.datn.Models.Costume;
 import com.personal_game.datn.Models.PersonalStyle;
 import com.personal_game.datn.Models.Picture;
+import com.personal_game.datn.Models.Promotion;
 import com.personal_game.datn.Models.Size;
 import com.personal_game.datn.R;
 import com.personal_game.datn.Request.Request_AddCart;
@@ -41,6 +46,7 @@ import com.personal_game.datn.Response.CostumeHome;
 import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.Response.Message_Costume;
 import com.personal_game.datn.databinding.ActivityCostumeBinding;
+import com.personal_game.datn.ultilities.RangeTime;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -76,6 +82,7 @@ public class CostumeActivity extends AppCompatActivity {
     private int preColor = -1;
     private int preSize = -1;
     private int preIndexImg = 0;
+    private CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +124,126 @@ public class CostumeActivity extends AppCompatActivity {
         }else{
             binding.layoutMain1.setVisibility(View.VISIBLE);
             binding.progressBarMain.setVisibility(View.GONE);
+        }
+    }
+
+    private String countDownTime(long milis){
+        int seconds = (int) (milis / 1000) % 60;
+        int minutes = (int) ((milis / (1000 * 60)) % 60);
+        int hours = (int) ((milis / (1000 * 60 * 60)) % 24);
+        int days = (int) ((milis / (1000 * 60 * 60)) / 24);
+
+        if (days > 0)
+            return days+" ngày";
+        else
+            return hours + ":" + minutes + ":" + seconds;
+    }
+
+    private int day(long milis){
+        return (int) ((milis / (1000 * 60 * 60)) / 24);
+    }
+
+    private void setEventHasNotStart(Costume costume){
+        costumeHasEvent(costume);
+
+        binding.txtDiscount.setVisibility(View.GONE);
+        binding.txtNoteEvent.setVisibility(View.GONE);
+        binding.txtValueEvent.setVisibility(View.GONE);
+    }
+
+    private void eventRunning(Costume costume){
+        costumeHasEvent(costume);
+
+        int discount = costume.getPrice()*(100-costume.getPromotion().getValue())/100;
+        binding.txtPrice.setText(intConvertMoney(discount));
+        binding.txtDiscount.setText(Html.fromHtml("<strike>"+intConvertMoney(costume.getPrice())+"</strike>"));
+        binding.txtPrice.setTextColor(getResources().getColor(R.color.color1));
+        binding.txtNoteEvent.setText("Tiết kiệm: "+intConvertMoney(costume.getPrice()-discount));
+        binding.txtValueEvent.setText("-"+costume.getPromotion().getValue()+"%");
+    }
+
+    private void costumeHasEvent(Costume costume){
+        if(!costume.getPromotion().getIcon().equals("")) {
+            Picasso.Builder builder = new Picasso.Builder(getApplicationContext());
+            builder.listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                    binding.imgIcon.setImageResource(R.drawable.ic_baseline_flash_on_24);
+                }
+            });
+            Picasso pic = builder.build();
+            pic.load(costume.getPromotion().getIcon()).into(binding.imgIcon);
+        }
+
+        binding.txtNameEvent.setText(costume.getPromotion().getName());
+    }
+
+    private void eventHasNotStart(Costume costume, long millisFutureStartTime){
+        setEventHasNotStart(costume);
+
+        //check range from nowTime to startTime: result > 1 day ==> only show, <= 1 day ==> count down
+        if(day(millisFutureStartTime) > 1){
+            binding.txtCountDown.setText(getApplication().getString(R.string.start_event) + " " + countDownTime(millisFutureStartTime));
+        }else{
+            countDownTimer = new CountDownTimer(millisFutureStartTime, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+                    binding.txtCountDown.setText(getApplication().getString(R.string.start_event) + " " + countDownTime(millisUntilFinished));
+                }
+
+                public void onFinish() {
+
+                }
+            }.start();
+        }
+    }
+
+    private void eventHasStart(Costume costume){
+        long millisFutureEndTime = RangeTime.getBetweenDayToNow(costume.getPromotion().getEndTime());
+
+        //check endTime with nowTime: result < 0 => endEvent
+        if(millisFutureEndTime >= 0){
+            eventRunning(costume);
+
+            //check range from nowTime from endTime: result > 1 day ==> only show, <= 1 day ==> count down
+            if(day(millisFutureEndTime) > 1){
+                binding.txtCountDown.setText(getApplication().getString(R.string.end_event) + " " + countDownTime(millisFutureEndTime));
+            }else{
+                countDownTimer = new CountDownTimer(millisFutureEndTime, 1000) {
+
+                    public void onTick(long millisUntilFinished) {
+                        binding.txtCountDown.setText(getApplication().getString(R.string.end_event) + " " + countDownTime(millisUntilFinished));
+                    }
+
+                    public void onFinish() {
+                        binding.txtCountDown.setText(getApplication().getString(R.string.done_event));
+                    }
+                }.start();
+            }
+        }else{
+            endEvent();
+        }
+    }
+
+    private void endEvent(){
+        binding.layoutEvent.setVisibility(View.GONE);
+        binding.txtDiscount.setVisibility(View.GONE);
+        binding.txtNoteEvent.setVisibility(View.GONE);
+        binding.txtValueEvent.setVisibility(View.GONE);
+    }
+
+    private void setPromotion(Costume costume){
+        if(costume.getPromotion() != null){
+            long millisFutureStartTime = RangeTime.getBetweenDayToNow(costume.getPromotion().getStartTime());
+
+            //check startTime with nowTime: result > 0 => nowTime < startTime => event hasn't start
+            if(millisFutureStartTime > 0){
+                eventHasNotStart(costume, millisFutureStartTime);
+            }else{
+                eventHasStart(costume);
+            }
+        }else{
+            endEvent();
         }
     }
 
@@ -514,6 +641,7 @@ public class CostumeActivity extends AppCompatActivity {
     }
 
     private void getCostumeInfo(){
+        Log.i("error", costumeId);
         loading(true);
 
         String token = shared_preferences.getToken();
@@ -543,6 +671,7 @@ public class CostumeActivity extends AppCompatActivity {
                     setBody();
                     setRelatedCostumes();
                     setSuitableOutfit();
+
                     if(sizeList != null)
                     {
                         for(int i = 0; i < sizeList.size(); i ++){
@@ -577,6 +706,8 @@ public class CostumeActivity extends AppCompatActivity {
                     binding.txtNumberFavourite.setText(response.body().getCostume().getQuantityFavourite()+"");
                     binding.txtPosition.setText("1/"+pictures.size());
 
+                    setPromotion(response.body().getCostume().getCostume());
+
                     String descriptionCostume = response.body().getCostume().getCostume().getDescription();
                     String description = " ";
                     String descriptionList[] = descriptionCostume.split(",");
@@ -589,6 +720,10 @@ public class CostumeActivity extends AppCompatActivity {
                         binding.imgFavourite.setImageResource(R.drawable.ic_baseline_favorite_24);
                     else
                         binding.imgFavourite.setImageResource(R.drawable.ic_favourite_none);
+                }else{
+                    Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
+                    Log.i("error", response.body().getNotification());
+                    finish();
                 }
                 loading(false);
             }
@@ -597,7 +732,24 @@ public class CostumeActivity extends AppCompatActivity {
             public void onFailure(Call<Message_Costume> call, Throwable t) {
                 Toast.makeText(getApplication(), "Lấy dữ liệu thất bại", Toast.LENGTH_SHORT).show();
                 loading(false);
+                finish();
             }
         });
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        if(countDownTimer != null)
+            countDownTimer.start();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if(countDownTimer != null)
+            countDownTimer.cancel();
     }
 }

@@ -136,47 +136,21 @@ public class RegistrationActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Đã gửi OTP", Toast.LENGTH_SHORT).show();
             mVerificationId = verificationId;
             mResendToken = token;
-            loading(false);
 
             VerifyOTPDialog dialog = new VerifyOTPDialog(RegistrationActivity.this, new VerifyOTPDialog.VerifyOTPListeners() {
                 @Override
                 public void onClick(String code) {
-                    verifyCode(code);
+                    loading(true);
+                    registration(binding.inputFullName.getText()+"",
+                            binding.inputPass.getText()+"",
+                            binding.inputTK.getText()+"");
                 }
-            });
+            }, "+84" + binding.inputTK.getText().toString());
 
             dialog.show();
             dialog.getWindow().setLayout(700, 430);
         }
     };
-
-    //code xác thực OTP
-    private void verifyCode(String code)
-    {
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
-        signInWithPhoneAuthCredential(credential);
-    }
-
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("Confirm", "signInWithCredential:success");
-                            FirebaseUser user = task.getResult().getUser();
-                            registration(binding.inputFullName.getText()+"",
-                                    binding.inputPass.getText()+"",
-                                    binding.inputTK.getText()+"");
-                        } else {
-                            Log.w("Confirm", "signInWithCredential:failure", task.getException());
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                            }
-                        }
-                        loading(false);
-                    }
-                });
-    }
 
     private void registration(String fullName, String pass, String phone) {
         loading(true);

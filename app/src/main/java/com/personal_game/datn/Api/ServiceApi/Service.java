@@ -9,6 +9,7 @@ import com.personal_game.datn.Request.Request_AddCart;
 import com.personal_game.datn.Request.Request_Bill;
 import com.personal_game.datn.Request.Request_Suggestion;
 import com.personal_game.datn.Request.Request_UpdateBill;
+import com.personal_game.datn.Response.BeforeCreateBill;
 import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.Response.Message_Address;
 import com.personal_game.datn.Response.Message_Bill;
@@ -112,4 +113,7 @@ public interface Service {
 
     @POST("CostumeSearch_Post")
     Call<Message_CostumeWithStyle> CostumeSearch(@Header("Authorization") String token, @Query("inputSearch") String inputSearch);
+
+    @GET("bills/before-create")
+    Call<BeforeCreateBill> BeforeCreate(@Header("Authorization") String token);
 }

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.personal_game.datn.Activity.CostumeActivity;
 import com.personal_game.datn.Api.ServiceApi.Service;
+import com.personal_game.datn.Backup.Constant;
 import com.personal_game.datn.Backup.Shared_Preferences;
 import com.personal_game.datn.Models.Cart;
 import com.personal_game.datn.R;
@@ -26,6 +28,7 @@ import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.Response.Message_Cart;
 import com.personal_game.datn.databinding.ItemCostumeBinding;
 import com.personal_game.datn.databinding.ItemCostumeCartBinding;
+import com.personal_game.datn.ultilities.RangeTime;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -81,6 +84,44 @@ public class CostumeCartAdapter extends RecyclerView.Adapter<CostumeCartAdapter.
         }
 
         public void setData(Costume_Cart costume) {
+            int discount = costume.getCostume().getPrice();
+            // giúp thông báo bên ngoài biết đang có khuyến mãi
+            boolean isDiscount = false;
+
+            if(costume.getCostume().getPromotion() != null){
+                if(RangeTime.checkRangeEvent(costume.getCostume().getPromotion().getStartTime(), costume.getCostume().getPromotion().getEndTime())) {
+                    binding.layoutDiscount.setVisibility(View.VISIBLE);
+                    binding.txtPrice.setVisibility(View.GONE);
+                    binding.txtValueEvent.setVisibility(View.VISIBLE);
+                    isDiscount = true;
+
+                    if (!costume.getCostume().getPromotion().getIcon().equals("")) {
+                        Picasso.Builder builder = new Picasso.Builder(context);
+                        builder.listener(new Picasso.Listener() {
+                            @Override
+                            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                                binding.imgIConDiscount.setImageResource(R.drawable.ic_baseline_flash_on_24);
+                            }
+                        });
+                        Picasso pic = builder.build();
+                        pic.load(costume.getCostume().getPromotion().getIcon()).into(binding.imgIConDiscount);
+                    }
+
+                    binding.txtValueEvent.setText("-" + costume.getCostume().getPromotion().getValue() + "%");
+                    discount = costume.getCostume().getPrice() * (100 - costume.getCostume().getPromotion().getValue()) / 100;
+                    binding.txtPriceDiscount.setText(intConvertMoney(discount));
+                    binding.txtDiscount.setText(Html.fromHtml("<strike>" + intConvertMoney(costume.getCostume().getPrice()) + "</strike>"));
+                }else {
+                    binding.layoutDiscount.setVisibility(View.GONE);
+                    binding.txtPrice.setVisibility(View.VISIBLE);
+                    binding.txtValueEvent.setVisibility(View.GONE);
+                }
+            }else{
+                binding.layoutDiscount.setVisibility(View.GONE);
+                binding.txtPrice.setVisibility(View.VISIBLE);
+                binding.txtValueEvent.setVisibility(View.GONE);
+            }
+
             Picasso.Builder builder = new Picasso.Builder(context);
             builder.listener(new Picasso.Listener() {
                 @Override
@@ -94,12 +135,12 @@ public class CostumeCartAdapter extends RecyclerView.Adapter<CostumeCartAdapter.
             binding.txtName.setText(costume.getCostume().getName());
             binding.txtPrice.setText(intConvertMoney(costume.getCostume().getPrice()));
             binding.txtQuantity.setText(costume.getQuantity()+"");
-            if(!costume.getSize().isEmpty())
+            if(costume.getSize() != null)
                 binding.txtSize.setText(context.getString(R.string.size)+" "+costume.getSize());
             else
                 binding.txtSize.setVisibility(View.GONE);
 
-            if(!costume.getColor().getCode().isEmpty())
+            if(costume.getColor() != null)
                 binding.color.setBackgroundColor(Color.parseColor(costume.getColor().getCode()));
             else {
                 binding.color.setVisibility(View.GONE);
@@ -115,22 +156,24 @@ public class CostumeCartAdapter extends RecyclerView.Adapter<CostumeCartAdapter.
                 binding.btnSelect.setVisibility(View.GONE);
             }
 
+            int finalDiscount = discount;
+            boolean finalIsDiscount = isDiscount;
             binding.btnRemove.setOnClickListener(v -> {
                 int quantity = costume.getQuantity() - 1;
 
-                costumeCartListeners.onClick(costume, quantity, costume.getState(), getAdapterPosition());
+                costumeCartListeners.onClick(costume, quantity, costume.getState(), getAdapterPosition(), finalDiscount, finalIsDiscount, Constant.codeMinus);
             });
 
             binding.btnAdd.setOnClickListener(v -> {
                 int quantity = costume.getQuantity() + 1;
 
-                costumeCartListeners.onClick(costume, quantity, costume.getState(), getAdapterPosition());
+                costumeCartListeners.onClick(costume, quantity, costume.getState(), getAdapterPosition(), finalDiscount, finalIsDiscount, Constant.codePlus);
             });
 
             binding.btnSelect.setOnClickListener(v -> {
                 boolean state = !costume.getState();
 
-                costumeCartListeners.onClick(costume, costume.getQuantity(), state, getAdapterPosition());
+                costumeCartListeners.onClick(costume, costume.getQuantity(), state, getAdapterPosition(), finalDiscount, finalIsDiscount, Constant.codeSelect);
             });
 
             binding.imgMain.setOnClickListener(v -> {
@@ -142,6 +185,6 @@ public class CostumeCartAdapter extends RecyclerView.Adapter<CostumeCartAdapter.
     }
 
     public interface CostumeCartListeners {
-        void onClick(Costume_Cart costume, int quantity, boolean state, int position);
+        void onClick(Costume_Cart costume, int quantity, boolean state, int position, int discount, boolean isDiscount, int code);
     }
 }

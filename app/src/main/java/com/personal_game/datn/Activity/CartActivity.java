@@ -1,7 +1,11 @@
 package com.personal_game.datn.Activity;
 
 import static com.personal_game.datn.Api.RetrofitApi.getRetrofit;
+import static com.personal_game.datn.Backup.Constant.codeMinus;
+import static com.personal_game.datn.Backup.Constant.codePlus;
+import static com.personal_game.datn.Backup.Constant.codeSelect;
 import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
+import static com.personal_game.datn.ultilities.ConvertMoney.longConvertMoney;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +14,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,6 +31,7 @@ import com.personal_game.datn.Response.Message_Cart;
 import com.personal_game.datn.Response.Message_Costume;
 import com.personal_game.datn.databinding.ActivityCartBinding;
 import com.personal_game.datn.databinding.ActivityCostumeBinding;
+import com.personal_game.datn.ultilities.RangeTime;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
@@ -41,7 +48,9 @@ public class CartActivity extends AppCompatActivity {
 
     private Shared_Preferences shared_preferences;
     private List<Costume_Cart> costumeCarts = new ArrayList<>();
-    private boolean isAll = true;
+    private int sumSelect = 0;
+    private long sumPrice = 0;
+    private int countSelectPromotionCostume = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +70,50 @@ public class CartActivity extends AppCompatActivity {
 
         setListeners();
         getCart();
+    }
+
+    private void sumTotal(){
+        sumSelect = 0;
+        sumPrice = 0;
+        countSelectPromotionCostume = 0;
+        for(int i = 0; i < costumeCarts.size(); i++){
+            if(costumeCarts.get(i).getState()){
+                sumSelect ++;
+                if(costumeCarts.get(i).getCostume().getPromotion() != null) {
+                    if (RangeTime.checkRangeEvent(costumeCarts.get(i).getCostume().getPromotion().getStartTime(), costumeCarts.get(i).getCostume().getPromotion().getEndTime())) {
+                        countSelectPromotionCostume ++;
+                        sumPrice += costumeCarts.get(i).getQuantity() * (costumeCarts.get(i).getCostume().getPrice() * (100 - costumeCarts.get(i).getCostume().getPromotion().getValue()) / 100);
+                        continue;
+                    }
+                }
+
+                sumPrice += costumeCarts.get(i).getQuantity()*costumeCarts.get(i).getCostume().getPrice();
+            }
+        }
+        Log.i("totalSelect", sumSelect+"");
+
+        setTextTotal();
+    }
+
+    private void setTextTotal(){
+        if(countSelectPromotionCostume > 0){
+            binding.layoutPromotionTotal.setVisibility(View.VISIBLE);
+            binding.txtTotal.setVisibility(View.GONE);
+
+            binding.txtPromotionTotal.setText(longConvertMoney(sumPrice));
+
+            long cost = 0;
+            for(Costume_Cart item: costumeCarts){
+                cost += item.getQuantity()*item.getCostume().getPrice();
+            }
+
+            binding.txtPromotionDiscount.setText(Html.fromHtml("<strike>"+longConvertMoney(cost)+"</strike>"));
+        }else{
+            binding.layoutPromotionTotal.setVisibility(View.GONE);
+            binding.txtTotal.setVisibility(View.VISIBLE);
+
+            binding.txtTotal.setText(longConvertMoney(sumPrice));
+        }
     }
 
     private void loading(boolean value){
@@ -93,7 +146,7 @@ public class CartActivity extends AppCompatActivity {
         });
 
         binding.btnAll.setOnClickListener(v -> {
-            if(!isAll){
+            if(sumSelect != costumeCarts.size()){
                 updateAllCart();
             }else{
                 binding.btnAll.setImageResource(R.drawable.circle_none);
@@ -108,12 +161,12 @@ public class CartActivity extends AppCompatActivity {
     private void getCostume(){
         costumeCartAdapter = new CostumeCartAdapter(costumeCarts, this, new CostumeCartAdapter.CostumeCartListeners() {
             @Override
-            public void onClick(Costume_Cart costume, int quantity, boolean state, int position) {
+            public void onClick(Costume_Cart costume, int quantity, boolean state, int position, int discount, boolean isDiscount, int code) {
                 Cart updateCart = new Cart(costume.getCostume().getId(),
                         quantity,
                         state);
 
-                updateCart(updateCart, position);
+                updateCart(updateCart, position, discount, isDiscount, code);
             }
         }, 1);
 
@@ -137,21 +190,12 @@ public class CartActivity extends AppCompatActivity {
 
                     getCostume();
 
-                    int total = 0;
-                    for(int i = 0; i < costumeCarts.size(); i++){
-                        if(!costumeCarts.get(i).getState()){
-                            isAll = false;
-                        }else{
-                            total += (costumeCarts.get(i).getQuantity()*costumeCarts.get(i).getCostume().getPrice());
-                        }
-                    }
+                    sumTotal();
 
-                    if(isAll)
+                    if(sumSelect == costumeCarts.size())
                         binding.btnAll.setImageResource(R.drawable.circle_check);
                     else
                         binding.btnAll.setImageResource(R.drawable.circle_none);
-
-                    binding.txtTotal.setText(intConvertMoney(total));
                 }
 
                 loading(false);
@@ -165,7 +209,7 @@ public class CartActivity extends AppCompatActivity {
         });
     }
 
-    private void updateCart(Cart updateCart, int position){
+    private void updateCart(Cart updateCart, int position, int discount, boolean isDiscount, int code){
         Service service = getRetrofit().create(Service.class);
         Call<Message> call = service.UpdateCart("bearer "+shared_preferences.getToken(), updateCart);
         call.enqueue(new Callback<Message>() {
@@ -177,22 +221,49 @@ public class CartActivity extends AppCompatActivity {
 
                     costumeCartAdapter.notifyItemChanged(position);
 
-                    int total = 0;
-                    isAll = true;
-                    for(int i = 0; i < costumeCarts.size(); i++){
-                        if(!costumeCarts.get(i).getState()){
-                            isAll = false;
-                        }else{
-                            total += (costumeCarts.get(i).getQuantity()*costumeCarts.get(i).getCostume().getPrice());
+                    switch (code){
+                        case codeSelect:{
+                            if(updateCart.getState()) {
+                                if(isDiscount)
+                                    countSelectPromotionCostume ++;
+                                sumPrice += discount*updateCart.getQuantity();
+                                sumSelect++;
+                            }else {
+                                if (isDiscount)
+                                    countSelectPromotionCostume --;
+                                sumPrice -= discount*updateCart.getQuantity();
+                                sumSelect --;
+                            }
+                        }break;
+                        case codeMinus:{
+                            if(updateCart.getState()) {
+                                sumPrice -= discount;
+                                sumSelect--;
+                            }
+                        }break;
+                        case codePlus:{
+                            if(updateCart.getState()) {
+                                sumPrice += discount;
+                                sumSelect++;
+                            }
                         }
                     }
+                    setTextTotal();
+//                    for(int i = 0; i < costumeCarts.size(); i++){
+//                        if(!costumeCarts.get(i).getState()){
+//                            isAll = false;
+//                        }else{
+//
+//                            total += (costumeCarts.get(i).getQuantity()*costumeCarts.get(i).getCostume().getPrice());
+//                        }
+//                    }
 
-                    if(isAll)
+                    if(sumSelect == costumeCarts.size())
                         binding.btnAll.setImageResource(R.drawable.circle_check);
                     else
                         binding.btnAll.setImageResource(R.drawable.circle_none);
 
-                    binding.txtTotal.setText(intConvertMoney(total));
+                    binding.txtTotal.setText(longConvertMoney(sumPrice));
                 }else{
                     Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
                 }
@@ -217,22 +288,12 @@ public class CartActivity extends AppCompatActivity {
                     }
                     costumeCartAdapter.notifyDataSetChanged();
 
-                    int total = 0;
-                    isAll = true;
-                    for(int i = 0; i < costumeCarts.size(); i++){
-                        if(!costumeCarts.get(i).getState()){
-                            isAll = false;
-                        }else{
-                            total += (costumeCarts.get(i).getQuantity()*costumeCarts.get(i).getCostume().getPrice());
-                        }
-                    }
+                    sumTotal();
 
-                    if(isAll)
+                    if(sumSelect == costumeCarts.size())
                         binding.btnAll.setImageResource(R.drawable.circle_check);
                     else
                         binding.btnAll.setImageResource(R.drawable.circle_none);
-
-                    binding.txtTotal.setText(intConvertMoney(total));
                 }
             }
 

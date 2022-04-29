@@ -22,4 +22,7 @@
     <color name="color3">#F1F1F1</color>
     <color name="color4">#FB574B</color>
     <color name="color5">#06D0E3</color>
+    <color name="event">#ACACAC</color>
+    <color name="indexImg">#9F707070</color>
+    <color name="ribbonsEvent">#B2FFE900</color>
 </resources>

@@ -6,8 +6,10 @@ import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.Response.Message_Home;
 import com.personal_game.datn.databinding.ItemCostumeBinding;
 import com.personal_game.datn.databinding.ItemCostumeStyleBinding;
+import com.personal_game.datn.ultilities.RangeTime;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -146,6 +149,31 @@ public class CostumeAdapter extends RecyclerView.Adapter<CostumeAdapter.ViewHold
                     }
                 });
             });
+
+            if(costume.getCostume().getPromotion() != null) {
+                if(RangeTime.checkRangeEvent(costume.getCostume().getPromotion().getStartTime(), costume.getCostume().getPromotion().getEndTime())) {
+                    binding.layoutEvent.setVisibility(View.VISIBLE);
+
+                    if (!costume.getCostume().getPromotion().getIcon().equals("")) {
+                        Picasso.Builder builder = new Picasso.Builder(context);
+                        builder.listener(new Picasso.Listener() {
+                            @Override
+                            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                                binding.imgEvent.setImageResource(R.drawable.logo);
+                            }
+                        });
+                        Picasso pic = builder.build();
+                        pic.load(costume.getCostume().getPromotion().getIcon()).into(binding.imgEvent);
+                    }
+
+                    binding.txtValueEvent.setText("-" + costume.getCostume().getPromotion().getValue() + "%");
+                    binding.txtDiscount.setVisibility(View.VISIBLE);
+                    binding.txtPrice.setTextColor(context.getResources().getColor(R.color.color1));
+                    int discount = costume.getCostume().getPrice() * (100 - costume.getCostume().getPromotion().getValue()) / 100;
+                    binding.txtPrice.setText(intConvertMoney(discount));
+                    binding.txtDiscount.setText(Html.fromHtml("<strike>" + intConvertMoney(costume.getCostume().getPrice()) + "</strike>"));
+                }
+            }
         }
     }
 

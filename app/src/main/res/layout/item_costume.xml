@@ -32,6 +32,35 @@
             android:layout_marginBottom="5dp"
             android:layout_marginRight="5dp"/>
 
+        <LinearLayout
+            android:id="@+id/layoutEvent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="@id/imgMain"
+            app:layout_constraintTop_toTopOf="@id/imgMain"
+            android:orientation="vertical"
+            android:background="@color/event"
+            android:padding="3dp"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="1dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/imgEvent"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_baseline_flash_on_24"/>
+
+            <TextView
+                android:id="@+id/txtValueEvent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:text="-42%"/>
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/imgSex"
             android:layout_width="wrap_content"
@@ -55,10 +84,23 @@
             android:layout_marginTop="10dp"/>
 
         <TextView
+            android:id="@+id/txtDiscount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@id/txtPrice"
+            app:layout_constraintTop_toTopOf="@id/txtPrice"
+            android:text="100.000đ"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="10sp"
+            android:layout_marginLeft="5dp"
+            android:visibility="gone"/>
+
+        <TextView
             android:id="@+id/txtName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="@id/txtPrice"
+            app:layout_constraintLeft_toLeftOf="@id/imgMain"
             app:layout_constraintTop_toBottomOf="@id/txtPrice"
             app:layout_constraintRight_toRightOf="@id/imgMain"
             android:textSize="11sp"

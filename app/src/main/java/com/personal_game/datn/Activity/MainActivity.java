@@ -11,10 +11,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -25,7 +27,9 @@ import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,6 +38,7 @@ import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
 import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Adapter.CostumeStyleAdapter;
+import com.personal_game.datn.Adapter.EventAdapter;
 import com.personal_game.datn.Api.ServiceApi.Service;
 import com.personal_game.datn.Backup.Shared_Preferences;
 import com.personal_game.datn.Models.Address;
@@ -41,6 +46,7 @@ import com.personal_game.datn.Models.CostumeStyle;
 import com.personal_game.datn.R;
 import com.personal_game.datn.Response.CostumeHome;
 import com.personal_game.datn.Response.Data;
+import com.personal_game.datn.Response.Event;
 import com.personal_game.datn.Response.Message_CostumeWithStyle;
 import com.personal_game.datn.Response.Message_Home;
 import com.personal_game.datn.Response.Message_Login;
@@ -64,11 +70,13 @@ public class MainActivity extends AppCompatActivity {
     private CostumeAdapter costumeHotAdapter;
     private CostumeAdapter costumeNewAdapter;
     private CostumeStyleAdapter costumeStyleAdapter;
+    private EventAdapter eventAdapter;
 
     private Shared_Preferences shared_preferences;
     private List<CostumeStyle> costumeStyles ;
     private List<CostumeHome> costumeHots ;
     private List<CostumeHome> costumeNews ;
+    private List<Event> events = new ArrayList<>();
 
     private Timer timer = new Timer();
     private final long DELAY = 300; // in ms
@@ -91,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void init(){
         shared_preferences = new Shared_Preferences(getApplicationContext());
+        activityMainBinding.swipeRefreshLayout.setColorSchemeResources(R.color.color1);
 
         setInfo();
 
@@ -100,13 +109,15 @@ public class MainActivity extends AppCompatActivity {
         setListeners();
     }
 
-    private void loading(boolean value){
-        if(value){
-            activityMainBinding.layoutMain.setVisibility(View.GONE);
-            activityMainBinding.progressBarMain.setVisibility(View.VISIBLE);
-        }else{
-            activityMainBinding.layoutMain.setVisibility(View.VISIBLE);
-            activityMainBinding.progressBarMain.setVisibility(View.GONE);
+    private void loading(boolean value, int code){
+        if(code == 1) {
+            if (value) {
+                activityMainBinding.layoutMain.setVisibility(View.GONE);
+                activityMainBinding.progressBarMain.setVisibility(View.VISIBLE);
+            } else {
+                activityMainBinding.layoutMain.setVisibility(View.VISIBLE);
+                activityMainBinding.progressBarMain.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -125,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
         name.setText(shared_preferences.getName());
 
-        getHome();
+        getHome(1);
     }
 
     private void setListeners(){
@@ -219,6 +230,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        activityMainBinding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getHome(2);
+            }
+        });
     }
 
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -234,40 +252,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     });
-
-    private void getHome(){
-        loading(true);
-        Service service = getRetrofit().create(Service.class);
-        Call<Message_Home> home = service.GetHome("bearer "+shared_preferences.getToken());
-        home.enqueue(new Callback<Message_Home>() {
-            @Override
-            public void onResponse(Call<Message_Home> call, Response<Message_Home> response) {
-                if(response.body().getStatus() == 1){
-                    activityMainBinding.imgNumber.setText(response.body().getHome().getQuantityCart()+"");
-
-                    costumeStyles = response.body().getHome().getCostumeStyles();
-                    costumeHots = response.body().getHome().getCostumeHots();
-                    costumeNews = response.body().getHome().getCostumeNews();
-
-                    setCostumeStyle();
-                    setCostume();
-                    setPromotion();
-
-                    shared_preferences.saveQuantityFavorite(response.body().getHome().getQuantityFavourite());
-                    shared_preferences.saveQuantityCart(response.body().getHome().getQuantityCart());
-                }
-
-                loading(false);
-            }
-
-            @Override
-            public void onFailure(Call<Message_Home> call, Throwable t) {
-                loading(false);
-                Intent intent = new Intent(getApplication(), SignInActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
 
     private void setCostumeStyle(){
         costumeStyleAdapter = new CostumeStyleAdapter(costumeStyles, this, new CostumeStyleAdapter.CostumeStyleListeners() {
@@ -330,6 +314,54 @@ public class MainActivity extends AppCompatActivity {
         activityMainBinding.rclCostume.setAdapter(costumeHotAdapter);
     }
 
+    private void setEvent(){
+        eventAdapter = new EventAdapter(events, this);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
+        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+
+        activityMainBinding.rclEvent.setLayoutManager(gridLayoutManager);
+        activityMainBinding.rclEvent.setAdapter(eventAdapter);
+    }
+
+    private void getHome(int code){
+        loading(true, code);
+        Service service = getRetrofit().create(Service.class);
+        Call<Message_Home> home = service.GetHome("bearer "+shared_preferences.getToken());
+        home.enqueue(new Callback<Message_Home>() {
+            @Override
+            public void onResponse(Call<Message_Home> call, Response<Message_Home> response) {
+                if(response.body().getStatus() == 1){
+                    activityMainBinding.imgNumber.setText(response.body().getHome().getQuantityCart()+"");
+
+                    costumeStyles = response.body().getHome().getCostumeStyles();
+                    costumeHots = response.body().getHome().getCostumeHots();
+                    costumeNews = response.body().getHome().getCostumeNews();
+                    events = response.body().getHome().getEvents();
+
+                    setCostumeStyle();
+                    setCostume();
+                    setPromotion();
+                    setEvent();
+
+                    shared_preferences.saveQuantityFavorite(response.body().getHome().getQuantityFavourite());
+                    shared_preferences.saveQuantityCart(response.body().getHome().getQuantityCart());
+                }
+
+                loading(false, 1);
+                activityMainBinding.swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(Call<Message_Home> call, Throwable t) {
+                loading(false, 1);
+                activityMainBinding.swipeRefreshLayout.setRefreshing(false);
+                Intent intent = new Intent(getApplication(), SignInActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
     private void getCostumeSearch(String input){
         Service service = getRetrofit().create(Service.class);
         Call<Message_CostumeWithStyle> call = service.CostumeSearch("bearer "+shared_preferences.getToken(), input);
@@ -380,5 +412,16 @@ public class MainActivity extends AppCompatActivity {
         name.setText(shared_preferences.getName());
 
         activityMainBinding.imgNumber.setText(shared_preferences.getQuantityCart());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //khi tắt ứng dụng thì set lại promotion nằm tắt các countdown trong adapter
+        for (int i = 0; i < events.size(); i++){
+            events.get(i).setPromotion(null);
+        }
+        eventAdapter.notifyDataSetChanged();
     }
 }

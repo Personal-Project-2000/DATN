@@ -86,6 +86,7 @@ public class ForgotDialog extends Dialog {
     private void setListeners(){
         layout.btnUpdatePass.setOnClickListener(v -> {
             loading(true);
+
             sendVerificationCode("+84" + layout.inputTK.getText().toString());
         });
     }
@@ -116,7 +117,7 @@ public class ForgotDialog extends Dialog {
     private void sendVerificationCode(String number) {
         PhoneAuthOptions options = PhoneAuthOptions.newBuilder(mAuth)
                 .setPhoneNumber(number) // số điện thoại cần xác thực
-                .setTimeout(60L, TimeUnit.SECONDS) //thời gian timeout
+                .setTimeout(120L, TimeUnit.SECONDS) //thời gian timeout
                 .setActivity(c) .setCallbacks(mCallbacks) .build();
         PhoneAuthProvider.verifyPhoneNumber(options);
     }
@@ -138,7 +139,7 @@ public class ForgotDialog extends Dialog {
         public void onVerificationFailed(FirebaseException e) {
             Log.e("onVerificationFailed", "onVerificationFailed", e);
             if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                Toast.makeText(c, "Request fail", Toast.LENGTH_SHORT).show();
+                Toast.makeText(c, "Không thể gửi OTP", Toast.LENGTH_SHORT).show();
             } else if (e instanceof FirebaseTooManyRequestsException) {
                 Toast.makeText(c, "Quota không đủ", Toast.LENGTH_SHORT).show();
             }
@@ -154,41 +155,17 @@ public class ForgotDialog extends Dialog {
             VerifyOTPDialog dialog = new VerifyOTPDialog(c, new VerifyOTPDialog.VerifyOTPListeners() {
                 @Override
                 public void onClick(String code) {
-                    verifyCode(code);
+                    loading(true);
+                    forgot(layout.inputTK.getText()+"",
+                            layout.inputPass.getText()+"");
                 }
-            });
+            },"+84" + layout.inputTK.getText().toString());
 
             dialog.show();
             dialog.getWindow().setLayout(700, 450);
+            dialog.setCancelable(false);
         }
     };
-
-    //code xác thực OTP
-    private void verifyCode(String code)
-    {
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
-        signInWithPhoneAuthCredential(credential);
-    }
-
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(c, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("Confirm", "signInWithCredential:success");
-                            FirebaseUser user = task.getResult().getUser();
-                            forgot(layout.inputTK.getText()+"",
-                                    layout.inputPass.getText()+"");
-                        } else {
-                            Log.w("Confirm", "signInWithCredential:failure", task.getException());
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                            }
-                            loading(false);
-                        }
-                    }
-                });
-    }
 
     public interface ForgotListeners{
         void onClick(String code);

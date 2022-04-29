@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Cart implements Serializable {
     private String id ;
     private String costumeId ;
-    private String account ;
+    private String userId ;
     private int quantity ;
     private Boolean state ;
     private ColorObject color;
@@ -17,17 +17,16 @@ public class Cart implements Serializable {
         this.state = state;
     }
 
-    public Cart(String costumeId, String account, int quantity, Boolean state) {
+    public Cart(String costumeId, String userId, int quantity, Boolean state) {
         this.costumeId = costumeId;
-        this.account = account;
+        this.userId = userId;
         this.quantity = quantity;
         this.state = state;
     }
 
-    public Cart(String id, String costumeId, String account, int quantity, Boolean state) {
+    public Cart(String id, String costumeId, String userId, int quantity, Boolean state) {
         this.id = id;
-        this.costumeId = costumeId;
-        this.account = account;
+        this.costumeId = userId;
         this.quantity = quantity;
         this.state = state;
     }
@@ -48,12 +47,12 @@ public class Cart implements Serializable {
         this.costumeId = costumeId;
     }
 
-    public String getAccount() {
-        return account;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public int getQuantity() {

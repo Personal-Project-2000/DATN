@@ -19,6 +19,15 @@ public class Costume implements Serializable {
     private List<Picture> pictures;
     private List<ColorObject> colors;
     private List<Size> sizes;
+    private Promotion promotion;
+
+    public Promotion getPromotion() {
+        return promotion;
+    }
+
+    public void setPromotion(Promotion promotion) {
+        this.promotion = promotion;
+    }
 
     public List<String> getBodies() {
         return bodies;
