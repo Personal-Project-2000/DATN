@@ -14,6 +14,7 @@ import static com.personal_game.datn.Backup.Constant.billTransportedId;
 import static com.personal_game.datn.Backup.Constant.billWait;
 import static com.personal_game.datn.Backup.Constant.billWaitId;
 import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
+import static com.personal_game.datn.ultilities.ConvertMoney.longConvertMoney;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -79,6 +80,25 @@ public class BillActivity extends AppCompatActivity {
 
         setListeners();
         getBill();
+    }
+
+    private void setMoney(int total, int valuePromotion){
+        binding.txtBuyMoney.setText(longConvertMoney(total));
+
+        if(valuePromotion != -1) {
+            binding.txtMoney5.setVisibility(View.VISIBLE);
+            binding.txtPromotionMoney.setVisibility(View.VISIBLE);
+
+            int pricePromotion = total * (valuePromotion) / 100;
+
+            binding.txtTotal.setText(longConvertMoney(total - pricePromotion));
+            binding.txtPromotionMoney.setText(longConvertMoney(total * (valuePromotion) / 100));
+        }else{
+            binding.txtPromotionMoney.setVisibility(View.GONE);
+            binding.txtMoney5.setVisibility(View.GONE);
+
+            binding.txtTotal.setText(intConvertMoney(total));
+        }
     }
 
     private void changeSelectStateBill(int state){
@@ -287,6 +307,7 @@ public class BillActivity extends AppCompatActivity {
 
         binding.btnClose.setOnClickListener(v -> {
             binding.layoutBill.setVisibility(View.GONE);
+            binding.layoutMoney.setVisibility(View.GONE);
         });
 
         binding.layoutBillPaid.setOnClickListener(v -> {
@@ -303,6 +324,10 @@ public class BillActivity extends AppCompatActivity {
 
         binding.layoutD.setOnClickListener(v -> {
             binding.layoutBill.setVisibility(View.GONE);
+        });
+
+        binding.btnPayDetail.setOnClickListener(v -> {
+            binding.layoutMoney.setVisibility(View.VISIBLE);
         });
     }
 
@@ -360,12 +385,15 @@ public class BillActivity extends AppCompatActivity {
             @Override
             public void onClick(BillInfo bill) {
                 binding.layoutBill.setVisibility(View.VISIBLE);
+                binding.layoutMoney.setVisibility(View.GONE);
                 binding.txtName.setText(bill.getBill().getName());
                 binding.txtPhone.setText(bill.getBill().getPhone());
                 binding.txtAddress.setText(bill.getBill().getStreet());
                 binding.txtAddress1.setText(bill.getBill().getAddress());
                 binding.txtTotal.setText(intConvertMoney(bill.getBill().getTotal()));
                 binding.txtTitleBill.setText("Chi tiết đơn hàng: "+bill.getBill().getId());
+
+                setMoney(bill.getBill().getTotal(), bill.getBill().getPromotion() != null ? bill.getBill().getPromotion().getValue() : -1);
 
                 binding.btnCancel.setOnClickListener(v -> {
                     if(!bill.getBillState().getId().equals(billWaitId)){

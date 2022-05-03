@@ -15,10 +15,11 @@
     <color name="secondary_text">#919191</color>
 
     <color name="donhat">#F83B3B</color>
-    <color name="background_btn">#870046</color>
-    
-    <color name="color1">#85052B</color>
-    <color name="color2">#057A85</color>
+    <color name="background_btn">#C10128</color>
+<!--    85052B-->
+    <color name="color1">#C30000</color>
+<!--    057A85-->
+    <color name="color2">#00929F</color>
     <color name="color3">#F1F1F1</color>
     <color name="color4">#FB574B</color>
     <color name="color5">#06D0E3</color>

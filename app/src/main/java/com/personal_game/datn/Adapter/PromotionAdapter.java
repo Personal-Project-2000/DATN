@@ -90,7 +90,9 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.View
 
             binding.txtTitle.setText(promotion.getName());
             binding.txtValue.setText("Khuyến mãi: "+promotion.getValue()+"%");
-            binding.txtCountDown.setText("Còn lại: "+"12:00:00");
+
+            long millislnFuture = RangeTime.getBetweenDayToNow(promotion.getEndTime());
+            binding.txtCountDown.setText("Còn lại: "+ day(millislnFuture)+" ngày");
 
             binding.layoutMain.setOnClickListener(v -> {
                 if(!promotion.isSelect()){
@@ -102,18 +104,6 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.View
                 }
                 promotionListeners.onClick(promotion, getAdapterPosition(), promotion.isSelect());
             });
-        }
-
-        private String countDownTime(long milis){
-            int seconds = (int) (milis / 1000) % 60;
-            int minutes = (int) ((milis / (1000 * 60)) % 60);
-            int hours = (int) ((milis / (1000 * 60 * 60)) % 24);
-            int days = (int) ((milis / (1000 * 60 * 60)) / 24);
-
-            if (days > 0)
-                return days+" ngày";
-            else
-                return hours + ":" + minutes + ":" + seconds;
         }
 
         private int day(long milis){

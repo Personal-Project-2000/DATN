@@ -151,7 +151,7 @@
                             android:text="100.000 đ"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:textSize="20sp"
+                            android:textSize="18sp"
                             app:layout_constraintTop_toBottomOf="@id/txtName"
                             app:layout_constraintLeft_toLeftOf="parent"/>
 
@@ -218,7 +218,7 @@
                                 android:textColor="@color/black"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintLeft_toLeftOf="parent"
-                                android:textSize="18sp"/>
+                                android:textSize="15sp"/>
 
                             <TextView
                                 android:id="@+id/errorColor"
@@ -265,7 +265,7 @@
                                 android:text="@string/size"
                                 android:textStyle="bold"
                                 android:textColor="@color/black"
-                                android:textSize="18sp"
+                                android:textSize="15sp"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintLeft_toLeftOf="parent"/>
 
@@ -315,7 +315,7 @@
                                 android:text="Vận chuyển đến"
                                 android:textStyle="bold"
                                 android:textColor="@color/black"
-                                android:textSize="18sp"
+                                android:textSize="15sp"
                                 app:layout_constraintTop_toTopOf="parent"/>
 
                             <LinearLayout
@@ -500,7 +500,7 @@
                             android:text="SẢN PHẨM PHÙ HỢP"
                             android:textColor="@color/black"
                             android:textStyle="bold"
-                            android:textSize="20sp"/>
+                            android:textSize="18sp"/>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rclSuitableOutfit"
@@ -524,7 +524,7 @@
                             android:text="SẢN PHẨM LIÊN QUAN"
                             android:textColor="@color/black"
                             android:textStyle="bold"
-                            android:textSize="20sp"/>
+                            android:textSize="18sp"/>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rclRelatedCostumes"
@@ -784,7 +784,7 @@
                     android:id="@+id/txt21"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Mô tả chi tiết"
+                    android:text="Miêu tả chi tiết"
                     app:layout_constraintTop_toBottomOf="@id/layout4"
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_marginTop="10dp"

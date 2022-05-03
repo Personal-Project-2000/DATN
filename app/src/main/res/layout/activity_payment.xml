@@ -159,8 +159,8 @@
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:src="@drawable/circle_check"
                             android:layout_gravity="center_vertical"/>
 
@@ -206,7 +206,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Khuyễn mãi của bạn"
+                        android:text="Khuyến mãi của bạn"
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         android:textSize="15sp"
@@ -258,8 +258,8 @@
 
                         <ImageView
                             android:id="@+id/btnSelect1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:src="@drawable/circle_check"/>
 
                         <TextView
@@ -282,12 +282,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="10dp">
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp">
 
                         <ImageView
                             android:id="@+id/btnSelect2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:src="@drawable/circle_none"/>
 
                         <TextView
@@ -327,6 +328,7 @@
                         app:layout_constraintLeft_toLeftOf="parent"/>
 
                     <TextView
+                        android:id="@+id/txtQuantityProduct"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintRight_toRightOf="parent"
@@ -342,6 +344,106 @@
                         android:layout_marginTop="8dp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/txt4" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/layoutMoney"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                app:layout_constraintTop_toBottomOf="@id/layoutCart">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="5dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp">
+
+                    <TextView
+                        android:id="@+id/txtMoney2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:text="Giá bán:"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/txtBuyMoney"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="@id/txtMoney2"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:text="100.000đ"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/txtMoney3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/txtMoney2"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:text="Tạm tính:"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/txtTemporaryMoney"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="@id/txtMoney3"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:text="100.000đ"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/txtMoney4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/txtMoney3"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:text="Phí vận chuyển:"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/txtTransportMoney"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="@id/txtMoney4"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:text="100.000đ"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/txtMoney5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/txtMoney4"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:text="Tiền khuyến mãi:"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/color1"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/txtPromotionMoney"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="@id/txtMoney5"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:text="100.000đ"
+                        android:textColor="@color/color1"
+                        android:textSize="12sp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>

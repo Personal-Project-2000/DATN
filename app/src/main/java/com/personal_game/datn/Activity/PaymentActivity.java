@@ -66,8 +66,11 @@ public class PaymentActivity extends AppCompatActivity {
     private int paymentMethods = paymentDefault;
     private int sumSelect = 0;
     private long sumPrice = 0;
+    //tiền sau khi khuyến mãi
     private long sumPricePromotion = 0;
     private int prePromotion = -1;
+    //Kiểm tra trong các sản phẩm có sản phẩm nào khuyến mãi
+    private boolean isCheckPromotion = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +94,8 @@ public class PaymentActivity extends AppCompatActivity {
 
         costumes = (List<Costume_Cart>)getIntent().getSerializableExtra("costumeBills");
         shared_preferences = new Shared_Preferences(getApplicationContext());
+
+        binding.txtQuantityProduct.setText(costumes.size()+" sản phẩm");
 
         getPromotion();
 
@@ -120,6 +125,7 @@ public class PaymentActivity extends AppCompatActivity {
             if(costumes.get(i).getState()){
                 if(costumes.get(i).getCostume().getPromotion() != null) {
                     if (RangeTime.checkRangeEvent(costumes.get(i).getCostume().getPromotion().getStartTime(), costumes.get(i).getCostume().getPromotion().getEndTime())) {
+                        isCheckPromotion = true;
                         sumPrice += costumes.get(i).getQuantity() * (costumes.get(i).getCostume().getPrice() * (100 - costumes.get(i).getCostume().getPromotion().getValue()) / 100);
                         continue;
                     }
@@ -128,6 +134,40 @@ public class PaymentActivity extends AppCompatActivity {
                 sumPrice += costumes.get(i).getQuantity()*costumes.get(i).getCostume().getPrice();
                 sumSelect ++;
             }
+        }
+
+        setMoney();
+    }
+
+    private void setMoney(){
+        binding.txtTemporaryMoney.setText(longConvertMoney(sumPrice));
+
+        if(isCheckPromotion){
+            long cost = 0;
+            for(Costume_Cart item: costumes){
+                cost += item.getQuantity()*item.getCostume().getPrice();
+            }
+
+            binding.txtBuyMoney.setText(Html.fromHtml("<strike>"+longConvertMoney(cost)+"</strike>"));
+        }else{
+            binding.txtBuyMoney.setText(Html.fromHtml("<strike>"+longConvertMoney(sumPrice)+"</strike>"));
+        }
+
+        if(prePromotion != -1){
+            binding.txtPromotionMoney.setVisibility(View.VISIBLE);
+            binding.txtMoney5.setVisibility(View.VISIBLE);
+
+            long pricePromotion = sumPrice*(promotions.get(prePromotion).getValue())/100;
+
+            binding.txtPromotionMoney.setText(longConvertMoney(pricePromotion));
+            sumPricePromotion = sumPrice-pricePromotion;
+
+            binding.txtTotal.setText(longConvertMoney(sumPricePromotion));
+        }else{
+            binding.txtPromotionMoney.setVisibility(View.GONE);
+            binding.txtMoney5.setVisibility(View.GONE);
+
+            binding.txtTotal.setText(longConvertMoney(sumPrice));
         }
     }
 
@@ -175,12 +215,13 @@ public class PaymentActivity extends AppCompatActivity {
             @Override
             public void onClick(Promotion promotion, int position, boolean isSelect) {
                 if(isSelect) {
-                    sumPricePromotion = sumPrice*(100-promotion.getValue())/100;
-                    binding.txtTotal.setText(longConvertMoney(sumPricePromotion));
-                    binding.txtTotal.setTextColor(getResources().getColor(R.color.color1));
-                    binding.txtTotalPromotion.setVisibility(View.VISIBLE);
-                    binding.txtTotalPromotion.setText(Html.fromHtml("<strike>"+longConvertMoney(sumPrice)+"</strike>"));
+//                    sumPricePromotion = sumPrice*(100-promotion.getValue())/100;
+//                    binding.txtTotal.setText(longConvertMoney(sumPricePromotion));
+//                    binding.txtTotal.setTextColor(getResources().getColor(R.color.color1));
+//                    binding.txtTotalPromotion.setVisibility(View.VISIBLE);
+//                    binding.txtTotalPromotion.setText(Html.fromHtml("<strike>"+longConvertMoney(sumPrice)+"</strike>"));
 
+                    //kiểm tra đã chọn khuyến mãi khác chưa
                     if (prePromotion != -1) {
                         promotions.get(prePromotion).setSelect(false);
 
@@ -188,11 +229,15 @@ public class PaymentActivity extends AppCompatActivity {
                     }
 
                     prePromotion = position;
+
+                    setMoney();
                 }else{
-                    binding.txtTotal.setTextColor(getResources().getColor(R.color.black));
-                    binding.txtTotalPromotion.setVisibility(View.GONE);
-                    binding.txtTotal.setText(longConvertMoney(sumPrice));
+//                    binding.txtTotal.setTextColor(getResources().getColor(R.color.black));
+//                    binding.txtTotalPromotion.setVisibility(View.GONE);
+//                    binding.txtTotal.setText(longConvertMoney(sumPrice));
                     prePromotion = -1;
+
+                    setMoney();
                 }
             }
         });
@@ -328,14 +373,7 @@ public class PaymentActivity extends AppCompatActivity {
                         }
                     }
 
-                    if(prePromotion != -1){
-                        sumPricePromotion = sumPrice*(100-promotions.get(prePromotion).getValue())/100;
-                        binding.txtTotal.setTextColor(getResources().getColor(R.color.color1));
-                        binding.txtTotalPromotion.setText(Html.fromHtml("<strike>"+longConvertMoney(sumPrice)+"</strike>"));
-                        binding.txtTotal.setText(longConvertMoney(sumPricePromotion));
-                    }else{
-                        binding.txtTotal.setText(longConvertMoney(sumPrice));
-                    }
+                    setMoney();
                 }else{
                     Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
                 }
@@ -357,14 +395,17 @@ public class PaymentActivity extends AppCompatActivity {
                 if(response.body().getStatus() == 1){
                     Intent intent = new Intent(getApplication(), MainActivity.class);
                     startActivity(intent);
+                    finish();
                 }
                 loading(false);
+                Log.i("errorAddBill", response.body().getId());
                 Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<Message> call, Throwable t) {
                 loading(false);
+                Log.i("errorAddBill", t.toString());
                 Toast.makeText(getApplication(), "Thêm hóa đơn thất bại", Toast.LENGTH_SHORT).show();
             }
         });

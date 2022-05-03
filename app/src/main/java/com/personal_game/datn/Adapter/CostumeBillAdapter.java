@@ -74,12 +74,12 @@ public class CostumeBillAdapter extends RecyclerView.Adapter<CostumeBillAdapter.
             binding.txtName.setText(costume.getName());
             binding.txtPrice.setText(intConvertMoney(costume.getPrice()));
             binding.txtQuantity.setText("x"+costume.getQuantity());
-            if(!costume.getSize().isEmpty())
+            if(costume.getSize() != null)
                 binding.txtSize.setText(context.getString(R.string.size)+" "+costume.getSize());
             else
                 binding.txtSize.setVisibility(View.GONE);
 
-            if(!costume.getColor().getCode().isEmpty())
+            if(costume.getColor() != null)
                 binding.color.setBackgroundColor(Color.parseColor(costume.getColor().getCode()));
             else {
                 binding.color.setVisibility(View.GONE);
