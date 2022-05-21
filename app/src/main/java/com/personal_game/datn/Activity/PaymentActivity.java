@@ -1,11 +1,14 @@
 package com.personal_game.datn.Activity;
 
 import static com.personal_game.datn.Api.RetrofitApi.getRetrofit;
+import static com.personal_game.datn.Api.RetrofitService.getRetrofitLocation;
 import static com.personal_game.datn.Backup.Constant.codeMinus;
 import static com.personal_game.datn.Backup.Constant.codePlus;
 import static com.personal_game.datn.Backup.Constant.codeSelect;
 import static com.personal_game.datn.Backup.Constant.paymentDefault;
 import static com.personal_game.datn.Backup.Constant.paymentZalo;
+import static com.personal_game.datn.Backup.Constant.shop_district;
+import static com.personal_game.datn.Backup.Constant.shop_id;
 import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
 import static com.personal_game.datn.ultilities.ConvertMoney.longConvertMoney;
 
@@ -23,8 +26,16 @@ import android.widget.Toast;
 
 import com.personal_game.datn.Adapter.CostumeAdapter;
 import com.personal_game.datn.Adapter.CostumeCartAdapter;
+import com.personal_game.datn.Adapter.CostumePaymentAdapter;
 import com.personal_game.datn.Adapter.PromotionAdapter;
+import com.personal_game.datn.Api.ModelFee.MessageFee;
+import com.personal_game.datn.Api.ModelFee.MessageService;
+import com.personal_game.datn.Api.ModelFee.RequestFee;
+import com.personal_game.datn.Api.ModelFee.RequestService;
 import com.personal_game.datn.Api.ServiceApi.Service;
+import com.personal_game.datn.Api.ServiceApi.ServiceLocation1;
+import com.personal_game.datn.Api.ServiceApi.ServiceService;
+import com.personal_game.datn.Backup.Constant;
 import com.personal_game.datn.Backup.Shared_Preferences;
 import com.personal_game.datn.Helper.AppInfo;
 import com.personal_game.datn.Helper.CreateOrder;
@@ -39,6 +50,7 @@ import com.personal_game.datn.Response.Costume_Cart;
 import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.databinding.ActivityInfoBinding;
 import com.personal_game.datn.databinding.ActivityPaymentBinding;
+import com.personal_game.datn.ultilities.ConvertMoney;
 import com.personal_game.datn.ultilities.RangeTime;
 
 import org.json.JSONObject;
@@ -56,7 +68,7 @@ import retrofit2.Response;
 
 public class PaymentActivity extends AppCompatActivity {
     private ActivityPaymentBinding binding;
-    private CostumeCartAdapter costumeCartAdapter;
+    private CostumePaymentAdapter costumeCartAdapter;
     private PromotionAdapter promotionAdapter;
 
     private Shared_Preferences shared_preferences;
@@ -71,6 +83,7 @@ public class PaymentActivity extends AppCompatActivity {
     private int prePromotion = -1;
     //Kiểm tra trong các sản phẩm có sản phẩm nào khuyến mãi
     private boolean isCheckPromotion = false;
+    private int fee = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,8 +114,6 @@ public class PaymentActivity extends AppCompatActivity {
 
         sumTotal();
 
-        binding.txtTotal.setText(longConvertMoney(sumPrice));
-
         addressDefault = shared_preferences.getAddress();
 
         if(addressDefault != null) {
@@ -110,10 +121,18 @@ public class PaymentActivity extends AppCompatActivity {
             binding.txtPhone.setText(addressDefault.getPhone());
             binding.txtAddress.setText(addressDefault.getStreet());
             binding.txtAddress1.setText(addressDefault.getWard() + " - " + addressDefault.getDistrict() + " - " + addressDefault.getCity());
+
+            if(sumPrice <= 699000)
+                getService(Integer.parseInt(sumPrice+""));
+            else
+                binding.txtTransportMoney.setText("miễn phí");
         }
         else{
             binding.txtName.setText("Bạn chưa có địa chỉ giao hàng");
         }
+
+        //binding.txtTotal.setText(longConvertMoney(sumPrice));
+
         setCostumeCart();
         setListeners();
     }
@@ -140,7 +159,7 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     private void setMoney(){
-        binding.txtTemporaryMoney.setText(longConvertMoney(sumPrice));
+        binding.txtTemporaryMoney.setText(longConvertMoney(sumPrice+fee));
 
         if(isCheckPromotion){
             long cost = 0;
@@ -150,7 +169,7 @@ public class PaymentActivity extends AppCompatActivity {
 
             binding.txtBuyMoney.setText(Html.fromHtml("<strike>"+longConvertMoney(cost)+"</strike>"));
         }else{
-            binding.txtBuyMoney.setText(Html.fromHtml("<strike>"+longConvertMoney(sumPrice)+"</strike>"));
+            binding.txtBuyMoney.setText(Html.fromHtml("<strike>"+longConvertMoney(sumPrice+fee)+"</strike>"));
         }
 
         if(prePromotion != -1){
@@ -159,15 +178,15 @@ public class PaymentActivity extends AppCompatActivity {
 
             long pricePromotion = sumPrice*(promotions.get(prePromotion).getValue())/100;
 
-            binding.txtPromotionMoney.setText(longConvertMoney(pricePromotion));
-            sumPricePromotion = sumPrice-pricePromotion;
+            binding.txtPromotionMoney.setText(longConvertMoney(pricePromotion+fee));
+            sumPricePromotion = sumPrice-pricePromotion+fee;
 
-            binding.txtTotal.setText(longConvertMoney(sumPricePromotion));
+            binding.txtTotal.setText(longConvertMoney(sumPricePromotion+fee));
         }else{
             binding.txtPromotionMoney.setVisibility(View.GONE);
             binding.txtMoney5.setVisibility(View.GONE);
 
-            binding.txtTotal.setText(longConvertMoney(sumPrice));
+            binding.txtTotal.setText(longConvertMoney(sumPrice+fee));
         }
     }
 
@@ -192,16 +211,7 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     private void setCostumeCart(){
-        costumeCartAdapter = new CostumeCartAdapter(costumes, this, new CostumeCartAdapter.CostumeCartListeners() {
-            @Override
-            public void onClick(Costume_Cart costume, int quantity, boolean state, int position, int discount, boolean isDiscount, int code) {
-                Cart updateCart = new Cart(costume.getCostume().getId(),
-                        quantity,
-                        state);
-
-                updateCart(updateCart, position, discount, isDiscount, code);
-            }
-        }, 2);
+        costumeCartAdapter = new CostumePaymentAdapter(costumes, this);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
@@ -277,15 +287,15 @@ public class PaymentActivity extends AppCompatActivity {
             }
 
             if(paymentMethods == paymentDefault){
-                Request_Bill bill = new Request_Bill(addressDefault.getId(), costumeBills, false);
+                Request_Bill bill = new Request_Bill(addressDefault.getId(), costumeBills, fee, false);
                 if(prePromotion != -1)
-                    bill = new Request_Bill(addressDefault.getId(), costumeBills, promotions.get(prePromotion), false);
+                    bill = new Request_Bill(addressDefault.getId(), costumeBills, promotions.get(prePromotion), fee, false);
                 loading(true);
                 addBill(bill);
             }else if(paymentMethods == paymentZalo){
-                Request_Bill bill = new Request_Bill(addressDefault.getId(), costumeBills, true);
+                Request_Bill bill = new Request_Bill(addressDefault.getId(), costumeBills, fee, true);
                 if(prePromotion != -1)
-                    bill = new Request_Bill(addressDefault.getId(), costumeBills, promotions.get(prePromotion), true);
+                    bill = new Request_Bill(addressDefault.getId(), costumeBills, promotions.get(prePromotion), fee, true);
                 loading(true);
                 paymentZaloPay(sumPrice+"", bill);
             }
@@ -337,55 +347,6 @@ public class PaymentActivity extends AppCompatActivity {
 //        ZaloPaySDK.getInstance().onResult(intent);
     }
 
-    private void updateCart(Cart updateCart, int position, int discount, boolean isDiscount, int code){
-        Service service = getRetrofit().create(Service.class);
-        Call<Message> call = service.UpdateCart("bearer "+shared_preferences.getToken(), updateCart);
-        call.enqueue(new Callback<Message>() {
-            @Override
-            public void onResponse(Call<Message> call, Response<Message> response) {
-                if(response.body().getStatus() == 1){
-                    costumes.get(position).setQuantity(updateCart.getQuantity());
-                    costumes.get(position).setState(updateCart.getState());
-
-                    costumeCartAdapter.notifyItemChanged(position);
-
-                    switch (code){
-                        case codeSelect:{
-                            if(updateCart.getState()) {
-                                sumPrice += discount*updateCart.getQuantity();
-                                sumSelect++;
-                            }else {
-                                sumPrice -= discount*updateCart.getQuantity();
-                                sumSelect --;
-                            }
-                        }break;
-                        case codeMinus:{
-                            if(updateCart.getState()) {
-                                sumPrice -= discount;
-                                sumSelect--;
-                            }
-                        }break;
-                        case codePlus:{
-                            if(updateCart.getState()) {
-                                sumPrice += discount;
-                                sumSelect++;
-                            }
-                        }
-                    }
-
-                    setMoney();
-                }else{
-                    Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Message> call, Throwable t) {
-                Toast.makeText(getApplication(), "Cập nhật dữ liệu thất bại", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     private void addBill(Request_Bill bill){
         Service service = getRetrofit().create(Service.class);
         Call<Message> call = service.AddBill("bearer "+shared_preferences.getToken(), bill);
@@ -435,6 +396,52 @@ public class PaymentActivity extends AppCompatActivity {
         });
     }
 
+    private void getFee(int total, int service_id){
+        ServiceService service = getRetrofitLocation().create(ServiceService.class);
+        Call<MessageFee> call = service.GetFee(Constant.tokenLocation, new RequestFee(service_id, total, null, shop_district, Integer.parseInt(addressDefault.getDistrictId()), Integer.parseInt(addressDefault.getWardId())));
+        call.enqueue(new Callback<MessageFee>() {
+            @Override
+            public void onResponse(Call<MessageFee> call, Response<MessageFee> response) {
+                if(response.body().getCode() == 200){
+                    fee = response.body().getData().getService_fee();
+                    binding.txtTransportMoney.setText(ConvertMoney.intConvertMoney(response.body().getData().getService_fee()));
+                    binding.txtTotal.setText(ConvertMoney.intConvertMoney(Integer.parseInt(sumPrice+"")+fee));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageFee> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getService(int total){
+        ServiceService service = getRetrofitLocation().create(ServiceService.class);
+        Call<MessageService> call = service.GetServices(Constant.tokenLocation, new RequestService(shop_id, shop_district, Integer.parseInt(addressDefault.getDistrictId())));
+        call.enqueue(new Callback<MessageService>() {
+            @Override
+            public void onResponse(Call<MessageService> call, Response<MessageService> response) {
+                if(response.body().getCode() == 200){
+                    List<com.personal_game.datn.Api.ModelFee.Service> services = response.body().getData();
+
+                    for(com.personal_game.datn.Api.ModelFee.Service service1: services){
+                        if(service1.getShort_name().equals("Đi bộ")){
+                            getFee(total, service1.getService_id());
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageService> call, Throwable t) {
+
+            }
+        });
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -445,5 +452,10 @@ public class PaymentActivity extends AppCompatActivity {
         binding.txtPhone.setText(addressDefault.getPhone());
         binding.txtAddress.setText(addressDefault.getStreet());
         binding.txtAddress1.setText(addressDefault.getWard() + " - "+addressDefault.getDistrict()+" - "+addressDefault.getCity());
+
+        if(sumPrice <= 699000)
+            getService(Integer.parseInt(sumPrice+""));
+        else
+            binding.txtTransportMoney.setText("miễn phí");
     }
 }

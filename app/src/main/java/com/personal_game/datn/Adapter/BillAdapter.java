@@ -1,9 +1,11 @@
 package com.personal_game.datn.Adapter;
 
 import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
+import static com.personal_game.datn.ultilities.ConvertMoney.longConvertMoney;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.personal_game.datn.Models.BillDetail;
 import com.personal_game.datn.Models.Costume;
+import com.personal_game.datn.Models.Promotion;
 import com.personal_game.datn.Response.BillInfo;
 import com.personal_game.datn.databinding.ItemBillBinding;
 
@@ -64,7 +67,9 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder>{
             List<BillDetail> costume = bill.getBill().getBillDetails();
             setImg(binding, costume);
 
-            binding.txtTotal.setText(intConvertMoney(bill.getBill().getTotal()));
+            //binding.txtTotal.setText(intConvertMoney(bill.getBill().getTotal()));
+
+            setMoney(bill.getBill().getTotal(), bill.getBill().getPromotion(), bill.getBill().getFee());
 
             String str = "(Đã thanh toán)";
             if(!bill.getBill().isPayment()){
@@ -78,6 +83,17 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder>{
             binding.layoutMain.setOnClickListener(v -> {
                 billListeners.onClick(bill);
             });
+        }
+
+        private void setMoney(int total, Promotion promotion, int fee){
+            if(promotion != null) {
+
+                int pricePromotion = total * (promotion.getValue()) / 100;
+
+                binding.txtTotal.setText(longConvertMoney(total - pricePromotion + fee));
+            }else{
+                binding.txtTotal.setText(intConvertMoney(total + fee));
+            }
         }
     }
 

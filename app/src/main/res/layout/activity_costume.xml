@@ -285,11 +285,11 @@
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rclSize"
-                            android:layout_marginTop="8dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:layout_constraintTop_toBottomOf="@id/layoutDes"
-                            app:layout_constraintLeft_toLeftOf="parent"/>
+                            android:layout_marginTop="8dp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/layoutDes" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -343,7 +343,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:textColor="@color/black"
-                                        android:text="Giao hàng miễn phí với mức giá cố định cho các đơn hàng trên 499.000đ"/>
+                                        android:text="Giao hàng miễn phí với mức giá cố định cho các đơn hàng trên 699.000đ"/>
 
                                     <TextView
                                         android:layout_width="wrap_content"
@@ -727,6 +727,24 @@
                     android:visibility="gone" />
             </FrameLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/imgCostume"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/logo"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/imgCostumeOld"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/logo"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layoutDescription"

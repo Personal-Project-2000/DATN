@@ -1,7 +1,7 @@
 package com.personal_game.datn.Activity;
 
 import static com.personal_game.datn.Api.RetrofitApi.getRetrofit;
-import static com.personal_game.datn.Api.RetrofitLocation.getRetrofitLocation;
+import static com.personal_game.datn.Api.RetrofitLocation1.getRetrofitLocation;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,12 +16,20 @@ import android.widget.Toast;
 
 import com.personal_game.datn.Adapter.CostumeImgAdapter;
 import com.personal_game.datn.Adapter.LocationAdapter;
-import com.personal_game.datn.Api.ModelLocation.DistrictModel;
-import com.personal_game.datn.Api.ModelLocation.Location;
-import com.personal_game.datn.Api.ModelLocation.ProvinceModel;
-import com.personal_game.datn.Api.ModelLocation.WardModel;
+import com.personal_game.datn.Api.ModelLocation1.DistrictModel;
+import com.personal_game.datn.Api.ModelLocation1.Location;
+import com.personal_game.datn.Api.ModelLocation1.MessageWard;
+import com.personal_game.datn.Api.ModelLocation1.RequestWard;
+import com.personal_game.datn.Api.ModelLocation1.WardModel;
+import com.personal_game.datn.Api.ModelLocation1.MessageDistrict;
+import com.personal_game.datn.Api.ModelLocation1.MessageProvince;
+import com.personal_game.datn.Api.ModelLocation1.ProvinceModel;
+import com.personal_game.datn.Api.ModelLocation1.RequestDistrict;
+import com.personal_game.datn.Api.RetrofitLocation1;
 import com.personal_game.datn.Api.ServiceApi.Service;
 import com.personal_game.datn.Api.ServiceApi.ServiceLocation;
+import com.personal_game.datn.Api.ServiceApi.ServiceLocation1;
+import com.personal_game.datn.Backup.Constant;
 import com.personal_game.datn.Backup.Shared_Preferences;
 import com.personal_game.datn.Models.Address;
 import com.personal_game.datn.R;
@@ -39,12 +47,15 @@ import retrofit2.Response;
 
 public class DeliveryAddressActivity extends AppCompatActivity {
     private ActivityDeliveryAddressBinding binding;
-    private ArrayList<ProvinceModel> provinceModels;
-    private ArrayList<DistrictModel> districtModels;
-    private ArrayList<WardModel> wardModels;
+    private List<ProvinceModel> provinceModels;
+    private List<DistrictModel> districtModels;
+    private List<WardModel> wardModels;
     private int positionProvince = -1;
     private int positionDistrict = -1;
     private int positionWard = -1;
+    private String cityId;
+    private String districtId;
+    private String wardId;
     private LocationAdapter locationProvince;
     private LocationAdapter locationDistrict;
     private LocationAdapter locationWard;
@@ -103,43 +114,44 @@ public class DeliveryAddressActivity extends AppCompatActivity {
 
     private void setCity(){
         provinceModels = new ArrayList<>();
-        ServiceLocation serviceAPI = getRetrofitLocation().create(ServiceLocation.class);
-        Call<ArrayList<ProvinceModel>> call = serviceAPI.GetProvinces();
-        call.enqueue(new Callback<ArrayList<ProvinceModel>>() {
+        ServiceLocation1 serviceAPI = RetrofitLocation1.getRetrofitLocation().create(ServiceLocation1.class);
+        Call<MessageProvince> call = serviceAPI.GetProvinces(Constant.tokenLocation);
+        call.enqueue(new Callback<MessageProvince>() {
             @Override
-            public void onResponse(Call<ArrayList<ProvinceModel>> call, Response<ArrayList<ProvinceModel>> response) {
-                provinceModels = response.body();
+            public void onResponse(Call<MessageProvince> call, Response<MessageProvince> response) {
+                provinceModels = response.body().getData();
 
                 ArrayList<Location> locations = new ArrayList<>();
                 for (ProvinceModel province: provinceModels) {
-                    locations.add(new Location(province.getCode(), province.getName()));
+                    locations.add(new Location(province.getProvinceID()+"", province.getProvinceName()));
                 }
 
                 setRcl(locations, 1);
             }
 
             @Override
-            public void onFailure(Call<ArrayList<ProvinceModel>> call, Throwable t) {
+            public void onFailure(Call<MessageProvince> call, Throwable t) {
 
             }
         });
     }
 
-    private void setDistrict(String code){
+    private void setDistrict(int code){
+        //Toast.makeText(getApplicationContext(), code+"", Toast.LENGTH_SHORT).show();
         districtModels = new ArrayList<>();
-        ServiceLocation serviceAPI = getRetrofitLocation().create(ServiceLocation.class);
-        Call<ProvinceModel> call = serviceAPI.GetDistricts(code);
-        call.enqueue(new Callback<ProvinceModel>() {
+        ServiceLocation1 serviceAPI = getRetrofitLocation().create(ServiceLocation1.class);
+        Call<MessageDistrict> call = serviceAPI.GetDistricts(Constant.tokenLocation, new RequestDistrict(code));
+        call.enqueue(new Callback<MessageDistrict>() {
             @Override
-            public void onResponse(Call<ProvinceModel> call, Response<ProvinceModel> response) {
-                districtModels.add(new DistrictModel("-1", "huyen", "-1", "Quận / Huyện", "-1"));
-                if (response.body() != null && response.body().getDistricts().size() > 0) {
-                    districtModels = response.body().getDistricts();
+            public void onResponse(Call<MessageDistrict> call, Response<MessageDistrict> response) {
+                districtModels.add(new DistrictModel(1, "huyen"));
+                if (response.body() != null && response.body().getData().size() > 0) {
+                    districtModels = response.body().getData();
                 }
 
                 ArrayList<Location> locations = new ArrayList<>();
                 for (DistrictModel districtModel: districtModels) {
-                    locations.add(new Location(districtModel.getCode(), districtModel.getName()));
+                    locations.add(new Location(districtModel.getDistrictID()+"", districtModel.getDistrictName()));
                 }
 
                 binding.rclCity.setVisibility(View.GONE);
@@ -150,27 +162,27 @@ public class DeliveryAddressActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ProvinceModel> call, Throwable t) {
+            public void onFailure(Call<MessageDistrict> call, Throwable t) {
                 Log.d("log:", t.getMessage());
             }
         });
     }
 
-    private void setWard(String code){
+    private void setWard(int code){
         wardModels = new ArrayList<>();
-        ServiceLocation serviceAPI = getRetrofitLocation().create(ServiceLocation.class);
-        Call<DistrictModel> call = serviceAPI.GetWards(code);
-        call.enqueue(new Callback<DistrictModel>() {
+        ServiceLocation1 serviceAPI = getRetrofitLocation().create(ServiceLocation1.class);
+        Call<MessageWard> call = serviceAPI.GetWards(Constant.tokenLocation, new RequestWard(code));
+        call.enqueue(new Callback<MessageWard>() {
             @Override
-            public void onResponse(Call<DistrictModel> call, Response<DistrictModel> response) {
-                wardModels.add(new WardModel("-1", "phuong", "-1", "-1", "Phường / Xã"));
-                if (response.body() != null && response.body().getWards().size() > 0) {
-                    wardModels = response.body().getWards();
+            public void onResponse(Call<MessageWard> call, Response<MessageWard> response) {
+                wardModels.add(new WardModel("-1", "phuong"));
+                if (response.body() != null && response.body().getData().size() > 0) {
+                    wardModels = response.body().getData();
                 }
 
                 ArrayList<Location> locations = new ArrayList<>();
                 for (WardModel wardModel: wardModels) {
-                    locations.add(new Location(wardModel.getCode(), wardModel.getName()));
+                    locations.add(new Location(wardModel.getWardCode(), wardModel.getWardName()));
                 }
 
                 binding.rclDistrict.setVisibility(View.GONE);
@@ -181,7 +193,7 @@ public class DeliveryAddressActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<DistrictModel> call, Throwable t) {
+            public void onFailure(Call<MessageWard> call, Throwable t) {
                 Log.d("log:", t.getMessage());
             }
         });
@@ -198,7 +210,8 @@ public class DeliveryAddressActivity extends AppCompatActivity {
                     @Override
                     public void onClick(Location location, int position) {
                         binding.SelectCity.setText(location.getName());
-                        setDistrict(location.getCode());
+                        cityId = location.getCode();
+                        setDistrict(Integer.parseInt(location.getCode()));
                         binding.SelectDistrict.setVisibility(View.VISIBLE);
 
                         if(positionProvince != -1) {
@@ -221,7 +234,8 @@ public class DeliveryAddressActivity extends AppCompatActivity {
                     @Override
                     public void onClick(Location location, int position) {
                         binding.SelectDistrict.setText(location.getName());
-                        setWard(location.getCode());
+                        districtId = location.getCode();
+                        setWard(Integer.parseInt(location.getCode()));
                         binding.SelectWard.setVisibility(View.VISIBLE);
 
                         if(positionDistrict != -1) {
@@ -241,6 +255,7 @@ public class DeliveryAddressActivity extends AppCompatActivity {
                 locationWard = new LocationAdapter(locations, getApplication(), new LocationAdapter.LocationListeners() {
                     @Override
                     public void onClick(Location location, int position) {
+                        wardId = location.getCode();
                         binding.SelectWard.setTextColor(getResources().getColor(R.color.color4));
                         binding.SelectWard.setText(location.getName());
                         binding.txtCity.setText(binding.SelectCity.getText()+"");
@@ -346,6 +361,9 @@ public class DeliveryAddressActivity extends AppCompatActivity {
                     binding.txtDistrict.getText()+"",
                     binding.txtCity.getText()+"",
                     binding.txtStreet.getText()+"",
+                    cityId,
+                    districtId,
+                    wardId,
                     binding.txtPhone.getText()+"",
                     addressDefault,
                     shared_preferences.getAccount());
@@ -377,6 +395,9 @@ public class DeliveryAddressActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Message> call, Response<Message> response) {
                 if(response.body().getStatus() == 1){
+                    newAddress.setId(response.body().getId());
+                    shared_preferences.saveAddress(newAddress);
+
                     Intent intent = new Intent(getApplication(), AddressActivity.class);
                     startActivity(intent);
                 }

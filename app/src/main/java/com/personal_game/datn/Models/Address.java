@@ -10,6 +10,9 @@ public class Address implements Serializable {
     private String district ;
     private String city ;
     private String street ;
+    private String cityId;
+    private String districtId;
+    private String wardId;
     private String phone ;
     private Boolean addressDefault ;
     private String userId ;
@@ -24,7 +27,7 @@ public class Address implements Serializable {
         this.phone = "";
     }
 
-    public Address(String id, String name, String ward, String district, String city, String street, String phone) {
+    public Address(String id, String name, String ward, String district, String city, String street, String phone, String wardId, String districtId, String cityId) {
         this.id = id;
         this.name = name;
         this.ward = ward;
@@ -32,9 +35,12 @@ public class Address implements Serializable {
         this.city = city;
         this.street = street;
         this.phone = phone;
+        this.wardId = wardId;
+        this.districtId = districtId;
+        this.cityId = cityId;
     }
 
-    public Address(String id, String name, String ward, String district, String city, String street, String phone, Boolean addressDefault) {
+    public Address(String id, String name, String ward, String district, String city, String street, String cityId, String districtId, String wardId, String phone, Boolean addressDefault) {
         this.id = id;
         this.name = name;
         this.ward = ward;
@@ -42,6 +48,9 @@ public class Address implements Serializable {
         this.city = city;
         this.street = street;
         this.phone = phone;
+        this.wardId = wardId;
+        this.districtId = districtId;
+        this.cityId = cityId;
         this.addressDefault = addressDefault;
     }
 
@@ -54,6 +63,52 @@ public class Address implements Serializable {
         this.phone = phone;
         this.addressDefault = addressDefault;
         this.userId = userId;
+    }
+
+    public Address(String name, String ward, String district, String city, String street, String cityId, String districtId, String wardId, String phone, Boolean addressDefault, String userId) {
+        this.name = name;
+        this.ward = ward;
+        this.district = district;
+        this.city = city;
+        this.street = street;
+        this.cityId = cityId;
+        this.districtId = districtId;
+        this.wardId = wardId;
+        this.phone = phone;
+        this.addressDefault = addressDefault;
+        this.userId = userId;
+    }
+
+    public String getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(String cityId) {
+        this.cityId = cityId;
+    }
+
+    public String getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(String districtId) {
+        this.districtId = districtId;
+    }
+
+    public String getWardId() {
+        return wardId;
+    }
+
+    public void setWardId(String wardId) {
+        this.wardId = wardId;
+    }
+
+    public Boolean getAddressDefault() {
+        return addressDefault;
+    }
+
+    public void setAddressDefault(Boolean addressDefault) {
+        this.addressDefault = addressDefault;
     }
 
     public String getId() {

@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.personal_game.datn.Api.ModelLocation.Location;
+import com.personal_game.datn.Api.ModelLocation1.Location;
 import com.personal_game.datn.R;
 import com.personal_game.datn.databinding.ItemLocationBinding;
 

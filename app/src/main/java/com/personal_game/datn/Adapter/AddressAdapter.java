@@ -97,6 +97,9 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
                         address.getDistrict(),
                         address.getCity(),
                         address.getStreet(),
+                        address.getCityId(),
+                        address.getDistrictId(),
+                        address.getWardId(),
                         address.getPhone(),
                         !checkDefault);
 

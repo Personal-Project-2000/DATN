@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,6 +52,7 @@ import com.personal_game.datn.ultilities.RangeTime;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -84,6 +87,9 @@ public class CostumeActivity extends AppCompatActivity {
     private int preIndexImg = 0;
     private CountDownTimer countDownTimer;
 
+    //kiểm tra đã bấm thêm chưa
+    private boolean isAdd = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +119,7 @@ public class CostumeActivity extends AppCompatActivity {
             costumeId = temp;
         }
 
+        setDay();
         getCostumeInfo();
         setListeners();
     }
@@ -141,6 +148,16 @@ public class CostumeActivity extends AppCompatActivity {
 
     private int day(long milis){
         return (int) ((milis / (1000 * 60 * 60)) / 24);
+    }
+
+    private void setDay(){
+        java.time.LocalDate dateStart = java.time.LocalDate.now();
+        dateStart = dateStart.plusDays(3);
+        java.time.LocalDate dateEnd = java.time.LocalDate.now();
+        dateEnd = dateEnd.plusDays(5);
+
+        binding.txt5.setText( dateStart.getDayOfMonth()+"/"+dateStart.getMonthValue()+"/"+dateStart.getYear()+" - "+
+                dateEnd.getDayOfMonth()+"/"+dateEnd.getMonthValue()+"/"+dateEnd.getYear());
     }
 
     private void setEventHasNotStart(Costume costume){
@@ -377,7 +394,12 @@ public class CostumeActivity extends AppCompatActivity {
         });
 
         binding.btnAddCart.setOnClickListener(v -> {
-            addCart();
+            if(!isAdd)
+                addCart();
+            else{
+                Intent intent = new Intent(getApplication(), CartActivity.class);
+                startActivity(intent);
+            }
         });
 
         binding.imgFavouriteTotal.setOnClickListener(v -> {
@@ -472,9 +494,27 @@ public class CostumeActivity extends AppCompatActivity {
                             binding.txtNumber.setText(quantity + "");
                             shared_preferences.saveQuantityCart(quantity);
                         }
-                    }
 
-                    Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
+                        binding.imgCostume.setVisibility(View.VISIBLE);
+                        AnimatorSet animSetXY = new AnimatorSet();
+                        if(isAdd) {
+                            binding.imgCostume.setY(binding.imgCostumeOld.getY());
+                            binding.imgCostume.setX(binding.imgCostumeOld.getX());
+                        }else{
+                            isAdd = true;
+                        }
+                        ObjectAnimator y = ObjectAnimator.ofFloat(binding.imgCostume, "translationY", binding.imgCart.getY()-binding.imgCostumeOld.getY());
+                        ObjectAnimator x = ObjectAnimator.ofFloat(binding.imgCostume, "translationX", binding.imgCostumeOld.getLeft(), binding.imgCart.getLeft());
+                        ObjectAnimator sy = ObjectAnimator.ofFloat(binding.imgCostume, "scaleY", 2f, 0.1f);
+                        ObjectAnimator sx = ObjectAnimator.ofFloat(binding.imgCostume, "scaleX", 2f, 0.1f);
+                        animSetXY.playTogether(x, y, sx, sy);
+                        animSetXY.setDuration(1500);
+                        animSetXY.start();
+
+                        binding.btnAddCart.setText("Xem giỏ hàng");
+                    }
+                    else
+                        Toast.makeText(getApplication(), response.body().getNotification(), Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -695,10 +735,12 @@ public class CostumeActivity extends AppCompatActivity {
                         @Override
                         public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
                             binding.imgMain.setImageResource(R.drawable.logo);
+                            binding.imgCostume.setImageResource(R.drawable.logo);
                         }
                     });
                     Picasso pic = builder.build();
                     pic.load(pictures.get(0).getLink()).into(binding.imgMain);
+                    pic.load(pictures.get(0).getLink()).into(binding.imgCostume);
 
                     binding.txtName.setText(costumeName);
                     binding.txtPrice.setText(intConvertMoney(response.body().getCostume().getCostume().getPrice()));

@@ -16,6 +16,7 @@ import com.personal_game.datn.Models.BillDetail;
 import com.personal_game.datn.Models.Costume;
 import com.personal_game.datn.R;
 import com.personal_game.datn.databinding.ItemCostumeBillBinding;
+import com.personal_game.datn.databinding.ItemCostumePaymentBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class CostumeBillAdapter extends RecyclerView.Adapter<CostumeBillAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder((ItemCostumeBillBinding.inflate(
+        return new ViewHolder((ItemCostumePaymentBinding.inflate(
                 LayoutInflater.from(parent.getContext()),
                 parent,
                 false
@@ -53,9 +54,9 @@ public class CostumeBillAdapter extends RecyclerView.Adapter<CostumeBillAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        final ItemCostumeBillBinding binding;
+        final ItemCostumePaymentBinding binding;
 
-        public ViewHolder(@NonNull ItemCostumeBillBinding binding) {
+        public ViewHolder(@NonNull ItemCostumePaymentBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

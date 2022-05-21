@@ -38,6 +38,7 @@ import com.personal_game.datn.Response.BillInfo;
 import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.Response.Message_Bill;
 import com.personal_game.datn.databinding.ActivityBillBinding;
+import com.personal_game.datn.ultilities.ConvertMoney;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +83,7 @@ public class BillActivity extends AppCompatActivity {
         getBill();
     }
 
-    private void setMoney(int total, int valuePromotion){
+    private void setMoney(int total, int valuePromotion, int fee){
         binding.txtBuyMoney.setText(longConvertMoney(total));
 
         if(valuePromotion != -1) {
@@ -91,13 +92,13 @@ public class BillActivity extends AppCompatActivity {
 
             int pricePromotion = total * (valuePromotion) / 100;
 
-            binding.txtTotal.setText(longConvertMoney(total - pricePromotion));
+            binding.txtTotal.setText(longConvertMoney(total - pricePromotion + fee));
             binding.txtPromotionMoney.setText(longConvertMoney(total * (valuePromotion) / 100));
         }else{
             binding.txtPromotionMoney.setVisibility(View.GONE);
             binding.txtMoney5.setVisibility(View.GONE);
 
-            binding.txtTotal.setText(intConvertMoney(total));
+            binding.txtTotal.setText(intConvertMoney(total + fee));
         }
     }
 
@@ -392,8 +393,12 @@ public class BillActivity extends AppCompatActivity {
                 binding.txtAddress1.setText(bill.getBill().getAddress());
                 binding.txtTotal.setText(intConvertMoney(bill.getBill().getTotal()));
                 binding.txtTitleBill.setText("Chi tiết đơn hàng: "+bill.getBill().getId());
+                if(bill.getBill().getFee() == 0)
+                    binding.txtTransportMoney.setText("miễn phí");
+                else
+                    binding.txtTransportMoney.setText(ConvertMoney.intConvertMoney(bill.getBill().getFee()));
 
-                setMoney(bill.getBill().getTotal(), bill.getBill().getPromotion() != null ? bill.getBill().getPromotion().getValue() : -1);
+                setMoney(bill.getBill().getTotal(), bill.getBill().getPromotion() != null ? bill.getBill().getPromotion().getValue() : -1, bill.getBill().getFee());
 
                 binding.btnCancel.setOnClickListener(v -> {
                     if(!bill.getBillState().getId().equals(billWaitId)){

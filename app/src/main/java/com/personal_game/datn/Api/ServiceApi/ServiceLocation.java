@@ -10,7 +10,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public interface ServiceLocation {
-    @GET("api/p/")
+    @GET("province")
     Call<ArrayList<ProvinceModel>> GetProvinces();
 
     @GET("api/p/{code}?depth=2")

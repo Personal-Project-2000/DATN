@@ -74,6 +74,9 @@ public class Shared_Preferences {
         editor.putString("District", address.getDistrict());
         editor.putString("City", address.getCity());
         editor.putString("IdAddress", address.getId());
+        editor.putString("WardId", address.getWardId());
+        editor.putString("DistrictId", address.getDistrictId());
+        editor.putString("CityId", address.getCityId());
         editor.apply();
         editor.commit();
     }
@@ -128,6 +131,9 @@ public class Shared_Preferences {
                 sharedPreferences.getString("District", ""),
                 sharedPreferences.getString("City", ""),
                 sharedPreferences.getString("Street", ""),
-                sharedPreferences.getString("PhoneAddress", ""));
+                sharedPreferences.getString("PhoneAddress", ""),
+                sharedPreferences.getString("WardId", ""),
+                sharedPreferences.getString("DistrictId", ""),
+                sharedPreferences.getString("CityId", ""));
     }
 }

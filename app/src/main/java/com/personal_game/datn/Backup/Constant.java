@@ -26,6 +26,10 @@ public class Constant {
     public static final int codeSelect = 2;
     public static final int codePlus = 3;
 
+    public static final String tokenLocation = "a2f375b0-d4d4-11ec-ac32-0e0f5adc015a";
+    public static final int shop_id = 2853871;
+    public static final int shop_district = 1455;
+
     public static final int paymentDefault = 4;
     public static final int paymentZalo = 5;
 }

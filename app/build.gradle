@@ -55,4 +55,7 @@ dependencies {
 
     //showImage
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    def dynamicanimation_version = '1.0.0'
+    implementation "androidx.dynamicanimation:dynamicanimation:$dynamicanimation_version"
 }

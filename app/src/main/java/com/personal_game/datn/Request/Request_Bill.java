@@ -8,19 +8,30 @@ public class Request_Bill {
     private String addressId ;
     private List<Request_CostumeBill> costumes ;
     private Promotion promotion;
+    private int fee;
     private boolean isPayment;
 
-    public Request_Bill(String addressId, List<Request_CostumeBill> costumes, boolean isPayment) {
+    public Request_Bill(String addressId, List<Request_CostumeBill> costumes, int fee, boolean isPayment) {
         this.addressId = addressId;
         this.costumes = costumes;
         this.isPayment = isPayment;
+        this.fee = fee;
     }
 
-    public Request_Bill(String addressId, List<Request_CostumeBill> costumes, Promotion promotion, boolean isPayment) {
+    public Request_Bill(String addressId, List<Request_CostumeBill> costumes, Promotion promotion, int fee, boolean isPayment) {
         this.addressId = addressId;
         this.costumes = costumes;
         this.promotion = promotion;
         this.isPayment = isPayment;
+        this.fee = fee;
+    }
+
+    public int getFee() {
+        return fee;
+    }
+
+    public void setFee(int fee) {
+        this.fee = fee;
     }
 
     public Promotion getPromotion() {

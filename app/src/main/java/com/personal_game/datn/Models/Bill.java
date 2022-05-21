@@ -17,6 +17,7 @@ public class Bill implements Serializable {
     private int year ;
     private boolean isPayment;
     private int total ;
+    private int fee;
     private List<BillDetail> billDetails;
     private Promotion promotion;
 
@@ -33,6 +34,14 @@ public class Bill implements Serializable {
         this.month = month;
         this.year = year;
         this.total = total;
+    }
+
+    public int getFee() {
+        return fee;
+    }
+
+    public void setFee(int fee) {
+        this.fee = fee;
     }
 
     public Promotion getPromotion() {
