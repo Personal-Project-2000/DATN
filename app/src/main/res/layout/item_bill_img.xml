@@ -5,7 +5,7 @@
     android:layout_margin="5dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -14,6 +14,17 @@
             android:layout_width="100dp"
             android:layout_height="150dp"
             android:src="@drawable/logo"
-            android:background="@drawable/vien"/>
-    </LinearLayout>
+            android:background="@drawable/vien"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <ImageView
+            android:id="@+id/imgCheck"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_baseline_check_24"
+            app:layout_constraintTop_toTopOf="@id/imgMain"
+            app:layout_constraintRight_toRightOf="@id/imgMain"
+            android:visibility="gone"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

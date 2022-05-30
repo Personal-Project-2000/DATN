@@ -6,6 +6,7 @@ import static com.personal_game.datn.Backup.Constant.codeMinus;
 import static com.personal_game.datn.Backup.Constant.codePlus;
 import static com.personal_game.datn.Backup.Constant.codeSelect;
 import static com.personal_game.datn.Backup.Constant.paymentDefault;
+import static com.personal_game.datn.Backup.Constant.paymentMoMo;
 import static com.personal_game.datn.Backup.Constant.paymentZalo;
 import static com.personal_game.datn.Backup.Constant.shop_district;
 import static com.personal_game.datn.Backup.Constant.shop_id;
@@ -61,6 +62,10 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import vn.zalopay.sdk.Environment;
+import vn.zalopay.sdk.ZaloPayError;
+import vn.zalopay.sdk.ZaloPaySDK;
+import vn.zalopay.sdk.listeners.PayOrderListener;
 //import vn.zalopay.sdk.Environment;
 //import vn.zalopay.sdk.ZaloPayError;
 //import vn.zalopay.sdk.ZaloPaySDK;
@@ -96,7 +101,7 @@ public class PaymentActivity extends AppCompatActivity {
                 StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-//        ZaloPaySDK.init(AppInfo.APP_ID, Environment.SANDBOX);
+        ZaloPaySDK.init(AppInfo.APP_ID, Environment.SANDBOX);
 
         init();
     }
@@ -204,9 +209,15 @@ public class PaymentActivity extends AppCompatActivity {
         if (code == paymentDefault) {
             binding.btnSelect1.setImageResource(R.drawable.circle_check);
             binding.btnSelect2.setImageResource(R.drawable.circle_none);
-        }else{
+            binding.btnSelect3.setImageResource(R.drawable.circle_none);
+        }else if(code == paymentZalo){
             binding.btnSelect1.setImageResource(R.drawable.circle_none);
             binding.btnSelect2.setImageResource(R.drawable.circle_check);
+            binding.btnSelect3.setImageResource(R.drawable.circle_none);
+        }else {
+            binding.btnSelect1.setImageResource(R.drawable.circle_none);
+            binding.btnSelect2.setImageResource(R.drawable.circle_none);
+            binding.btnSelect3.setImageResource(R.drawable.circle_check);
         }
     }
 
@@ -277,6 +288,12 @@ public class PaymentActivity extends AppCompatActivity {
             changePayment(paymentZalo);
         });
 
+        binding.layoutPayment3.setOnClickListener(v -> {
+            paymentMethods = paymentMoMo;
+
+            changePayment(paymentMoMo);
+        });
+
         binding.btnCreateBill.setOnClickListener(v -> {
             List<Request_CostumeBill> costumeBills = new ArrayList<>();
 
@@ -297,7 +314,13 @@ public class PaymentActivity extends AppCompatActivity {
                 if(prePromotion != -1)
                     bill = new Request_Bill(addressDefault.getId(), costumeBills, promotions.get(prePromotion), fee, true);
                 loading(true);
-                paymentZaloPay(sumPrice+"", bill);
+                paymentZaloPay(sumPrice, bill, fee);
+            }else if(paymentMethods == paymentMoMo){
+                Request_Bill bill = new Request_Bill(addressDefault.getId(), costumeBills, fee, true);
+                if(prePromotion != -1)
+                    bill = new Request_Bill(addressDefault.getId(), costumeBills, promotions.get(prePromotion), fee, true);
+                loading(true);
+                paymentMoMo();
             }
         });
 
@@ -306,10 +329,14 @@ public class PaymentActivity extends AppCompatActivity {
         });
     }
 
-    private void paymentZaloPay(String amount, Request_Bill bill){
+    private void paymentMoMo(){
+        Toast.makeText(getApplicationContext(), "Chức năng hiện đang bảo trì", Toast.LENGTH_SHORT).show();
+    }
+
+    private void paymentZaloPay(long amount, Request_Bill bill, int fee){
         CreateOrder orderApi = new CreateOrder();
         try {
-            JSONObject data = orderApi.createOrder(amount);
+            JSONObject data = orderApi.createOrder((amount+fee)+"");
             String code = data.getString("returncode");
 
             Log.e("code", code);
@@ -317,34 +344,37 @@ public class PaymentActivity extends AppCompatActivity {
 
                 String token = data.getString("zptranstoken");
 
-//                ZaloPaySDK.getInstance().payOrder(PaymentActivity.this, token, "demozpdk://app", new PayOrderListener() {
-//                    @Override
-//                    public void onPaymentSucceeded(final String  transactionId, final String transToken, final String appTransID) {
-//                        Toast.makeText(getApplication(), "Thanh toán thành công", Toast.LENGTH_SHORT).show();
-//                        addBill(bill);
-//                    }
-//
-//                    @Override
-//                    public void onPaymentCanceled(String zpTransToken, String appTransID) {
-//                        Toast.makeText(getApplication(), "Thanh toán bị hủy", Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                    @Override
-//                    public void onPaymentError(ZaloPayError zaloPayError, String zpTransToken, String appTransID) {
-//                        Toast.makeText(getApplication(), "Thanh toán thất bại", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+                ZaloPaySDK.getInstance().payOrder(PaymentActivity.this, token, "demozpdk://app", new PayOrderListener() {
+                    @Override
+                    public void onPaymentSucceeded(final String  transactionId, final String transToken, final String appTransID) {
+                        Toast.makeText(getApplication(), "Thanh toán thành công", Toast.LENGTH_SHORT).show();
+                        addBill(bill);
+                    }
+
+                    @Override
+                    public void onPaymentCanceled(String zpTransToken, String appTransID) {
+                        Toast.makeText(getApplication(), "Thanh toán bị hủy", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onPaymentError(ZaloPayError zaloPayError, String zpTransToken, String appTransID) {
+                        Toast.makeText(getApplication(), "Thanh toán thất bại", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
         } catch (Exception e) {
             Toast.makeText(getApplication(), e.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("errorPayment", e.toString());
+            loading(false);
         }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-//        ZaloPaySDK.getInstance().onResult(intent);
+        loading(false);
+        ZaloPaySDK.getInstance().onResult(intent);
     }
 
     private void addBill(Request_Bill bill){

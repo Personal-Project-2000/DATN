@@ -21,14 +21,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DATN">
         <activity
-            android:name=".Activity.MainActivity2"
-            android:exported="true" >
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-        </activity>
+            android:name=".Activity.CoordinatesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.CoordinateActivity"
+            android:exported="false" />
         <activity
             android:name=".Activity.BillActivity"
             android:exported="true" />
@@ -91,7 +88,7 @@
             android:exported="false" />
         <activity
             android:name=".Activity.RegistrationActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".Activity.SignInActivity"
             android:exported="true">

@@ -86,6 +86,7 @@ public class CostumeActivity extends AppCompatActivity {
     private int preSize = -1;
     private int preIndexImg = 0;
     private CountDownTimer countDownTimer;
+    private Costume costume;
 
     //kiểm tra đã bấm thêm chưa
     private boolean isAdd = false;
@@ -415,6 +416,12 @@ public class CostumeActivity extends AppCompatActivity {
         binding.btnBackBack.setOnClickListener(v -> {
             finish();
         });
+
+        binding.imgEye.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), CoordinatesActivity.class);
+            intent.putExtra("costume", costume);
+            startActivity(intent);
+        });
     }
 
     public void setFavourite(){
@@ -705,6 +712,7 @@ public class CostumeActivity extends AppCompatActivity {
                     colorList = response.body().getCostume().getCostume().getColors();
                     sizeList = response.body().getCostume().getCostume().getSizes();
                     costumeStyleId = response.body().getCostume().getCostume().getCostumeStyleId();
+                    costume = response.body().getCostume().getCostume();
 
                     setImg(pictures);
                     setStyle();

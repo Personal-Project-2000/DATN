@@ -14,6 +14,10 @@
             android:icon="@drawable/ic_baseline_search_24"
             android:title="Gợi ý" />
         <item
+            android:id="@+id/nav_coordinate"
+            android:icon="@drawable/ic_baseline_search_24"
+            android:title="Phối đồ" />
+        <item
             android:id="@+id/nav_notification"
             android:icon="@drawable/ic_baseline_notifications_none_24"
             android:title="Thông báo" />

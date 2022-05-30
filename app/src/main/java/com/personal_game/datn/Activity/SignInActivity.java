@@ -15,9 +15,6 @@ import android.widget.Toast;
 import com.personal_game.datn.Api.ServiceApi.Service;
 import com.personal_game.datn.Backup.Shared_Preferences;
 import com.personal_game.datn.Dialog.ForgotDialog;
-import com.personal_game.datn.Dialog.VerifyOTPDialog;
-import com.personal_game.datn.Models.User;
-import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.Response.Message_Login;
 import com.personal_game.datn.databinding.ActivitySignInBinding;
 

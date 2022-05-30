@@ -164,6 +164,11 @@ public class MainActivity extends AppCompatActivity {
                         startActivityForResult(intent, 3);
                         break;
                     }
+                    case R.id.nav_coordinate: {
+                        Intent intent = new Intent(getApplication(), CoordinatesActivity.class);
+                        startActivityForResult(intent, 3);
+                        break;
+                    }
                     case R.id.nav_signout: {
                         shared_preferences.saveToken1("");
                         shared_preferences.saveAddress(new Address());

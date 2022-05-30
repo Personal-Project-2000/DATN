@@ -1,6 +1,7 @@
 package com.personal_game.datn.Adapter;
 
 import static com.personal_game.datn.Api.RetrofitApi.getRetrofit;
+import static com.personal_game.datn.Backup.Constant.SwitchCostumeActivity;
 import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
 
 import android.content.Context;
@@ -108,9 +109,7 @@ public class CostumeAdapter extends RecyclerView.Adapter<CostumeAdapter.ViewHold
             }
 
             binding.imgMain.setOnClickListener(v -> {
-                Intent intent = new Intent(context, CostumeActivity.class);
-                intent.putExtra("costumeId", costume.getCostume().getId());
-                context.startActivity(intent);
+                SwitchCostumeActivity(context, costume.getCostume().getId());
             });
 
             binding.imgFavourite.setOnClickListener(v -> {

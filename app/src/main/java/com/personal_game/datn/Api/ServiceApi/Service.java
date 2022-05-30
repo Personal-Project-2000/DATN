@@ -1,9 +1,8 @@
 package com.personal_game.datn.Api.ServiceApi;
 
-import com.personal_game.datn.Api.ModelLocation.DistrictModel;
-import com.personal_game.datn.Api.ModelLocation.ProvinceModel;
 import com.personal_game.datn.Models.Address;
 import com.personal_game.datn.Models.Cart;
+import com.personal_game.datn.Models.Coordinate;
 import com.personal_game.datn.Models.User;
 import com.personal_game.datn.Request.Request_AddCart;
 import com.personal_game.datn.Request.Request_Bill;
@@ -14,6 +13,8 @@ import com.personal_game.datn.Response.Message;
 import com.personal_game.datn.Response.Message_Address;
 import com.personal_game.datn.Response.Message_Bill;
 import com.personal_game.datn.Response.Message_Cart;
+import com.personal_game.datn.Response.Message_Coordinate;
+import com.personal_game.datn.Response.Message_Coordinates;
 import com.personal_game.datn.Response.Message_Costume;
 import com.personal_game.datn.Response.Message_CostumeWithStyle;
 import com.personal_game.datn.Response.Message_Favourite;
@@ -23,16 +24,15 @@ import com.personal_game.datn.Response.Message_Login;
 import com.personal_game.datn.Response.Message_Suggestion;
 import com.personal_game.datn.Response.Message_Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -68,6 +68,9 @@ public interface Service {
 
     @GET("Carts_Get")
     Call<Message_Cart> GetCart(@Header("Authorization") String token);
+
+    @DELETE("carts/{id}")
+    Call<Message> DeleteCart(@Header("Authorization") String token, @Path("id") String id);
 
     @POST("UpdateCart_Post")
     Call<Message> UpdateCart(@Header("Authorization") String token, @Body Cart cart);
@@ -116,4 +119,22 @@ public interface Service {
 
     @GET("bills/before-create")
     Call<BeforeCreateBill> BeforeCreate(@Header("Authorization") String token);
+
+    @POST("coordinates")
+    Call<Message> CreateCoordinate(@Header("Authorization") String token, @Body Coordinate coordinate);
+
+    @GET("coordinates")
+    Call<Message_Coordinates> GetCoordinates(@Header("Authorization") String token);
+
+    @GET("coordinates/{id}")
+    Call<Message_Coordinate> GetCoordinate(@Header("Authorization") String token, @Path("id") String id);
+
+    @PUT("coordinates")
+    Call<Message> UpdateCoordinate(@Header("Authorization") String token, @Body Coordinate coordinate);
+
+    @DELETE("coordinates/{id}")
+    Call<Message> DeleteCoordinate(@Header("Authorization") String token, @Path("id") String id);
+
+    @GET("costumes/styleandsex/{styleId}/{sex}")
+    Call<Message_CostumeWithStyle> StyleAndSex(@Header("Authorization") String token, @Path("styleId") String styleId, @Path("sex") boolean sex);
 }

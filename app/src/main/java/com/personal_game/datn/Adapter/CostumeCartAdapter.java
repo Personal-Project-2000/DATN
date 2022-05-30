@@ -181,10 +181,15 @@ public class CostumeCartAdapter extends RecyclerView.Adapter<CostumeCartAdapter.
                 intent.putExtra("costumeId", costume.getCostume().getId());
                 context.startActivity(intent);
             });
+
+            binding.btnDelete.setOnClickListener(v -> {
+                costumeCartListeners.onClickDel(costume.getCostume().getId(), getAdapterPosition());
+            });
         }
     }
 
     public interface CostumeCartListeners {
         void onClick(Costume_Cart costume, int quantity, boolean state, int position, int discount, boolean isDiscount, int code);
+        void onClickDel(String costumeId, int position);
     }
 }

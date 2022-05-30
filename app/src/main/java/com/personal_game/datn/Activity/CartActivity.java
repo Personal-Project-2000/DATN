@@ -168,6 +168,11 @@ public class CartActivity extends AppCompatActivity {
 
                 updateCart(updateCart, position, discount, isDiscount, code);
             }
+
+            @Override
+            public void onClickDel(String costumeId, int position) {
+                deleteCart(costumeId, position);
+            }
         }, 1);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
@@ -294,6 +299,29 @@ public class CartActivity extends AppCompatActivity {
                         binding.btnAll.setImageResource(R.drawable.circle_check);
                     else
                         binding.btnAll.setImageResource(R.drawable.circle_none);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void deleteCart(String costumeId, int position){
+        Service service = getRetrofit().create(Service.class);
+        Call<Message> call = service.DeleteCart("bearer "+shared_preferences.getToken(), costumeId);
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if(response.body().getStatus() == 1){
+                    costumeCarts.remove(position);
+
+                    costumeCartAdapter.notifyItemRemoved(position);
+
+                    int cart = Integer.parseInt(shared_preferences.getQuantityCart());
+                    shared_preferences.saveQuantityCart(cart-1);
                 }
             }
 
