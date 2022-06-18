@@ -1,5 +1,7 @@
 package com.personal_game.datn.Adapter;
 
+import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
@@ -22,6 +24,7 @@ import com.personal_game.datn.R;
 import com.personal_game.datn.databinding.ItemColorBinding;
 import com.personal_game.datn.databinding.ItemCoordinateBinding;
 import com.personal_game.datn.ultilities.MyDragListener;
+import com.personal_game.datn.ultilities.RangeTime;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -72,6 +75,8 @@ public class CoordinateAdapter extends RecyclerView.Adapter<CoordinateAdapter.Vi
 
         public void setData(Coordinate coordinate) {
             if(coordinate != null) {
+                int total = 0;
+
                 for (CostumeCoordinate costumeCoordinate : coordinate.getCostumes()) {
                     switch (costumeCoordinate.getStyleId()) {
                         case Constant.bagId: {
@@ -116,7 +121,7 @@ public class CoordinateAdapter extends RecyclerView.Adapter<CoordinateAdapter.Vi
                             pic.load(costumeCoordinate.getImage()).into(binding.imgShirt);
                         }
                         break;
-                        case Constant.trousersId: {
+                        case Constant.trousersId: case Constant.skirtId:{
                             binding.imgTrouser.setVisibility(View.VISIBLE);
 
                             Picasso.Builder builder = new Picasso.Builder(context);
@@ -145,7 +150,26 @@ public class CoordinateAdapter extends RecyclerView.Adapter<CoordinateAdapter.Vi
                         }
                         break;
                     }
+
+                    if(costumeCoordinate.getCostumeInfo() != null) {
+                        if (costumeCoordinate.getCostumeInfo().getPromotion() != null) {
+                            long millisFutureStartTime = RangeTime.getBetweenDayToNow(costumeCoordinate.getCostumeInfo().getPromotion().getStartTime());
+
+                            if (millisFutureStartTime <= 0) {
+                                long millisFutureEndTime = RangeTime.getBetweenDayToNow(costumeCoordinate.getCostumeInfo().getPromotion().getEndTime());
+
+                                if (millisFutureEndTime > 0) {
+                                    total += costumeCoordinate.getCostumeInfo().getPrice() * (100 - costumeCoordinate.getCostumeInfo().getPromotion().getValue()) / 100;
+
+                                    continue;
+                                }
+                            }
+                        }
+                        total += costumeCoordinate.getCostumeInfo().getPrice();
+                    }
                 }
+
+                binding.txtPrice.setText(intConvertMoney(total));
             }else{
                 binding.layoutMain.setVisibility(View.GONE);
                 binding.imgAdd.setVisibility(View.VISIBLE);

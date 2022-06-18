@@ -15,7 +15,7 @@
             android:title="Gợi ý" />
         <item
             android:id="@+id/nav_coordinate"
-            android:icon="@drawable/ic_baseline_search_24"
+            android:icon="@drawable/ic_baseline_blinds_24"
             android:title="Phối đồ" />
         <item
             android:id="@+id/nav_notification"

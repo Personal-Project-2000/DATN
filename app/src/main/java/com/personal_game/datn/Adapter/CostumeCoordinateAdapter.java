@@ -23,6 +23,7 @@ import com.personal_game.datn.Response.CostumeHome;
 import com.personal_game.datn.Response.Costume_Cart;
 import com.personal_game.datn.databinding.ItemBillImgBinding;
 import com.personal_game.datn.databinding.ItemCostumeCartBinding;
+import com.personal_game.datn.databinding.ItemCostumeCoordinateBinding;
 import com.personal_game.datn.ultilities.RangeTime;
 import com.squareup.picasso.Picasso;
 
@@ -45,7 +46,7 @@ public class CostumeCoordinateAdapter extends RecyclerView.Adapter<CostumeCoordi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new CostumeCoordinateAdapter.ViewHolder((ItemBillImgBinding.inflate(
+        return new CostumeCoordinateAdapter.ViewHolder((ItemCostumeCoordinateBinding.inflate(
                 LayoutInflater.from(parent.getContext()),
                 parent,
                 false
@@ -64,9 +65,10 @@ public class CostumeCoordinateAdapter extends RecyclerView.Adapter<CostumeCoordi
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        final ItemBillImgBinding binding;
+        final ItemCostumeCoordinateBinding binding;
+        int total = 0;
 
-        public ViewHolder(@NonNull ItemBillImgBinding binding) {
+        public ViewHolder(@NonNull ItemCostumeCoordinateBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
@@ -86,12 +88,46 @@ public class CostumeCoordinateAdapter extends RecyclerView.Adapter<CostumeCoordi
             pic.load(costume.getCostume().getPictures().get(0).getLink()).into(binding.imgMain);
 
             binding.imgMain.setOnClickListener(v -> {
-                costumeCoordinateListeners.onClick(costume, getAdapterPosition());
+                costumeCoordinateListeners.onClick(costume, getAdapterPosition(), total);
             });
+
+            if(costume.getCostume().getPromotion() != null){
+                long millisFutureStartTime = RangeTime.getBetweenDayToNow(costume.getCostume().getPromotion().getStartTime());
+
+                if(millisFutureStartTime <= 0){
+                    long millisFutureEndTime = RangeTime.getBetweenDayToNow(costume.getCostume().getPromotion().getEndTime());
+
+                    if(millisFutureEndTime > 0){
+                        binding.txtPrice.setText(intConvertMoney(costume.getCostume().getPrice() * (100 - costume.getCostume().getPromotion().getValue()) / 100));
+                        binding.layoutEvent.setVisibility(View.VISIBLE);
+                        binding.txtValueEvent.setText("-" + costume.getCostume().getPromotion().getValue() + "%");
+
+                        Picasso.Builder builder1 = new Picasso.Builder(context);
+                        builder1.listener(new Picasso.Listener() {
+                            @Override
+                            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                                binding.imgEvent.setImageResource(R.drawable.ic_baseline_flash_on_24);
+                            }
+                        });
+
+                        Picasso pic1 = builder1.build();
+                        pic1.load(costume.getCostume().getPromotion().getIcon()).into(binding.imgEvent);
+
+                        total = costume.getCostume().getPrice()*(100-costume.getCostume().getPromotion().getValue())/100;
+
+                        binding.txtPrice.setText(intConvertMoney(total));
+
+                        return;
+                    }
+                }
+            }
+
+            total = costume.getCostume().getPrice();
+            binding.txtPrice.setText(intConvertMoney(total));
         }
     }
 
     public interface CostumeCoordinateListeners {
-        void onClick(CostumeHome costumeHome, int position);
+        void onClick(CostumeHome costumeHome, int position, int price);
     }
 }

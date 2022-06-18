@@ -1,6 +1,7 @@
 package com.personal_game.datn.Dialog;
 
 import static com.personal_game.datn.Backup.Constant.SwitchCostumeActivity;
+import static com.personal_game.datn.ultilities.ConvertMoney.intConvertMoney;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -9,10 +10,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.personal_game.datn.Activity.CoordinateActivity;
+import com.personal_game.datn.Adapter.CoordinateAdapter;
 import com.personal_game.datn.Adapter.SizeAdapter;
 import com.personal_game.datn.Backup.Constant;
 import com.personal_game.datn.Backup.Shared_Preferences;
@@ -22,6 +27,7 @@ import com.personal_game.datn.Models.Size;
 import com.personal_game.datn.R;
 import com.personal_game.datn.databinding.LayoutCoordinateBinding;
 import com.personal_game.datn.databinding.LayoutSizeBinding;
+import com.personal_game.datn.ultilities.RangeTime;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -35,6 +41,7 @@ public class CoordinateDialog extends Dialog {
     private Coordinate coordinate;
     private CoordinateDialogListeners coordinateDialogListeners;
     private int position;
+    private int total = 0;
 
     private String shirtId = null;
     private String shoeId = null;
@@ -106,6 +113,52 @@ public class CoordinateDialog extends Dialog {
         dismiss();
     }
 
+    private void setView(ImageView imgMain, TextView txtPrice, LinearLayout layoutEvent, TextView txtValueEvent, ImageView iconEvent, CostumeCoordinate costumeCoordinate){
+        txtPrice.setVisibility(View.VISIBLE);
+        Picasso.Builder builder = new Picasso.Builder(c);
+        builder.listener(new Picasso.Listener() {
+            @Override
+            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                imgMain.setImageResource(R.drawable.cong);
+            }
+        });
+        Picasso pic = builder.build();
+        pic.load(costumeCoordinate.getImage()).into(imgMain);
+
+        if(costumeCoordinate.getCostumeInfo().getPromotion() != null) {
+            long millisFutureStartTime = RangeTime.getBetweenDayToNow(costumeCoordinate.getCostumeInfo().getPromotion().getStartTime());
+
+            if (millisFutureStartTime <= 0) {
+                long millisFutureEndTime = RangeTime.getBetweenDayToNow(costumeCoordinate.getCostumeInfo().getPromotion().getEndTime());
+
+                if (millisFutureEndTime > 0) {
+                    total += costumeCoordinate.getCostumeInfo().getPrice() * (100 - costumeCoordinate.getCostumeInfo().getPromotion().getValue()) / 100;
+
+                    txtPrice.setText(intConvertMoney(costumeCoordinate.getCostumeInfo().getPrice() * (100 - costumeCoordinate.getCostumeInfo().getPromotion().getValue()) / 100));
+                    layoutEvent.setVisibility(View.VISIBLE);
+                    txtValueEvent.setText("-" + costumeCoordinate.getCostumeInfo().getPromotion().getValue() + "%");
+
+                    Picasso.Builder builder1 = new Picasso.Builder(c);
+                    builder1.listener(new Picasso.Listener() {
+                        @Override
+                        public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                            iconEvent.setImageResource(R.drawable.ic_baseline_flash_on_24);
+                        }
+                    });
+
+                    Picasso pic1 = builder1.build();
+                    pic1.load(costumeCoordinate.getCostumeInfo().getPromotion().getIcon()).into(iconEvent);
+
+                    return;
+                }
+            }
+        }
+
+        total += costumeCoordinate.getCostumeInfo().getPrice();
+
+        txtPrice.setText(intConvertMoney(costumeCoordinate.getCostumeInfo().getPrice()));
+    }
+
     private void setData(){
         if(coordinate != null) {
             for (CostumeCoordinate costumeCoordinate : coordinate.getCostumes()) {
@@ -113,76 +166,38 @@ public class CoordinateDialog extends Dialog {
                     case Constant.bagId: {
                         bagId = costumeCoordinate.getCostumeId();
 
-                        Picasso.Builder builder = new Picasso.Builder(c);
-                        builder.listener(new Picasso.Listener() {
-                            @Override
-                            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                                layout.imgBag.setImageResource(R.drawable.cong);
-                            }
-                        });
-                        Picasso pic = builder.build();
-                        pic.load(costumeCoordinate.getImage()).into(layout.imgBag);
+                        setView(layout.imgBag, layout.txtPriceBag, layout.layoutEventBag, layout.txtValueEventBag, layout.imgEventBag, costumeCoordinate);
                     }
                     break;
                     case Constant.hatId: {
                         hatId = costumeCoordinate.getCostumeId();
 
-                        Picasso.Builder builder = new Picasso.Builder(c);
-                        builder.listener(new Picasso.Listener() {
-                            @Override
-                            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                                layout.imgHat.setImageResource(R.drawable.cong);
-                            }
-                        });
-                        Picasso pic = builder.build();
-                        pic.load(costumeCoordinate.getImage()).into(layout.imgHat);
+                        setView(layout.imgHat, layout.txtPriceHat, layout.layoutEventHat, layout.txtValueEventHat, layout.imgEventHat, costumeCoordinate);
                     }
                     break;
                     case Constant.shirtId: {
                         shirtId = costumeCoordinate.getCostumeId();
 
-                        Picasso.Builder builder = new Picasso.Builder(c);
-                        builder.listener(new Picasso.Listener() {
-                            @Override
-                            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                                layout.imgShirt.setImageResource(R.drawable.cong);
-                            }
-                        });
-                        Picasso pic = builder.build();
-                        pic.load(costumeCoordinate.getImage()).into(layout.imgShirt);
+                        setView(layout.imgShirt, layout.txtPriceShirt, layout.layoutEventShirt, layout.txtValueEventShirt, layout.imgEventShirt, costumeCoordinate);
                     }
                     break;
-                    case Constant.trousersId: {
+                    case Constant.trousersId: case Constant.skirtId:{
                         trouserId = costumeCoordinate.getCostumeId();
 
-                        Picasso.Builder builder = new Picasso.Builder(c);
-                        builder.listener(new Picasso.Listener() {
-                            @Override
-                            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                                layout.imgTrouser.setImageResource(R.drawable.cong);
-                            }
-                        });
-                        Picasso pic = builder.build();
-                        pic.load(costumeCoordinate.getImage()).into(layout.imgTrouser);
+                        setView(layout.imgTrouser, layout.txtPriceTrouser, layout.layoutEventTrouser, layout.txtValueEventTrouser, layout.imgEventTrouser, costumeCoordinate);
                     }
                     break;
                     case Constant.shoeId: {
                         shoeId = costumeCoordinate.getCostumeId();
 
-                        Picasso.Builder builder = new Picasso.Builder(c);
-                        builder.listener(new Picasso.Listener() {
-                            @Override
-                            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                                layout.imgShoe.setImageResource(R.drawable.cong);
-                            }
-                        });
-                        Picasso pic = builder.build();
-                        pic.load(costumeCoordinate.getImage()).into(layout.imgShoe);
+                        setView(layout.imgShoe, layout.txtPriceShoe, layout.layoutEventShoe, layout.txtValueEventShoe, layout.imgEventShoe, costumeCoordinate);
                     }
                     break;
                 }
             }
         }
+
+        layout.txtPrice.setText(intConvertMoney(total));
     }
 
     public interface CoordinateDialogListeners{

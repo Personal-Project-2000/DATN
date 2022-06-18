@@ -16,8 +16,10 @@
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/circle_none.xml" value="0.23425925925925925" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/goctron.xml" value="0.2" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/goctron_red.xml" value="0.23425925925925925" />
+        <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/ic_baseline_accessibility_24.xml" value="0.18385416666666668" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.2703125" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/ic_baseline_arrow_forward_ios_24.xml" value="0.2" />
+        <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/ic_baseline_blinds_24.xml" value="0.18385416666666668" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/ic_baseline_boy_24.xml" value="0.16197916666666667" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/ic_baseline_check_24.xml" value="0.2574074074074074" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/drawable/ic_baseline_check_circle_24.xml" value="0.2703125" />
@@ -93,6 +95,7 @@
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/item_costume.xml" value="0.22926829268292684" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/item_costume_bill.xml" value="0.24547101449275363" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/item_costume_cart.xml" value="0.4" />
+        <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/item_costume_coordinate.xml" value="0.24547101449275363" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/item_costume_img.xml" value="0.22780797101449277" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/item_costume_payment.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/xyzsy/OneDrive/Desktop/Personal-Project/DATN/app/src/main/res/layout/item_costume_style.xml" value="0.536" />
